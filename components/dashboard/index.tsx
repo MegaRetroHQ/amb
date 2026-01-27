@@ -135,9 +135,6 @@ export function Dashboard() {
                 >
                   <MessageSquareIcon className="size-4" />
                   Сообщения
-                  <kbd className="ml-1 h-4 px-1 rounded bg-muted text-[10px] font-mono hidden sm:inline-flex items-center">
-                    1
-                  </kbd>
                 </TabsTrigger>
                 <TabsTrigger
                   value="inbox"
@@ -150,9 +147,6 @@ export function Dashboard() {
                       {inboxCount > 99 ? "99+" : inboxCount}
                     </span>
                   )}
-                  <kbd className="ml-1 h-4 px-1 rounded bg-muted text-[10px] font-mono hidden sm:inline-flex items-center">
-                    2
-                  </kbd>
                 </TabsTrigger>
                 <TabsTrigger
                   value="dlq"
@@ -165,9 +159,6 @@ export function Dashboard() {
                       {dlqCount > 99 ? "99+" : dlqCount}
                     </span>
                   )}
-                  <kbd className="ml-1 h-4 px-1 rounded bg-muted text-[10px] font-mono hidden sm:inline-flex items-center">
-                    3
-                  </kbd>
                 </TabsTrigger>
               </TabsList>
             </div>

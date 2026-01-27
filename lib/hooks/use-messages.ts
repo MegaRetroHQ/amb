@@ -177,3 +177,57 @@ export function useDlq() {
 
   return { messages, loading, error, refetch: fetchDlq, retryMessage, retryAll };
 }
+
+export function useAgentInboxCounts(agentIds: string[], pollInterval = 5000) {
+  const [counts, setCounts] = useState<Record<string, number>>({});
+  const [loading, setLoading] = useState(true);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const fetchCounts = useCallback(async () => {
+    if (agentIds.length === 0) {
+      setCounts({});
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const results = await Promise.all(
+        agentIds.map(async (agentId) => {
+          try {
+            const res = await fetch(`/api/messages/inbox?agentId=${agentId}`);
+            const json = await res.json();
+            const messages = json.data || [];
+            return { agentId, count: messages.length };
+          } catch {
+            return { agentId, count: 0 };
+          }
+        })
+      );
+
+      const newCounts: Record<string, number> = {};
+      results.forEach(({ agentId, count }) => {
+        newCounts[agentId] = count;
+      });
+      setCounts(newCounts);
+    } catch {
+      // Silent fail
+    } finally {
+      setLoading(false);
+    }
+  }, [agentIds]);
+
+  useEffect(() => {
+    setLoading(true);
+    fetchCounts();
+    
+    intervalRef.current = setInterval(fetchCounts, pollInterval);
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [agentIds, pollInterval, fetchCounts]);
+
+  return { counts, loading, refetch: fetchCounts };
+}

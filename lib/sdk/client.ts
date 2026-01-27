@@ -74,6 +74,13 @@ export class MessageBusClient {
     return res.data;
   }
 
+  async searchAgents(query: string): Promise<Agent[]> {
+    const res = await this.fetch<ApiResponse<Agent[]>>(
+      `/api/agents/search?q=${encodeURIComponent(query)}`
+    );
+    return res.data;
+  }
+
   // ─────────────────────────────────────────────────────────────
   // Threads
   // ─────────────────────────────────────────────────────────────

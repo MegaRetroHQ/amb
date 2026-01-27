@@ -2,6 +2,7 @@
 
 import { useState, useMemo, RefObject } from "react";
 import { useAgents } from "@/lib/hooks/use-agents";
+import { useAgentInboxCounts } from "@/lib/hooks/use-messages";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,6 +28,9 @@ export function AgentsList({ selectedAgentId, onSelectAgent, searchInputRef }: P
   const { agents, loading, error, refetch } = useAgents();
   const [searchQuery, setSearchQuery] = useState("");
   const [isRefreshing, setIsRefreshing] = useState(false);
+  
+  const agentIds = useMemo(() => agents.map((a) => a.id), [agents]);
+  const { counts } = useAgentInboxCounts(agentIds);
 
   const filteredAgents = useMemo(() => {
     if (!searchQuery.trim()) return agents;
@@ -175,6 +179,14 @@ export function AgentsList({ selectedAgentId, onSelectAgent, searchInputRef }: P
                           <WifiIcon className="size-3.5 text-green-500" />
                         ) : (
                           <WifiOffIcon className="size-3.5 text-muted-foreground" />
+                        )}
+                        {counts[agent.id] > 0 && (
+                          <Badge
+                            variant="default"
+                            className="text-[10px] px-1.5 h-5 min-w-5 flex items-center justify-center bg-blue-500 text-white"
+                          >
+                            {counts[agent.id] > 99 ? "99+" : counts[agent.id]}
+                          </Badge>
                         )}
                         <Badge
                           variant={isOnline ? "default" : "secondary"}

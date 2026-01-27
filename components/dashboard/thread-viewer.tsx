@@ -27,6 +27,7 @@ import type { Agent, Message } from "@/lib/types";
 import { MentionInput } from "./mention-input";
 import { AgentSelector } from "./agent-selector";
 import { extractToAgentId } from "@/lib/mentions";
+import { JsonViewer } from "@/components/ui/json-viewer";
 
 type Props = {
   threadId: string | null;
@@ -179,7 +180,7 @@ export function ThreadViewer({ threadId, currentAgentId }: Props) {
   }
 
   return (
-    <div className="h-full rounded-lg border bg-card flex flex-col overflow-hidden">
+    <div className="h-full min-h-0 rounded-lg border bg-card flex flex-col overflow-hidden">
       {/* Header */}
       <div className="px-4 py-3 border-b flex items-center justify-between bg-card/50">
         <div className="flex items-center gap-3">
@@ -218,7 +219,7 @@ export function ThreadViewer({ threadId, currentAgentId }: Props) {
       </div>
 
       {/* Messages area */}
-      <ScrollArea className="flex-1 relative" onScrollCapture={handleScroll}>
+      <ScrollArea className="flex-1 min-h-0 relative" onScrollCapture={handleScroll}>
         <div ref={scrollAreaRef} className="p-4 space-y-6">
           {loading && messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
@@ -248,85 +249,107 @@ export function ThreadViewer({ threadId, currentAgentId }: Props) {
                 </div>
 
                 {/* Messages */}
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {group.messages.map((msg) => {
                     const fromAgent = agentMap.get(msg.fromAgentId);
                     const toAgent = msg.toAgentId
                       ? agentMap.get(msg.toAgentId)
                       : null;
                     const isOwn = msg.fromAgentId === currentAgentId;
-                    const payload = msg.payload as { text?: string } | null;
+                    const payload = msg.payload as { text?: string; type?: string } | null;
                     const status = statusConfig[msg.status as keyof typeof statusConfig] || statusConfig.pending;
                     const StatusIcon = status.icon;
+                    const isBroadcast = !msg.toAgentId;
 
                     return (
                       <div
                         key={msg.id}
-                        className={`flex flex-col ${
-                          isOwn ? "items-end" : "items-start"
-                        }`}
+                        className="group rounded-lg border bg-background p-4 transition-all hover:shadow-sm"
                       >
-                        {/* Agent info */}
-                        <div
-                          className={`flex items-center gap-1.5 mb-1 px-1 ${
-                            isOwn ? "flex-row-reverse" : ""
-                          }`}
-                        >
-                          <div
-                            className={`flex items-center justify-center size-5 rounded-full ${
-                              fromAgent?.status === "online"
-                                ? "bg-green-500/10 text-green-600"
-                                : "bg-muted text-muted-foreground"
-                            }`}
-                          >
-                            <BotIcon className="size-3" />
+                        {/* Header */}
+                        <div className="flex items-start justify-between gap-3 mb-3">
+                          <div className="flex items-center gap-2.5">
+                            <div
+                              className={`flex items-center justify-center size-8 rounded-full ${
+                                fromAgent?.status === "online"
+                                  ? "bg-green-500/10 text-green-600"
+                                  : "bg-muted text-muted-foreground"
+                              }`}
+                            >
+                              <BotIcon className="size-4" />
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <p className="text-sm font-medium">
+                                  {fromAgent?.name || msg.fromAgentId.slice(0, 8)}
+                                </p>
+                                {toAgent && (
+                                  <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 font-normal">
+                                    → {toAgent.name}
+                                  </Badge>
+                                )}
+                                {isBroadcast && (
+                                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 font-normal">
+                                    broadcast
+                                  </Badge>
+                                )}
+                              </div>
+                              <p className="text-xs text-muted-foreground">
+                                {fromAgent?.role || "Unknown role"}
+                              </p>
+                            </div>
                           </div>
-                          <span className="text-xs font-medium">
-                            {fromAgent?.name || msg.fromAgentId.slice(0, 8)}
-                          </span>
-                          {toAgent && (
-                            <span className="text-xs text-muted-foreground">
-                              → {toAgent.name}
-                            </span>
+                        </div>
+
+                        {/* Content */}
+                        <div className="rounded-md bg-muted/50 p-3 mb-3">
+                          {/* Payload type indicator */}
+                          {payload?.type && payload.type !== "text" && (
+                            <div className="text-[11px] font-medium uppercase tracking-wider mb-2 text-muted-foreground">
+                              {payload.type}
+                            </div>
+                          )}
+                          {payload?.text ? (
+                            <p className="text-sm whitespace-pre-wrap break-words">
+                              {payload.text}
+                            </p>
+                          ) : (
+                            <div className="text-sm">
+                              <JsonViewer data={msg.payload} />
+                            </div>
                           )}
                         </div>
 
-                        {/* Message bubble */}
-                        <div
-                          className={`max-w-[75%] rounded-2xl px-4 py-2 ${
-                            isOwn
-                              ? "bg-primary text-primary-foreground rounded-br-md"
-                              : "bg-muted rounded-bl-md"
-                          }`}
-                        >
-                          <p className="text-sm whitespace-pre-wrap break-words">
-                            {payload?.text || JSON.stringify(msg.payload)}
-                          </p>
-                        </div>
-
-                        {/* Status and time */}
-                        <div
-                          className={`flex items-center gap-1.5 mt-1 px-1 ${
-                            isOwn ? "flex-row-reverse" : ""
-                          }`}
-                        >
-                          <span className="text-[10px] text-muted-foreground">
-                            {new Date(msg.createdAt).toLocaleTimeString(undefined, {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
-                          </span>
-                          <Tooltip>
-                            <TooltipTrigger>
-                              <StatusIcon className={`size-3 ${status.color}`} />
-                            </TooltipTrigger>
-                            <TooltipContent>{status.label}</TooltipContent>
-                          </Tooltip>
-                          {msg.retries > 0 && (
-                            <span className="text-[10px] text-muted-foreground">
-                              (retry {msg.retries})
+                        {/* Footer */}
+                        <div className="flex items-center justify-between text-xs text-muted-foreground">
+                          <div className="flex items-center gap-1.5">
+                            <ClockIcon className="size-3" />
+                            <span>
+                              {new Date(msg.createdAt).toLocaleString(undefined, {
+                                month: "short",
+                                day: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
                             </span>
-                          )}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div 
+                              className="flex items-center gap-1"
+                              role="status"
+                              aria-label={`Message status: ${status.label}`}
+                            >
+                              <StatusIcon className={`size-3 ${status.color}`} aria-hidden="true" />
+                              <span className={`text-xs font-medium ${status.color}`}>
+                                {status.label}
+                              </span>
+                            </div>
+                            {msg.retries > 0 && (
+                              <Badge variant="destructive" className="text-[9px] px-1 py-0 h-3.5">
+                                retry {msg.retries}
+                              </Badge>
+                            )}
+                          </div>
                         </div>
                       </div>
                     );

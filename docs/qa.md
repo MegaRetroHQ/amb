@@ -1,4 +1,11 @@
-# 🎯 Task: QA Validation for Local Agent Message Bus (Next.js-only)
+# 🎯 QA Validation — Local Agent Message Bus
+
+> **📚 Документация QA:**
+> - [QA Test Plan](./qa-test-plan.md) — комплексный тест-план с чеклистами
+> - [QA Test Scenarios](./qa-test-scenarios.md) — практические тестовые сценарии
+> - [QA Bug Template](./qa-bug-template.md) — шаблон для отчетов об ошибках
+
+---
 
 ## Context
 
@@ -80,12 +87,16 @@ Validate:
 
 ## Deliverables
 
-* QA checklist (markdown)
-* Postman/Bruno collection
-* happy-path сценарий
-* edge cases list
-* bug report template
-* regression suite
+✅ **Готово:**
+* [QA Test Plan](./qa-test-plan.md) — комплексный чеклист и тест-план
+* [QA Test Scenarios](./qa-test-scenarios.md) — практические сценарии с командами
+* [QA Bug Template](./qa-bug-template.md) — шаблон баг-репортов
+* Happy-path сценарии (в test-scenarios.md)
+* Edge cases (в test-plan.md)
+* Regression suite (в test-plan.md)
+
+⬜ **В работе:**
+* Postman/Bruno collection (опционально)
 
 ---
 

@@ -2,7 +2,6 @@
 
 import { useState, useMemo, RefObject } from "react";
 import { useAgents } from "@/lib/hooks/use-agents";
-import { useAgentInboxCounts } from "@/lib/hooks/use-messages";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,15 +21,16 @@ type Props = {
   selectedAgentId: string | null;
   onSelectAgent: (agentId: string) => void;
   searchInputRef?: RefObject<HTMLInputElement | null>;
+  inboxCounts?: Record<string, number>;
 };
 
-export function AgentsList({ selectedAgentId, onSelectAgent, searchInputRef }: Props) {
+export function AgentsList({ selectedAgentId, onSelectAgent, searchInputRef, inboxCounts = {} }: Props) {
   const { agents, loading, error, refetch } = useAgents();
   const [searchQuery, setSearchQuery] = useState("");
   const [isRefreshing, setIsRefreshing] = useState(false);
   
-  const agentIds = useMemo(() => agents.map((a) => a.id), [agents]);
-  const { counts } = useAgentInboxCounts(agentIds);
+  // Use inboxCounts from props (passed from Dashboard SSE)
+  const counts = inboxCounts;
 
   const filteredAgents = useMemo(() => {
     if (!searchQuery.trim()) return agents;

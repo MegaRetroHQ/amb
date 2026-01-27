@@ -68,9 +68,15 @@ export async function sendMessage(input: SendMessageInput) {
 export async function getInboxMessages(agentId: string) {
   return prisma.$transaction(async (tx) => {
     // Mark pending messages as delivered
+    // Include both direct messages (toAgentId = agentId) and broadcast messages (toAgentId = null)
+    // Exclude messages from the agent itself (fromAgentId != agentId)
     await tx.message.updateMany({
       where: {
-        toAgentId: agentId,
+        OR: [
+          { toAgentId: agentId },
+          { toAgentId: null }, // Broadcast messages
+        ],
+        fromAgentId: { not: agentId }, // Don't include own messages
         status: "pending",
       },
       data: {
@@ -79,9 +85,14 @@ export async function getInboxMessages(agentId: string) {
     });
 
     // Return all delivered (unacked) messages
+    // Include both direct and broadcast messages, exclude own messages
     return tx.message.findMany({
       where: {
-        toAgentId: agentId,
+        OR: [
+          { toAgentId: agentId },
+          { toAgentId: null }, // Broadcast messages
+        ],
+        fromAgentId: { not: agentId }, // Don't include own messages
         status: "delivered",
       },
       orderBy: {

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useCallback } from "react"
+import { useState, useRef, useCallback, useEffect } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { AgentsList } from "./agents-list"
@@ -10,17 +10,71 @@ import { InboxViewer } from "./inbox-viewer"
 import { DlqViewer } from "./dlq-viewer"
 import { CommandPalette, useCommandPalette } from "./command-palette"
 import { useKeyboardShortcuts } from "@/lib/hooks/use-keyboard-shortcuts"
-import { useInbox } from "@/lib/hooks/use-messages"
-import { useDlq } from "@/lib/hooks/use-messages"
+import { useSSE } from "@/lib/hooks/use-sse"
 import {
   MessageSquareIcon,
   InboxIcon,
   AlertTriangleIcon,
   CommandIcon,
   ActivityIcon,
+  SunIcon,
+  MoonIcon,
+  GripVerticalIcon,
 } from "lucide-react"
+import { useTheme } from "@/components/theme-provider"
 
 type TabValue = "messages" | "inbox" | "dlq"
+
+// Resizer component
+function ColumnResizer({ onResize }: { onResize: (delta: number) => void }) {
+  const [isDragging, setIsDragging] = useState(false)
+  const startXRef = useRef(0)
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault()
+    setIsDragging(true)
+    startXRef.current = e.clientX
+  }
+
+  useEffect(() => {
+    if (!isDragging) return
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const delta = e.clientX - startXRef.current
+      startXRef.current = e.clientX
+      onResize(delta)
+    }
+
+    const handleMouseUp = () => {
+      setIsDragging(false)
+    }
+
+    document.addEventListener("mousemove", handleMouseMove)
+    document.addEventListener("mouseup", handleMouseUp)
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove)
+      document.removeEventListener("mouseup", handleMouseUp)
+    }
+  }, [isDragging, onResize])
+
+  return (
+    <div
+      className={`w-1 flex-shrink-0 cursor-col-resize group hover:bg-primary/20 transition-colors relative ${
+        isDragging ? "bg-primary/30" : ""
+      }`}
+      onMouseDown={handleMouseDown}
+    >
+      <div className={`absolute inset-y-0 -left-1 -right-1 flex items-center justify-center ${
+        isDragging ? "bg-primary/10" : ""
+      }`}>
+        <GripVerticalIcon className={`size-3 text-muted-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity ${
+          isDragging ? "opacity-100 text-primary" : ""
+        }`} />
+      </div>
+    </div>
+  )
+}
 
 export function Dashboard() {
   const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null)
@@ -29,15 +83,25 @@ export function Dashboard() {
   const [showNewThreadDialog, setShowNewThreadDialog] = useState(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
   
+  // Column widths (resizable)
+  const [agentsWidth, setAgentsWidth] = useState(320)
+  const [threadsWidth, setThreadsWidth] = useState(384)
+  
   // Command palette
   const { open: commandOpen, setOpen: setCommandOpen } = useCommandPalette()
 
-  // Get counts for badges
-  const { messages: inboxMessages } = useInbox(selectedAgentId)
-  const { messages: dlqMessages } = useDlq()
-
-  const inboxCount = inboxMessages.length
-  const dlqCount = dlqMessages.length
+  // Get counts for badges via SSE
+  const { inboxCounts, dlqCount, connected } = useSSE()
+  
+  // Theme
+  const { resolvedTheme, setTheme } = useTheme()
+  
+  const toggleTheme = useCallback(() => {
+    setTheme(resolvedTheme === "dark" ? "light" : "dark")
+  }, [resolvedTheme, setTheme])
+  
+  // Inbox count for selected agent
+  const inboxCount = selectedAgentId ? (inboxCounts[selectedAgentId] ?? 0) : 0
 
   const handleRefresh = useCallback(() => {
     window.location.reload()
@@ -76,11 +140,26 @@ export function Dashboard() {
             {/* Status indicators */}
             <div className="flex items-center gap-4 mr-4 text-xs text-muted-foreground">
               <span className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                Подключено
+                <span className={`w-2 h-2 rounded-full ${connected ? "bg-green-500 animate-pulse" : "bg-yellow-500"}`} />
+                {connected ? "SSE подключено" : "Переподключение..."}
               </span>
-              <span>Обновление: 3с</span>
+              {connected && <span>Real-time</span>}
             </div>
+
+            {/* Theme toggle */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              className="size-9"
+              title={resolvedTheme === "dark" ? "Светлая тема" : "Тёмная тема"}
+            >
+              {resolvedTheme === "dark" ? (
+                <SunIcon className="size-4" />
+              ) : (
+                <MoonIcon className="size-4" />
+              )}
+            </Button>
 
             {/* Command palette button */}
             <Button
@@ -102,16 +181,28 @@ export function Dashboard() {
       {/* Main content */}
       <div className="flex-1 flex overflow-hidden">
         {/* Left sidebar: Agents */}
-        <aside className="w-72 border-r flex-shrink-0 overflow-hidden bg-card/30">
+        <aside 
+          className="flex-shrink-0 overflow-hidden bg-card/30"
+          style={{ width: agentsWidth, minWidth: 200, maxWidth: 500 }}
+        >
           <AgentsList
             selectedAgentId={selectedAgentId}
             onSelectAgent={setSelectedAgentId}
             searchInputRef={searchInputRef}
+            inboxCounts={inboxCounts}
           />
         </aside>
 
+        {/* Resizer 1 */}
+        <ColumnResizer 
+          onResize={(delta) => setAgentsWidth(w => Math.max(200, Math.min(500, w + delta)))} 
+        />
+
         {/* Middle sidebar: Threads */}
-        <aside className="w-80 border-r flex-shrink-0 overflow-hidden bg-card/30">
+        <aside 
+          className="flex-shrink-0 overflow-hidden bg-card/30"
+          style={{ width: threadsWidth, minWidth: 250, maxWidth: 600 }}
+        >
           <ThreadsList
             selectedThreadId={selectedThreadId}
             onSelectThread={setSelectedThreadId}
@@ -119,6 +210,11 @@ export function Dashboard() {
             onExternalDialogChange={setShowNewThreadDialog}
           />
         </aside>
+
+        {/* Resizer 2 */}
+        <ColumnResizer 
+          onResize={(delta) => setThreadsWidth(w => Math.max(250, Math.min(600, w + delta)))} 
+        />
 
         {/* Main area: Tabs */}
         <main className="flex-1 overflow-hidden bg-background">

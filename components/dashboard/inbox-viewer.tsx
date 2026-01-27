@@ -20,10 +20,39 @@ import {
   Loader2Icon,
   MailIcon,
   ClockIcon,
+  AlertTriangleIcon,
 } from "lucide-react";
+import { JsonViewer } from "@/components/ui/json-viewer";
 
 type Props = {
   agentId: string | null;
+};
+
+const statusConfig = {
+  pending: {
+    icon: ClockIcon,
+    color: "text-yellow-500",
+    label: "Pending",
+    variant: "outline" as const,
+  },
+  delivered: {
+    icon: CheckIcon,
+    color: "text-blue-500",
+    label: "Delivered",
+    variant: "secondary" as const,
+  },
+  ack: {
+    icon: CheckCheckIcon,
+    color: "text-green-500",
+    label: "Acknowledged",
+    variant: "default" as const,
+  },
+  dlq: {
+    icon: AlertTriangleIcon,
+    color: "text-destructive",
+    label: "Failed",
+    variant: "destructive" as const,
+  },
 };
 
 export function InboxViewer({ agentId }: Props) {
@@ -206,9 +235,15 @@ export function InboxViewer({ agentId }: Props) {
 
                     {/* Content */}
                     <div className="rounded-md bg-muted/50 p-3 mb-3">
-                      <p className="text-sm whitespace-pre-wrap break-words">
-                        {payload?.text || JSON.stringify(msg.payload)}
-                      </p>
+                      {payload?.text ? (
+                        <p className="text-sm whitespace-pre-wrap break-words">
+                          {payload.text}
+                        </p>
+                      ) : (
+                        <div className="text-sm">
+                          <JsonViewer data={msg.payload} />
+                        </div>
+                      )}
                     </div>
 
                     {/* Footer */}

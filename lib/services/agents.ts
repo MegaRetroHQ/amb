@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { Prisma } from "@/lib/generated/prisma/client";
+import { Prisma } from "@/lib/generated/prisma";
 
 export type CreateAgentInput = {
   name: string;

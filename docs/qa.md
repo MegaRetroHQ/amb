@@ -106,3 +106,79 @@ Validate:
 * load testing
 * multi-tenant
 * cloud infra
+
+---
+
+## Quick curl smoke checks
+
+Use `http://localhost:3001` if `3000` is busy.
+
+Create an agent:
+
+```bash
+curl -s -X POST http://localhost:3001/api/agents \
+  -H 'Content-Type: application/json' \
+  -d '{"name":"PO","role":"product","capabilities":{"scope":["requirements"]}}'
+```
+
+List agents:
+
+```bash
+curl -s http://localhost:3001/api/agents
+```
+
+Create a thread:
+
+```bash
+curl -s -X POST http://localhost:3001/api/threads \
+  -H 'Content-Type: application/json' \
+  -d '{"title":"API smoke thread","status":"open"}'
+```
+
+List threads:
+
+```bash
+curl -s http://localhost:3001/api/threads
+```
+
+Send a message (replace IDs):
+
+```bash
+curl -s -X POST http://localhost:3001/api/messages/send \
+  -H 'Content-Type: application/json' \
+  -d '{"threadId":"<thread-id>","fromAgentId":"<from-agent-id>","toAgentId":"<to-agent-id>","payload":{"text":"hello"}}'
+```
+
+List messages for a thread:
+
+```bash
+curl -s http://localhost:3001/api/threads/<thread-id>/messages
+```
+
+Inbox for an agent (marks pending as delivered):
+
+```bash
+curl -s "http://localhost:3001/api/messages/inbox?agentId=<agent-id>"
+```
+
+Ack a delivered message:
+
+```bash
+curl -s -X POST http://localhost:3001/api/messages/<message-id>/ack
+```
+
+Inbox + ACK flow (status transition):
+
+```bash
+# 1) Send a message
+curl -s -X POST http://localhost:3001/api/messages/send \
+  -H 'Content-Type: application/json' \
+  -d '{"threadId":"<thread-id>","fromAgentId":"<from-agent-id>","toAgentId":"<to-agent-id>","payload":{"text":"inbox check"}}'
+
+# 2) First inbox fetch should mark pending -> delivered
+curl -s "http://localhost:3001/api/messages/inbox?agentId=<to-agent-id>"
+
+# 3) Ack the message (idempotent)
+curl -s -X POST http://localhost:3001/api/messages/<message-id>/ack
+curl -s -X POST http://localhost:3001/api/messages/<message-id>/ack
+```

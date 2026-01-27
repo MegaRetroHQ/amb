@@ -7,3 +7,13 @@ export class NotFoundError extends Error {
     this.resource = resource;
   }
 }
+
+export class ConflictError extends Error {
+  readonly resource: string;
+
+  constructor(resource: string, message?: string) {
+    super(message ?? `${resource} state conflict`);
+    this.name = "ConflictError";
+    this.resource = resource;
+  }
+}

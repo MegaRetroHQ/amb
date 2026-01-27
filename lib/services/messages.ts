@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
-import { Prisma } from "@/lib/generated/prisma/client";
-import { NotFoundError } from "@/lib/services/errors";
+import { Prisma } from "@/lib/generated/prisma";
+import { ConflictError, NotFoundError } from "@/lib/services/errors";
 
 export type SendMessageInput = {
   threadId: string;
@@ -62,5 +62,54 @@ export async function sendMessage(input: SendMessageInput) {
       status: "pending",
       retries: 0,
     },
+  });
+}
+
+export async function getInboxMessages(agentId: string) {
+  return prisma.$transaction(async (tx) => {
+    await tx.message.updateMany({
+      where: {
+        toAgentId: agentId,
+        status: "pending",
+      },
+      data: {
+        status: "delivered",
+      },
+    });
+
+    return tx.message.findMany({
+      where: {
+        toAgentId: agentId,
+        status: {
+          in: ["pending", "delivered"],
+        },
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
+  });
+}
+
+export async function ackMessage(messageId: string) {
+  const message = await prisma.message.findUnique({
+    where: { id: messageId },
+  });
+
+  if (!message) {
+    throw new NotFoundError("Message");
+  }
+
+  if (message.status === "ack") {
+    return message;
+  }
+
+  if (message.status !== "delivered") {
+    throw new ConflictError("Message", "Message must be delivered before ack");
+  }
+
+  return prisma.message.update({
+    where: { id: messageId },
+    data: { status: "ack" },
   });
 }

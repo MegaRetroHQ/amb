@@ -36,6 +36,7 @@ export type MessageSumAggregateOutputType = {
 
 export type MessageMinAggregateOutputType = {
   id: string | null
+  projectId: string | null
   threadId: string | null
   fromAgentId: string | null
   toAgentId: string | null
@@ -47,6 +48,7 @@ export type MessageMinAggregateOutputType = {
 
 export type MessageMaxAggregateOutputType = {
   id: string | null
+  projectId: string | null
   threadId: string | null
   fromAgentId: string | null
   toAgentId: string | null
@@ -58,6 +60,7 @@ export type MessageMaxAggregateOutputType = {
 
 export type MessageCountAggregateOutputType = {
   id: number
+  projectId: number
   threadId: number
   fromAgentId: number
   toAgentId: number
@@ -80,6 +83,7 @@ export type MessageSumAggregateInputType = {
 
 export type MessageMinAggregateInputType = {
   id?: true
+  projectId?: true
   threadId?: true
   fromAgentId?: true
   toAgentId?: true
@@ -91,6 +95,7 @@ export type MessageMinAggregateInputType = {
 
 export type MessageMaxAggregateInputType = {
   id?: true
+  projectId?: true
   threadId?: true
   fromAgentId?: true
   toAgentId?: true
@@ -102,6 +107,7 @@ export type MessageMaxAggregateInputType = {
 
 export type MessageCountAggregateInputType = {
   id?: true
+  projectId?: true
   threadId?: true
   fromAgentId?: true
   toAgentId?: true
@@ -201,6 +207,7 @@ export type MessageGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 
 export type MessageGroupByOutputType = {
   id: string
+  projectId: string
   threadId: string
   fromAgentId: string
   toAgentId: string | null
@@ -236,6 +243,7 @@ export type MessageWhereInput = {
   OR?: Prisma.MessageWhereInput[]
   NOT?: Prisma.MessageWhereInput | Prisma.MessageWhereInput[]
   id?: Prisma.StringFilter<"Message"> | string
+  projectId?: Prisma.StringFilter<"Message"> | string
   threadId?: Prisma.StringFilter<"Message"> | string
   fromAgentId?: Prisma.StringFilter<"Message"> | string
   toAgentId?: Prisma.StringNullableFilter<"Message"> | string | null
@@ -244,6 +252,7 @@ export type MessageWhereInput = {
   retries?: Prisma.IntFilter<"Message"> | number
   parentId?: Prisma.StringNullableFilter<"Message"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Message"> | Date | string
+  project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
   thread?: Prisma.XOR<Prisma.ThreadScalarRelationFilter, Prisma.ThreadWhereInput>
   parent?: Prisma.XOR<Prisma.MessageNullableScalarRelationFilter, Prisma.MessageWhereInput> | null
   replies?: Prisma.MessageListRelationFilter
@@ -251,6 +260,7 @@ export type MessageWhereInput = {
 
 export type MessageOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   threadId?: Prisma.SortOrder
   fromAgentId?: Prisma.SortOrder
   toAgentId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -259,6 +269,7 @@ export type MessageOrderByWithRelationInput = {
   retries?: Prisma.SortOrder
   parentId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  project?: Prisma.ProjectOrderByWithRelationInput
   thread?: Prisma.ThreadOrderByWithRelationInput
   parent?: Prisma.MessageOrderByWithRelationInput
   replies?: Prisma.MessageOrderByRelationAggregateInput
@@ -269,6 +280,7 @@ export type MessageWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.MessageWhereInput | Prisma.MessageWhereInput[]
   OR?: Prisma.MessageWhereInput[]
   NOT?: Prisma.MessageWhereInput | Prisma.MessageWhereInput[]
+  projectId?: Prisma.StringFilter<"Message"> | string
   threadId?: Prisma.StringFilter<"Message"> | string
   fromAgentId?: Prisma.StringFilter<"Message"> | string
   toAgentId?: Prisma.StringNullableFilter<"Message"> | string | null
@@ -277,6 +289,7 @@ export type MessageWhereUniqueInput = Prisma.AtLeast<{
   retries?: Prisma.IntFilter<"Message"> | number
   parentId?: Prisma.StringNullableFilter<"Message"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Message"> | Date | string
+  project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
   thread?: Prisma.XOR<Prisma.ThreadScalarRelationFilter, Prisma.ThreadWhereInput>
   parent?: Prisma.XOR<Prisma.MessageNullableScalarRelationFilter, Prisma.MessageWhereInput> | null
   replies?: Prisma.MessageListRelationFilter
@@ -284,6 +297,7 @@ export type MessageWhereUniqueInput = Prisma.AtLeast<{
 
 export type MessageOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   threadId?: Prisma.SortOrder
   fromAgentId?: Prisma.SortOrder
   toAgentId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -304,6 +318,7 @@ export type MessageScalarWhereWithAggregatesInput = {
   OR?: Prisma.MessageScalarWhereWithAggregatesInput[]
   NOT?: Prisma.MessageScalarWhereWithAggregatesInput | Prisma.MessageScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Message"> | string
+  projectId?: Prisma.StringWithAggregatesFilter<"Message"> | string
   threadId?: Prisma.StringWithAggregatesFilter<"Message"> | string
   fromAgentId?: Prisma.StringWithAggregatesFilter<"Message"> | string
   toAgentId?: Prisma.StringNullableWithAggregatesFilter<"Message"> | string | null
@@ -322,6 +337,7 @@ export type MessageCreateInput = {
   status?: string
   retries?: number
   createdAt?: Date | string
+  project: Prisma.ProjectCreateNestedOneWithoutMessagesInput
   thread: Prisma.ThreadCreateNestedOneWithoutMessagesInput
   parent?: Prisma.MessageCreateNestedOneWithoutRepliesInput
   replies?: Prisma.MessageCreateNestedManyWithoutParentInput
@@ -329,6 +345,7 @@ export type MessageCreateInput = {
 
 export type MessageUncheckedCreateInput = {
   id?: string
+  projectId: string
   threadId: string
   fromAgentId: string
   toAgentId?: string | null
@@ -348,6 +365,7 @@ export type MessageUpdateInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   retries?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  project?: Prisma.ProjectUpdateOneRequiredWithoutMessagesNestedInput
   thread?: Prisma.ThreadUpdateOneRequiredWithoutMessagesNestedInput
   parent?: Prisma.MessageUpdateOneWithoutRepliesNestedInput
   replies?: Prisma.MessageUpdateManyWithoutParentNestedInput
@@ -355,6 +373,7 @@ export type MessageUpdateInput = {
 
 export type MessageUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
   threadId?: Prisma.StringFieldUpdateOperationsInput | string
   fromAgentId?: Prisma.StringFieldUpdateOperationsInput | string
   toAgentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -368,6 +387,7 @@ export type MessageUncheckedUpdateInput = {
 
 export type MessageCreateManyInput = {
   id?: string
+  projectId: string
   threadId: string
   fromAgentId: string
   toAgentId?: string | null
@@ -390,6 +410,7 @@ export type MessageUpdateManyMutationInput = {
 
 export type MessageUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
   threadId?: Prisma.StringFieldUpdateOperationsInput | string
   fromAgentId?: Prisma.StringFieldUpdateOperationsInput | string
   toAgentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -417,6 +438,7 @@ export type MessageNullableScalarRelationFilter = {
 
 export type MessageCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   threadId?: Prisma.SortOrder
   fromAgentId?: Prisma.SortOrder
   toAgentId?: Prisma.SortOrder
@@ -433,6 +455,7 @@ export type MessageAvgOrderByAggregateInput = {
 
 export type MessageMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   threadId?: Prisma.SortOrder
   fromAgentId?: Prisma.SortOrder
   toAgentId?: Prisma.SortOrder
@@ -444,6 +467,7 @@ export type MessageMaxOrderByAggregateInput = {
 
 export type MessageMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   threadId?: Prisma.SortOrder
   fromAgentId?: Prisma.SortOrder
   toAgentId?: Prisma.SortOrder
@@ -569,6 +593,48 @@ export type MessageUncheckedUpdateManyWithoutParentNestedInput = {
   deleteMany?: Prisma.MessageScalarWhereInput | Prisma.MessageScalarWhereInput[]
 }
 
+export type MessageCreateNestedManyWithoutProjectInput = {
+  create?: Prisma.XOR<Prisma.MessageCreateWithoutProjectInput, Prisma.MessageUncheckedCreateWithoutProjectInput> | Prisma.MessageCreateWithoutProjectInput[] | Prisma.MessageUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutProjectInput | Prisma.MessageCreateOrConnectWithoutProjectInput[]
+  createMany?: Prisma.MessageCreateManyProjectInputEnvelope
+  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
+}
+
+export type MessageUncheckedCreateNestedManyWithoutProjectInput = {
+  create?: Prisma.XOR<Prisma.MessageCreateWithoutProjectInput, Prisma.MessageUncheckedCreateWithoutProjectInput> | Prisma.MessageCreateWithoutProjectInput[] | Prisma.MessageUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutProjectInput | Prisma.MessageCreateOrConnectWithoutProjectInput[]
+  createMany?: Prisma.MessageCreateManyProjectInputEnvelope
+  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
+}
+
+export type MessageUpdateManyWithoutProjectNestedInput = {
+  create?: Prisma.XOR<Prisma.MessageCreateWithoutProjectInput, Prisma.MessageUncheckedCreateWithoutProjectInput> | Prisma.MessageCreateWithoutProjectInput[] | Prisma.MessageUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutProjectInput | Prisma.MessageCreateOrConnectWithoutProjectInput[]
+  upsert?: Prisma.MessageUpsertWithWhereUniqueWithoutProjectInput | Prisma.MessageUpsertWithWhereUniqueWithoutProjectInput[]
+  createMany?: Prisma.MessageCreateManyProjectInputEnvelope
+  set?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
+  disconnect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
+  delete?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
+  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
+  update?: Prisma.MessageUpdateWithWhereUniqueWithoutProjectInput | Prisma.MessageUpdateWithWhereUniqueWithoutProjectInput[]
+  updateMany?: Prisma.MessageUpdateManyWithWhereWithoutProjectInput | Prisma.MessageUpdateManyWithWhereWithoutProjectInput[]
+  deleteMany?: Prisma.MessageScalarWhereInput | Prisma.MessageScalarWhereInput[]
+}
+
+export type MessageUncheckedUpdateManyWithoutProjectNestedInput = {
+  create?: Prisma.XOR<Prisma.MessageCreateWithoutProjectInput, Prisma.MessageUncheckedCreateWithoutProjectInput> | Prisma.MessageCreateWithoutProjectInput[] | Prisma.MessageUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutProjectInput | Prisma.MessageCreateOrConnectWithoutProjectInput[]
+  upsert?: Prisma.MessageUpsertWithWhereUniqueWithoutProjectInput | Prisma.MessageUpsertWithWhereUniqueWithoutProjectInput[]
+  createMany?: Prisma.MessageCreateManyProjectInputEnvelope
+  set?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
+  disconnect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
+  delete?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
+  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
+  update?: Prisma.MessageUpdateWithWhereUniqueWithoutProjectInput | Prisma.MessageUpdateWithWhereUniqueWithoutProjectInput[]
+  updateMany?: Prisma.MessageUpdateManyWithWhereWithoutProjectInput | Prisma.MessageUpdateManyWithWhereWithoutProjectInput[]
+  deleteMany?: Prisma.MessageScalarWhereInput | Prisma.MessageScalarWhereInput[]
+}
+
 export type MessageCreateWithoutThreadInput = {
   id?: string
   fromAgentId: string
@@ -577,12 +643,14 @@ export type MessageCreateWithoutThreadInput = {
   status?: string
   retries?: number
   createdAt?: Date | string
+  project: Prisma.ProjectCreateNestedOneWithoutMessagesInput
   parent?: Prisma.MessageCreateNestedOneWithoutRepliesInput
   replies?: Prisma.MessageCreateNestedManyWithoutParentInput
 }
 
 export type MessageUncheckedCreateWithoutThreadInput = {
   id?: string
+  projectId: string
   fromAgentId: string
   toAgentId?: string | null
   payload: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -624,6 +692,7 @@ export type MessageScalarWhereInput = {
   OR?: Prisma.MessageScalarWhereInput[]
   NOT?: Prisma.MessageScalarWhereInput | Prisma.MessageScalarWhereInput[]
   id?: Prisma.StringFilter<"Message"> | string
+  projectId?: Prisma.StringFilter<"Message"> | string
   threadId?: Prisma.StringFilter<"Message"> | string
   fromAgentId?: Prisma.StringFilter<"Message"> | string
   toAgentId?: Prisma.StringNullableFilter<"Message"> | string | null
@@ -642,12 +711,14 @@ export type MessageCreateWithoutRepliesInput = {
   status?: string
   retries?: number
   createdAt?: Date | string
+  project: Prisma.ProjectCreateNestedOneWithoutMessagesInput
   thread: Prisma.ThreadCreateNestedOneWithoutMessagesInput
   parent?: Prisma.MessageCreateNestedOneWithoutRepliesInput
 }
 
 export type MessageUncheckedCreateWithoutRepliesInput = {
   id?: string
+  projectId: string
   threadId: string
   fromAgentId: string
   toAgentId?: string | null
@@ -671,12 +742,14 @@ export type MessageCreateWithoutParentInput = {
   status?: string
   retries?: number
   createdAt?: Date | string
+  project: Prisma.ProjectCreateNestedOneWithoutMessagesInput
   thread: Prisma.ThreadCreateNestedOneWithoutMessagesInput
   replies?: Prisma.MessageCreateNestedManyWithoutParentInput
 }
 
 export type MessageUncheckedCreateWithoutParentInput = {
   id?: string
+  projectId: string
   threadId: string
   fromAgentId: string
   toAgentId?: string | null
@@ -716,12 +789,14 @@ export type MessageUpdateWithoutRepliesInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   retries?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  project?: Prisma.ProjectUpdateOneRequiredWithoutMessagesNestedInput
   thread?: Prisma.ThreadUpdateOneRequiredWithoutMessagesNestedInput
   parent?: Prisma.MessageUpdateOneWithoutRepliesNestedInput
 }
 
 export type MessageUncheckedUpdateWithoutRepliesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
   threadId?: Prisma.StringFieldUpdateOperationsInput | string
   fromAgentId?: Prisma.StringFieldUpdateOperationsInput | string
   toAgentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -748,8 +823,61 @@ export type MessageUpdateManyWithWhereWithoutParentInput = {
   data: Prisma.XOR<Prisma.MessageUpdateManyMutationInput, Prisma.MessageUncheckedUpdateManyWithoutParentInput>
 }
 
+export type MessageCreateWithoutProjectInput = {
+  id?: string
+  fromAgentId: string
+  toAgentId?: string | null
+  payload: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  status?: string
+  retries?: number
+  createdAt?: Date | string
+  thread: Prisma.ThreadCreateNestedOneWithoutMessagesInput
+  parent?: Prisma.MessageCreateNestedOneWithoutRepliesInput
+  replies?: Prisma.MessageCreateNestedManyWithoutParentInput
+}
+
+export type MessageUncheckedCreateWithoutProjectInput = {
+  id?: string
+  threadId: string
+  fromAgentId: string
+  toAgentId?: string | null
+  payload: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  status?: string
+  retries?: number
+  parentId?: string | null
+  createdAt?: Date | string
+  replies?: Prisma.MessageUncheckedCreateNestedManyWithoutParentInput
+}
+
+export type MessageCreateOrConnectWithoutProjectInput = {
+  where: Prisma.MessageWhereUniqueInput
+  create: Prisma.XOR<Prisma.MessageCreateWithoutProjectInput, Prisma.MessageUncheckedCreateWithoutProjectInput>
+}
+
+export type MessageCreateManyProjectInputEnvelope = {
+  data: Prisma.MessageCreateManyProjectInput | Prisma.MessageCreateManyProjectInput[]
+  skipDuplicates?: boolean
+}
+
+export type MessageUpsertWithWhereUniqueWithoutProjectInput = {
+  where: Prisma.MessageWhereUniqueInput
+  update: Prisma.XOR<Prisma.MessageUpdateWithoutProjectInput, Prisma.MessageUncheckedUpdateWithoutProjectInput>
+  create: Prisma.XOR<Prisma.MessageCreateWithoutProjectInput, Prisma.MessageUncheckedCreateWithoutProjectInput>
+}
+
+export type MessageUpdateWithWhereUniqueWithoutProjectInput = {
+  where: Prisma.MessageWhereUniqueInput
+  data: Prisma.XOR<Prisma.MessageUpdateWithoutProjectInput, Prisma.MessageUncheckedUpdateWithoutProjectInput>
+}
+
+export type MessageUpdateManyWithWhereWithoutProjectInput = {
+  where: Prisma.MessageScalarWhereInput
+  data: Prisma.XOR<Prisma.MessageUpdateManyMutationInput, Prisma.MessageUncheckedUpdateManyWithoutProjectInput>
+}
+
 export type MessageCreateManyThreadInput = {
   id?: string
+  projectId: string
   fromAgentId: string
   toAgentId?: string | null
   payload: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -767,12 +895,14 @@ export type MessageUpdateWithoutThreadInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   retries?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  project?: Prisma.ProjectUpdateOneRequiredWithoutMessagesNestedInput
   parent?: Prisma.MessageUpdateOneWithoutRepliesNestedInput
   replies?: Prisma.MessageUpdateManyWithoutParentNestedInput
 }
 
 export type MessageUncheckedUpdateWithoutThreadInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
   fromAgentId?: Prisma.StringFieldUpdateOperationsInput | string
   toAgentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payload?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -785,6 +915,7 @@ export type MessageUncheckedUpdateWithoutThreadInput = {
 
 export type MessageUncheckedUpdateManyWithoutThreadInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
   fromAgentId?: Prisma.StringFieldUpdateOperationsInput | string
   toAgentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payload?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -796,6 +927,7 @@ export type MessageUncheckedUpdateManyWithoutThreadInput = {
 
 export type MessageCreateManyParentInput = {
   id?: string
+  projectId: string
   threadId: string
   fromAgentId: string
   toAgentId?: string | null
@@ -813,12 +945,14 @@ export type MessageUpdateWithoutParentInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   retries?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  project?: Prisma.ProjectUpdateOneRequiredWithoutMessagesNestedInput
   thread?: Prisma.ThreadUpdateOneRequiredWithoutMessagesNestedInput
   replies?: Prisma.MessageUpdateManyWithoutParentNestedInput
 }
 
 export type MessageUncheckedUpdateWithoutParentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
   threadId?: Prisma.StringFieldUpdateOperationsInput | string
   fromAgentId?: Prisma.StringFieldUpdateOperationsInput | string
   toAgentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -831,12 +965,63 @@ export type MessageUncheckedUpdateWithoutParentInput = {
 
 export type MessageUncheckedUpdateManyWithoutParentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
   threadId?: Prisma.StringFieldUpdateOperationsInput | string
   fromAgentId?: Prisma.StringFieldUpdateOperationsInput | string
   toAgentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payload?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.StringFieldUpdateOperationsInput | string
   retries?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type MessageCreateManyProjectInput = {
+  id?: string
+  threadId: string
+  fromAgentId: string
+  toAgentId?: string | null
+  payload: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  status?: string
+  retries?: number
+  parentId?: string | null
+  createdAt?: Date | string
+}
+
+export type MessageUpdateWithoutProjectInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  fromAgentId?: Prisma.StringFieldUpdateOperationsInput | string
+  toAgentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  payload?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  retries?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  thread?: Prisma.ThreadUpdateOneRequiredWithoutMessagesNestedInput
+  parent?: Prisma.MessageUpdateOneWithoutRepliesNestedInput
+  replies?: Prisma.MessageUpdateManyWithoutParentNestedInput
+}
+
+export type MessageUncheckedUpdateWithoutProjectInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  threadId?: Prisma.StringFieldUpdateOperationsInput | string
+  fromAgentId?: Prisma.StringFieldUpdateOperationsInput | string
+  toAgentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  payload?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  retries?: Prisma.IntFieldUpdateOperationsInput | number
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  replies?: Prisma.MessageUncheckedUpdateManyWithoutParentNestedInput
+}
+
+export type MessageUncheckedUpdateManyWithoutProjectInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  threadId?: Prisma.StringFieldUpdateOperationsInput | string
+  fromAgentId?: Prisma.StringFieldUpdateOperationsInput | string
+  toAgentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  payload?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  retries?: Prisma.IntFieldUpdateOperationsInput | number
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -873,6 +1058,7 @@ export type MessageCountOutputTypeCountRepliesArgs<ExtArgs extends runtime.Types
 
 export type MessageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  projectId?: boolean
   threadId?: boolean
   fromAgentId?: boolean
   toAgentId?: boolean
@@ -881,6 +1067,7 @@ export type MessageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   retries?: boolean
   parentId?: boolean
   createdAt?: boolean
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   thread?: boolean | Prisma.ThreadDefaultArgs<ExtArgs>
   parent?: boolean | Prisma.Message$parentArgs<ExtArgs>
   replies?: boolean | Prisma.Message$repliesArgs<ExtArgs>
@@ -889,6 +1076,7 @@ export type MessageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
 
 export type MessageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  projectId?: boolean
   threadId?: boolean
   fromAgentId?: boolean
   toAgentId?: boolean
@@ -897,12 +1085,14 @@ export type MessageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   retries?: boolean
   parentId?: boolean
   createdAt?: boolean
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   thread?: boolean | Prisma.ThreadDefaultArgs<ExtArgs>
   parent?: boolean | Prisma.Message$parentArgs<ExtArgs>
 }, ExtArgs["result"]["message"]>
 
 export type MessageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  projectId?: boolean
   threadId?: boolean
   fromAgentId?: boolean
   toAgentId?: boolean
@@ -911,12 +1101,14 @@ export type MessageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   retries?: boolean
   parentId?: boolean
   createdAt?: boolean
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   thread?: boolean | Prisma.ThreadDefaultArgs<ExtArgs>
   parent?: boolean | Prisma.Message$parentArgs<ExtArgs>
 }, ExtArgs["result"]["message"]>
 
 export type MessageSelectScalar = {
   id?: boolean
+  projectId?: boolean
   threadId?: boolean
   fromAgentId?: boolean
   toAgentId?: boolean
@@ -927,18 +1119,21 @@ export type MessageSelectScalar = {
   createdAt?: boolean
 }
 
-export type MessageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "threadId" | "fromAgentId" | "toAgentId" | "payload" | "status" | "retries" | "parentId" | "createdAt", ExtArgs["result"]["message"]>
+export type MessageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "projectId" | "threadId" | "fromAgentId" | "toAgentId" | "payload" | "status" | "retries" | "parentId" | "createdAt", ExtArgs["result"]["message"]>
 export type MessageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   thread?: boolean | Prisma.ThreadDefaultArgs<ExtArgs>
   parent?: boolean | Prisma.Message$parentArgs<ExtArgs>
   replies?: boolean | Prisma.Message$repliesArgs<ExtArgs>
   _count?: boolean | Prisma.MessageCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type MessageIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   thread?: boolean | Prisma.ThreadDefaultArgs<ExtArgs>
   parent?: boolean | Prisma.Message$parentArgs<ExtArgs>
 }
 export type MessageIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   thread?: boolean | Prisma.ThreadDefaultArgs<ExtArgs>
   parent?: boolean | Prisma.Message$parentArgs<ExtArgs>
 }
@@ -946,12 +1141,14 @@ export type MessageIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
 export type $MessagePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Message"
   objects: {
+    project: Prisma.$ProjectPayload<ExtArgs>
     thread: Prisma.$ThreadPayload<ExtArgs>
     parent: Prisma.$MessagePayload<ExtArgs> | null
     replies: Prisma.$MessagePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    projectId: string
     threadId: string
     fromAgentId: string
     toAgentId: string | null
@@ -1354,6 +1551,7 @@ readonly fields: MessageFieldRefs;
  */
 export interface Prisma__MessageClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  project<T extends Prisma.ProjectDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProjectDefaultArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   thread<T extends Prisma.ThreadDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ThreadDefaultArgs<ExtArgs>>): Prisma.Prisma__ThreadClient<runtime.Types.Result.GetResult<Prisma.$ThreadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   parent<T extends Prisma.Message$parentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Message$parentArgs<ExtArgs>>): Prisma.Prisma__MessageClient<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   replies<T extends Prisma.Message$repliesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Message$repliesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -1387,6 +1585,7 @@ export interface Prisma__MessageClient<T, Null = never, ExtArgs extends runtime.
  */
 export interface MessageFieldRefs {
   readonly id: Prisma.FieldRef<"Message", 'String'>
+  readonly projectId: Prisma.FieldRef<"Message", 'String'>
   readonly threadId: Prisma.FieldRef<"Message", 'String'>
   readonly fromAgentId: Prisma.FieldRef<"Message", 'String'>
   readonly toAgentId: Prisma.FieldRef<"Message", 'String'>

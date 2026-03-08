@@ -9,6 +9,7 @@ import path from "path";
 
 const BASE_URL = process.env.MESSAGE_BUS_URL ?? "http://localhost:3333";
 const API_URL = `${BASE_URL}/api/agents`;
+const PROJECT_ID = process.env.MESSAGE_BUS_PROJECT_ID;
 
 type Registry = {
   project: string;
@@ -29,7 +30,9 @@ type Agent = {
 
 async function getExistingAgents(): Promise<Map<string, Agent>> {
   try {
-    const res = await fetch(API_URL);
+    const res = await fetch(API_URL, {
+      headers: PROJECT_ID ? { "x-project-id": PROJECT_ID } : undefined,
+    });
     if (!res.ok) return new Map();
     const json = await res.json();
     const agents = json.data as Agent[];
@@ -76,7 +79,10 @@ export async function runSeedAgents(registryPath?: string): Promise<void> {
 
     const res = await fetch(API_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        ...(PROJECT_ID ? { "x-project-id": PROJECT_ID } : {}),
+      },
       body: JSON.stringify({
         name: agent.name,
         role: agent.role,

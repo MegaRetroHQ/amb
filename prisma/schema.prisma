@@ -8,6 +8,8 @@ generator client {
 }
 model Agent {
   id           String   @id @default(uuid())
+  projectId    String
+  project      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   name         String
   role         String
   status       String   @default("online")
@@ -15,19 +17,28 @@ model Agent {
 
   createdAt DateTime @default(now())
   lastSeen  DateTime?
+
+  @@index([projectId])
 }
 
 model Thread {
-  id        String @id @default(uuid())
+  id        String   @id @default(uuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   title     String
-  status    String @default("open")
+  status    String   @default("open")
   createdAt DateTime @default(now())
 
   messages Message[]
+
+  @@index([projectId])
 }
 
 model Message {
   id String @id @default(uuid())
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   threadId String
   thread   Thread @relation(fields: [threadId], references: [id])
@@ -47,8 +58,20 @@ model Message {
   createdAt DateTime @default(now())
 
   @@index([threadId])
+  @@index([projectId])
   @@index([toAgentId])
   @@index([fromAgentId])
   @@index([status])
   @@index([createdAt])
+}
+
+model Project {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+
+  agents   Agent[]
+  threads  Thread[]
+  messages Message[]
 }

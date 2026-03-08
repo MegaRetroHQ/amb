@@ -19,10 +19,12 @@ import type {
 export class MessageBusClient {
   private baseUrl: string;
   private timeout: number;
+  private projectId?: string;
 
   constructor(config: MessageBusConfig) {
     this.baseUrl = config.baseUrl.replace(/\/$/, "");
     this.timeout = config.timeout ?? 10000;
+    this.projectId = config.projectId;
   }
 
   private async fetch<T>(
@@ -38,6 +40,7 @@ export class MessageBusClient {
         signal: controller.signal,
         headers: {
           "Content-Type": "application/json",
+          ...(this.projectId ? { "x-project-id": this.projectId } : {}),
           ...options.headers,
         },
       });
@@ -279,8 +282,8 @@ export class MessageBusError extends Error {
 }
 
 // Default client for localhost
-export function createClient(baseUrl = "http://localhost:3333"): MessageBusClient {
-  return new MessageBusClient({ baseUrl });
+export function createClient(baseUrl = "http://localhost:3333", projectId?: string): MessageBusClient {
+  return new MessageBusClient({ baseUrl, projectId });
 }
 
 export * from "./types";

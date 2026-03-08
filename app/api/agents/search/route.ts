@@ -1,13 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { handleApiError } from "@/lib/api/errors";
+import { resolveProjectId } from "@/lib/api/project-context";
 import { searchAgents } from "@/lib/services/agents";
 
 export async function GET(request: NextRequest) {
   try {
+    const project = await resolveProjectId(request);
+    if (project.error) {
+      return project.error;
+    }
+
     const { searchParams } = new URL(request.url);
     const query = searchParams.get("q") ?? "";
 
-    const agents = await searchAgents(query);
+    const agents = await searchAgents(project.projectId, query);
     return NextResponse.json({ data: agents });
   } catch (error) {
     return handleApiError(error);

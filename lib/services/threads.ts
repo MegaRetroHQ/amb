@@ -2,12 +2,14 @@ import { prisma } from "@/lib/prisma";
 import { NotFoundError } from "@/lib/services/errors";
 
 export type CreateThreadInput = {
+  projectId: string;
   title: string;
   status: "open" | "closed";
 };
 
-export async function listThreads() {
+export async function listThreads(projectId: string) {
   return prisma.thread.findMany({
+    where: { projectId },
     include: {
       messages: {
         orderBy: { createdAt: "asc" },
@@ -21,15 +23,16 @@ export async function listThreads() {
 export async function createThread(input: CreateThreadInput) {
   return prisma.thread.create({
     data: {
+      projectId: input.projectId,
       title: input.title,
       status: input.status,
     },
   });
 }
 
-export async function getThreadById(threadId: string) {
-  const thread = await prisma.thread.findUnique({
-    where: { id: threadId },
+export async function getThreadById(projectId: string, threadId: string) {
+  const thread = await prisma.thread.findFirst({
+    where: { id: threadId, projectId },
   });
 
   if (!thread) {
@@ -39,17 +42,21 @@ export async function getThreadById(threadId: string) {
   return thread;
 }
 
-export async function listThreadMessages(threadId: string) {
-  await getThreadById(threadId);
+export async function listThreadMessages(projectId: string, threadId: string) {
+  await getThreadById(projectId, threadId);
 
   return prisma.message.findMany({
-    where: { threadId },
+    where: { threadId, projectId },
     orderBy: { createdAt: "asc" },
   });
 }
 
-export async function updateThreadStatus(threadId: string, status: "open" | "closed" | "archived") {
-  await getThreadById(threadId);
+export async function updateThreadStatus(
+  projectId: string,
+  threadId: string,
+  status: "open" | "closed" | "archived"
+) {
+  await getThreadById(projectId, threadId);
 
   return prisma.thread.update({
     where: { id: threadId },
@@ -57,12 +64,12 @@ export async function updateThreadStatus(threadId: string, status: "open" | "clo
   });
 }
 
-export async function deleteThread(threadId: string) {
-  await getThreadById(threadId);
+export async function deleteThread(projectId: string, threadId: string) {
+  await getThreadById(projectId, threadId);
 
   // Delete all messages in the thread first
   await prisma.message.deleteMany({
-    where: { threadId },
+    where: { threadId, projectId },
   });
 
   return prisma.thread.delete({

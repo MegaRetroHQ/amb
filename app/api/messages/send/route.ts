@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { jsonError, handleApiError } from "@/lib/api/errors";
+import { resolveProjectId } from "@/lib/api/project-context";
 import { sendMessage } from "@/lib/services/messages";
 import { Prisma } from "../../../../prisma/generated/client";
 
@@ -15,6 +16,11 @@ const sendMessageSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    const project = await resolveProjectId(request);
+    if (project.error) {
+      return project.error;
+    }
+
     const body = await request.json().catch(() => null);
     if (!body) {
       return jsonError(400, "invalid_json", "Request body must be valid JSON");
@@ -26,6 +32,7 @@ export async function POST(request: Request) {
     }
 
     const message = await sendMessage({
+      projectId: project.projectId,
       threadId: result.data.threadId,
       fromAgentId: result.data.fromAgentId,
       toAgentId: result.data.toAgentId ?? null,

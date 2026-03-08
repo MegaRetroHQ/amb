@@ -4,6 +4,7 @@
 
 export interface Agent {
   id: string;
+  projectId: string;
   name: string;
   role: string;
   status: string;
@@ -14,6 +15,7 @@ export interface Agent {
 
 export interface Thread {
   id: string;
+  projectId: string;
   title: string;
   status: "open" | "closed" | "archived";
   createdAt: string;
@@ -21,6 +23,7 @@ export interface Thread {
 
 export interface Message {
   id: string;
+  projectId: string;
   threadId: string;
   fromAgentId: string;
   toAgentId: string | null;
@@ -65,6 +68,7 @@ export interface SendMessageInput {
 export interface MessageBusConfig {
   baseUrl: string;
   timeout?: number;
+  projectId?: string;
 }
 
 export interface PollOptions {

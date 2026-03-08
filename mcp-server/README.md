@@ -20,7 +20,10 @@ pnpm add -D @bizmedia/amb-mcp
     "message-bus": {
       "command": "pnpm",
       "args": ["exec", "amb-mcp"],
-      "env": { "MESSAGE_BUS_URL": "http://localhost:3333" }
+      "env": {
+        "MESSAGE_BUS_URL": "http://localhost:3333",
+        "MESSAGE_BUS_PROJECT_ID": "<PROJECT_ID>"
+      }
     }
   }
 }
@@ -47,7 +50,12 @@ pnpm exec amb-mcp seed all .cursor/agents
 
 Если путь — каталог, используется `registry.json` внутри него.
 
-Переменная окружения `MESSAGE_BUS_URL` (по умолчанию `http://localhost:3333`). Поддерживается `.env`.
+Переменные окружения:
+
+- `MESSAGE_BUS_URL` (по умолчанию `http://localhost:3333`)
+- `MESSAGE_BUS_PROJECT_ID` (опционально; если не задан, используется default-проект)
+
+Поддерживается `.env`.
 
 ## Публикация
 

@@ -5,7 +5,8 @@
       "args": ["mcp-server/dist/index.js"],
       "cwd": "${workspaceFolder}",
       "env": {
-        "MESSAGE_BUS_URL": "http://localhost:3333"
+        "MESSAGE_BUS_URL": "http://localhost:3333",
+        "MESSAGE_BUS_PROJECT_ID": "00000000-0000-0000-0000-000000000001"
       }
     }
   }

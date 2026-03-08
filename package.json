@@ -1,6 +1,6 @@
 {
   "name": "mcp-message-bus",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "private": true,
   "license": "MIT",
   "repository": {
@@ -33,9 +33,8 @@
     "agent:worker": "tsx scripts/agent-worker.ts",
     "agent:worker:single": "tsx scripts/agent-worker.ts --agent-id=",
     "po:check-inbox": "tsx scripts/po-inbox-checker.ts",
-    "docker:build": "podman build -t bizmedia/amb:latest .",
-    "docker:push": "podman push bizmedia/amb:latest",
-    "docker:publish": "pnpm docker:build && pnpm docker:push",
+    "docker:compose:publish": "podman build -t docker.io/openaisdk/amb:latest . && podman push docker.io/openaisdk/amb:latest",
+    "deploy:amb": "podman pull docker.io/openaisdk/amb:latest && podman compose up -d",
     "mcp:publish": "pnpm mcp:build && cd mcp-server && npm publish --access public",
     "mcp:version": "cd mcp-server && npm version"
   },

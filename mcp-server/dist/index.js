@@ -8,6 +8,7 @@ import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { CallToolRequestSchema, ListToolsRequestSchema, } from "@modelcontextprotocol/sdk/types.js";
 const BASE_URL = process.env.MESSAGE_BUS_URL || "http://localhost:3333";
+const PROJECT_ID = process.env.MESSAGE_BUS_PROJECT_ID;
 // ─────────────────────────────────────────────────────────────
 // API Client
 // ─────────────────────────────────────────────────────────────
@@ -16,6 +17,7 @@ async function apiCall(path, options = {}) {
         ...options,
         headers: {
             "Content-Type": "application/json",
+            ...(PROJECT_ID ? { "x-project-id": PROJECT_ID } : {}),
             ...options.headers,
         },
     });

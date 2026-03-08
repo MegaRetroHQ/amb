@@ -26,6 +26,7 @@ export type AggregateAgent = {
 
 export type AgentMinAggregateOutputType = {
   id: string | null
+  projectId: string | null
   name: string | null
   role: string | null
   status: string | null
@@ -35,6 +36,7 @@ export type AgentMinAggregateOutputType = {
 
 export type AgentMaxAggregateOutputType = {
   id: string | null
+  projectId: string | null
   name: string | null
   role: string | null
   status: string | null
@@ -44,6 +46,7 @@ export type AgentMaxAggregateOutputType = {
 
 export type AgentCountAggregateOutputType = {
   id: number
+  projectId: number
   name: number
   role: number
   status: number
@@ -56,6 +59,7 @@ export type AgentCountAggregateOutputType = {
 
 export type AgentMinAggregateInputType = {
   id?: true
+  projectId?: true
   name?: true
   role?: true
   status?: true
@@ -65,6 +69,7 @@ export type AgentMinAggregateInputType = {
 
 export type AgentMaxAggregateInputType = {
   id?: true
+  projectId?: true
   name?: true
   role?: true
   status?: true
@@ -74,6 +79,7 @@ export type AgentMaxAggregateInputType = {
 
 export type AgentCountAggregateInputType = {
   id?: true
+  projectId?: true
   name?: true
   role?: true
   status?: true
@@ -157,6 +163,7 @@ export type AgentGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 
 export type AgentGroupByOutputType = {
   id: string
+  projectId: string
   name: string
   role: string
   status: string
@@ -188,22 +195,26 @@ export type AgentWhereInput = {
   OR?: Prisma.AgentWhereInput[]
   NOT?: Prisma.AgentWhereInput | Prisma.AgentWhereInput[]
   id?: Prisma.StringFilter<"Agent"> | string
+  projectId?: Prisma.StringFilter<"Agent"> | string
   name?: Prisma.StringFilter<"Agent"> | string
   role?: Prisma.StringFilter<"Agent"> | string
   status?: Prisma.StringFilter<"Agent"> | string
   capabilities?: Prisma.JsonNullableFilter<"Agent">
   createdAt?: Prisma.DateTimeFilter<"Agent"> | Date | string
   lastSeen?: Prisma.DateTimeNullableFilter<"Agent"> | Date | string | null
+  project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
 }
 
 export type AgentOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
   capabilities?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   lastSeen?: Prisma.SortOrderInput | Prisma.SortOrder
+  project?: Prisma.ProjectOrderByWithRelationInput
 }
 
 export type AgentWhereUniqueInput = Prisma.AtLeast<{
@@ -211,16 +222,19 @@ export type AgentWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.AgentWhereInput | Prisma.AgentWhereInput[]
   OR?: Prisma.AgentWhereInput[]
   NOT?: Prisma.AgentWhereInput | Prisma.AgentWhereInput[]
+  projectId?: Prisma.StringFilter<"Agent"> | string
   name?: Prisma.StringFilter<"Agent"> | string
   role?: Prisma.StringFilter<"Agent"> | string
   status?: Prisma.StringFilter<"Agent"> | string
   capabilities?: Prisma.JsonNullableFilter<"Agent">
   createdAt?: Prisma.DateTimeFilter<"Agent"> | Date | string
   lastSeen?: Prisma.DateTimeNullableFilter<"Agent"> | Date | string | null
+  project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
 }, "id">
 
 export type AgentOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -237,6 +251,7 @@ export type AgentScalarWhereWithAggregatesInput = {
   OR?: Prisma.AgentScalarWhereWithAggregatesInput[]
   NOT?: Prisma.AgentScalarWhereWithAggregatesInput | Prisma.AgentScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Agent"> | string
+  projectId?: Prisma.StringWithAggregatesFilter<"Agent"> | string
   name?: Prisma.StringWithAggregatesFilter<"Agent"> | string
   role?: Prisma.StringWithAggregatesFilter<"Agent"> | string
   status?: Prisma.StringWithAggregatesFilter<"Agent"> | string
@@ -253,10 +268,12 @@ export type AgentCreateInput = {
   capabilities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   lastSeen?: Date | string | null
+  project: Prisma.ProjectCreateNestedOneWithoutAgentsInput
 }
 
 export type AgentUncheckedCreateInput = {
   id?: string
+  projectId: string
   name: string
   role: string
   status?: string
@@ -273,10 +290,12 @@ export type AgentUpdateInput = {
   capabilities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  project?: Prisma.ProjectUpdateOneRequiredWithoutAgentsNestedInput
 }
 
 export type AgentUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -287,6 +306,7 @@ export type AgentUncheckedUpdateInput = {
 
 export type AgentCreateManyInput = {
   id?: string
+  projectId: string
   name: string
   role: string
   status?: string
@@ -307,6 +327,7 @@ export type AgentUpdateManyMutationInput = {
 
 export type AgentUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -317,6 +338,7 @@ export type AgentUncheckedUpdateManyInput = {
 
 export type AgentCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -327,6 +349,7 @@ export type AgentCountOrderByAggregateInput = {
 
 export type AgentMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -336,11 +359,22 @@ export type AgentMaxOrderByAggregateInput = {
 
 export type AgentMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   lastSeen?: Prisma.SortOrder
+}
+
+export type AgentListRelationFilter = {
+  every?: Prisma.AgentWhereInput
+  some?: Prisma.AgentWhereInput
+  none?: Prisma.AgentWhereInput
+}
+
+export type AgentOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type StringFieldUpdateOperationsInput = {
@@ -355,40 +389,189 @@ export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: Date | string | null
 }
 
+export type AgentCreateNestedManyWithoutProjectInput = {
+  create?: Prisma.XOR<Prisma.AgentCreateWithoutProjectInput, Prisma.AgentUncheckedCreateWithoutProjectInput> | Prisma.AgentCreateWithoutProjectInput[] | Prisma.AgentUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.AgentCreateOrConnectWithoutProjectInput | Prisma.AgentCreateOrConnectWithoutProjectInput[]
+  createMany?: Prisma.AgentCreateManyProjectInputEnvelope
+  connect?: Prisma.AgentWhereUniqueInput | Prisma.AgentWhereUniqueInput[]
+}
+
+export type AgentUncheckedCreateNestedManyWithoutProjectInput = {
+  create?: Prisma.XOR<Prisma.AgentCreateWithoutProjectInput, Prisma.AgentUncheckedCreateWithoutProjectInput> | Prisma.AgentCreateWithoutProjectInput[] | Prisma.AgentUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.AgentCreateOrConnectWithoutProjectInput | Prisma.AgentCreateOrConnectWithoutProjectInput[]
+  createMany?: Prisma.AgentCreateManyProjectInputEnvelope
+  connect?: Prisma.AgentWhereUniqueInput | Prisma.AgentWhereUniqueInput[]
+}
+
+export type AgentUpdateManyWithoutProjectNestedInput = {
+  create?: Prisma.XOR<Prisma.AgentCreateWithoutProjectInput, Prisma.AgentUncheckedCreateWithoutProjectInput> | Prisma.AgentCreateWithoutProjectInput[] | Prisma.AgentUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.AgentCreateOrConnectWithoutProjectInput | Prisma.AgentCreateOrConnectWithoutProjectInput[]
+  upsert?: Prisma.AgentUpsertWithWhereUniqueWithoutProjectInput | Prisma.AgentUpsertWithWhereUniqueWithoutProjectInput[]
+  createMany?: Prisma.AgentCreateManyProjectInputEnvelope
+  set?: Prisma.AgentWhereUniqueInput | Prisma.AgentWhereUniqueInput[]
+  disconnect?: Prisma.AgentWhereUniqueInput | Prisma.AgentWhereUniqueInput[]
+  delete?: Prisma.AgentWhereUniqueInput | Prisma.AgentWhereUniqueInput[]
+  connect?: Prisma.AgentWhereUniqueInput | Prisma.AgentWhereUniqueInput[]
+  update?: Prisma.AgentUpdateWithWhereUniqueWithoutProjectInput | Prisma.AgentUpdateWithWhereUniqueWithoutProjectInput[]
+  updateMany?: Prisma.AgentUpdateManyWithWhereWithoutProjectInput | Prisma.AgentUpdateManyWithWhereWithoutProjectInput[]
+  deleteMany?: Prisma.AgentScalarWhereInput | Prisma.AgentScalarWhereInput[]
+}
+
+export type AgentUncheckedUpdateManyWithoutProjectNestedInput = {
+  create?: Prisma.XOR<Prisma.AgentCreateWithoutProjectInput, Prisma.AgentUncheckedCreateWithoutProjectInput> | Prisma.AgentCreateWithoutProjectInput[] | Prisma.AgentUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.AgentCreateOrConnectWithoutProjectInput | Prisma.AgentCreateOrConnectWithoutProjectInput[]
+  upsert?: Prisma.AgentUpsertWithWhereUniqueWithoutProjectInput | Prisma.AgentUpsertWithWhereUniqueWithoutProjectInput[]
+  createMany?: Prisma.AgentCreateManyProjectInputEnvelope
+  set?: Prisma.AgentWhereUniqueInput | Prisma.AgentWhereUniqueInput[]
+  disconnect?: Prisma.AgentWhereUniqueInput | Prisma.AgentWhereUniqueInput[]
+  delete?: Prisma.AgentWhereUniqueInput | Prisma.AgentWhereUniqueInput[]
+  connect?: Prisma.AgentWhereUniqueInput | Prisma.AgentWhereUniqueInput[]
+  update?: Prisma.AgentUpdateWithWhereUniqueWithoutProjectInput | Prisma.AgentUpdateWithWhereUniqueWithoutProjectInput[]
+  updateMany?: Prisma.AgentUpdateManyWithWhereWithoutProjectInput | Prisma.AgentUpdateManyWithWhereWithoutProjectInput[]
+  deleteMany?: Prisma.AgentScalarWhereInput | Prisma.AgentScalarWhereInput[]
+}
+
+export type AgentCreateWithoutProjectInput = {
+  id?: string
+  name: string
+  role: string
+  status?: string
+  capabilities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  lastSeen?: Date | string | null
+}
+
+export type AgentUncheckedCreateWithoutProjectInput = {
+  id?: string
+  name: string
+  role: string
+  status?: string
+  capabilities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  lastSeen?: Date | string | null
+}
+
+export type AgentCreateOrConnectWithoutProjectInput = {
+  where: Prisma.AgentWhereUniqueInput
+  create: Prisma.XOR<Prisma.AgentCreateWithoutProjectInput, Prisma.AgentUncheckedCreateWithoutProjectInput>
+}
+
+export type AgentCreateManyProjectInputEnvelope = {
+  data: Prisma.AgentCreateManyProjectInput | Prisma.AgentCreateManyProjectInput[]
+  skipDuplicates?: boolean
+}
+
+export type AgentUpsertWithWhereUniqueWithoutProjectInput = {
+  where: Prisma.AgentWhereUniqueInput
+  update: Prisma.XOR<Prisma.AgentUpdateWithoutProjectInput, Prisma.AgentUncheckedUpdateWithoutProjectInput>
+  create: Prisma.XOR<Prisma.AgentCreateWithoutProjectInput, Prisma.AgentUncheckedCreateWithoutProjectInput>
+}
+
+export type AgentUpdateWithWhereUniqueWithoutProjectInput = {
+  where: Prisma.AgentWhereUniqueInput
+  data: Prisma.XOR<Prisma.AgentUpdateWithoutProjectInput, Prisma.AgentUncheckedUpdateWithoutProjectInput>
+}
+
+export type AgentUpdateManyWithWhereWithoutProjectInput = {
+  where: Prisma.AgentScalarWhereInput
+  data: Prisma.XOR<Prisma.AgentUpdateManyMutationInput, Prisma.AgentUncheckedUpdateManyWithoutProjectInput>
+}
+
+export type AgentScalarWhereInput = {
+  AND?: Prisma.AgentScalarWhereInput | Prisma.AgentScalarWhereInput[]
+  OR?: Prisma.AgentScalarWhereInput[]
+  NOT?: Prisma.AgentScalarWhereInput | Prisma.AgentScalarWhereInput[]
+  id?: Prisma.StringFilter<"Agent"> | string
+  projectId?: Prisma.StringFilter<"Agent"> | string
+  name?: Prisma.StringFilter<"Agent"> | string
+  role?: Prisma.StringFilter<"Agent"> | string
+  status?: Prisma.StringFilter<"Agent"> | string
+  capabilities?: Prisma.JsonNullableFilter<"Agent">
+  createdAt?: Prisma.DateTimeFilter<"Agent"> | Date | string
+  lastSeen?: Prisma.DateTimeNullableFilter<"Agent"> | Date | string | null
+}
+
+export type AgentCreateManyProjectInput = {
+  id?: string
+  name: string
+  role: string
+  status?: string
+  capabilities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  lastSeen?: Date | string | null
+}
+
+export type AgentUpdateWithoutProjectInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  capabilities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+export type AgentUncheckedUpdateWithoutProjectInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  capabilities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+export type AgentUncheckedUpdateManyWithoutProjectInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  capabilities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
 
 
 export type AgentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  projectId?: boolean
   name?: boolean
   role?: boolean
   status?: boolean
   capabilities?: boolean
   createdAt?: boolean
   lastSeen?: boolean
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["agent"]>
 
 export type AgentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  projectId?: boolean
   name?: boolean
   role?: boolean
   status?: boolean
   capabilities?: boolean
   createdAt?: boolean
   lastSeen?: boolean
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["agent"]>
 
 export type AgentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  projectId?: boolean
   name?: boolean
   role?: boolean
   status?: boolean
   capabilities?: boolean
   createdAt?: boolean
   lastSeen?: boolean
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["agent"]>
 
 export type AgentSelectScalar = {
   id?: boolean
+  projectId?: boolean
   name?: boolean
   role?: boolean
   status?: boolean
@@ -397,13 +580,25 @@ export type AgentSelectScalar = {
   lastSeen?: boolean
 }
 
-export type AgentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "role" | "status" | "capabilities" | "createdAt" | "lastSeen", ExtArgs["result"]["agent"]>
+export type AgentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "projectId" | "name" | "role" | "status" | "capabilities" | "createdAt" | "lastSeen", ExtArgs["result"]["agent"]>
+export type AgentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
+}
+export type AgentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
+}
+export type AgentIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
+}
 
 export type $AgentPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Agent"
-  objects: {}
+  objects: {
+    project: Prisma.$ProjectPayload<ExtArgs>
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    projectId: string
     name: string
     role: string
     status: string
@@ -804,6 +999,7 @@ readonly fields: AgentFieldRefs;
  */
 export interface Prisma__AgentClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  project<T extends Prisma.ProjectDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProjectDefaultArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -834,6 +1030,7 @@ export interface Prisma__AgentClient<T, Null = never, ExtArgs extends runtime.Ty
  */
 export interface AgentFieldRefs {
   readonly id: Prisma.FieldRef<"Agent", 'String'>
+  readonly projectId: Prisma.FieldRef<"Agent", 'String'>
   readonly name: Prisma.FieldRef<"Agent", 'String'>
   readonly role: Prisma.FieldRef<"Agent", 'String'>
   readonly status: Prisma.FieldRef<"Agent", 'String'>
@@ -857,6 +1054,10 @@ export type AgentFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.Interna
    */
   omit?: Prisma.AgentOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AgentInclude<ExtArgs> | null
+  /**
    * Filter, which Agent to fetch.
    */
   where: Prisma.AgentWhereUniqueInput
@@ -875,6 +1076,10 @@ export type AgentFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Extensions.
    */
   omit?: Prisma.AgentOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AgentInclude<ExtArgs> | null
+  /**
    * Filter, which Agent to fetch.
    */
   where: Prisma.AgentWhereUniqueInput
@@ -892,6 +1097,10 @@ export type AgentFindFirstArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Omit specific fields from the Agent
    */
   omit?: Prisma.AgentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AgentInclude<ExtArgs> | null
   /**
    * Filter, which Agent to fetch.
    */
@@ -941,6 +1150,10 @@ export type AgentFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   omit?: Prisma.AgentOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AgentInclude<ExtArgs> | null
+  /**
    * Filter, which Agent to fetch.
    */
   where?: Prisma.AgentWhereInput
@@ -989,6 +1202,10 @@ export type AgentFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    */
   omit?: Prisma.AgentOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AgentInclude<ExtArgs> | null
+  /**
    * Filter, which Agents to fetch.
    */
   where?: Prisma.AgentWhereInput
@@ -1032,6 +1249,10 @@ export type AgentCreateArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    */
   omit?: Prisma.AgentOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AgentInclude<ExtArgs> | null
+  /**
    * The data needed to create a Agent.
    */
   data: Prisma.XOR<Prisma.AgentCreateInput, Prisma.AgentUncheckedCreateInput>
@@ -1065,6 +1286,10 @@ export type AgentCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extension
    */
   data: Prisma.AgentCreateManyInput | Prisma.AgentCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AgentIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1079,6 +1304,10 @@ export type AgentUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    * Omit specific fields from the Agent
    */
   omit?: Prisma.AgentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AgentInclude<ExtArgs> | null
   /**
    * The data needed to update a Agent.
    */
@@ -1131,6 +1360,10 @@ export type AgentUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extension
    * Limit how many Agents to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AgentIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1145,6 +1378,10 @@ export type AgentUpsertArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    * Omit specific fields from the Agent
    */
   omit?: Prisma.AgentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AgentInclude<ExtArgs> | null
   /**
    * The filter to search for the Agent to update in case it exists.
    */
@@ -1171,6 +1408,10 @@ export type AgentDeleteArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    * Omit specific fields from the Agent
    */
   omit?: Prisma.AgentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AgentInclude<ExtArgs> | null
   /**
    * Filter which Agent to delete.
    */
@@ -1203,4 +1444,8 @@ export type AgentDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    * Omit specific fields from the Agent
    */
   omit?: Prisma.AgentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AgentInclude<ExtArgs> | null
 }

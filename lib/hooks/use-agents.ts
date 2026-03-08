@@ -3,6 +3,20 @@
 import { useState, useEffect, useCallback } from "react";
 import type { Agent } from "@/lib/types";
 
+function withProjectId(path: string): string {
+  if (typeof window === "undefined") {
+    return path;
+  }
+
+  const projectId = new URLSearchParams(window.location.search).get("projectId");
+  if (!projectId) {
+    return path;
+  }
+
+  const separator = path.includes("?") ? "&" : "?";
+  return `${path}${separator}projectId=${encodeURIComponent(projectId)}`;
+}
+
 export function useAgents() {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -10,7 +24,7 @@ export function useAgents() {
 
   const fetchAgents = useCallback(async () => {
     try {
-      const res = await fetch("/api/agents");
+      const res = await fetch(withProjectId("/api/agents"));
       const json = await res.json();
       if (json.data) {
         setAgents(json.data);

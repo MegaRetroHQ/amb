@@ -18,6 +18,20 @@ type UseSSEOptions = {
   reconnectInterval?: number;
 };
 
+function withProjectId(path: string): string {
+  if (typeof window === "undefined") {
+    return path;
+  }
+
+  const projectId = new URLSearchParams(window.location.search).get("projectId");
+  if (!projectId) {
+    return path;
+  }
+
+  const separator = path.includes("?") ? "&" : "?";
+  return `${path}${separator}projectId=${encodeURIComponent(projectId)}`;
+}
+
 export function useSSE(options: UseSSEOptions = {}) {
   const { enabled = true, reconnectInterval = 3000 } = options;
 
@@ -35,7 +49,7 @@ export function useSSE(options: UseSSEOptions = {}) {
       eventSourceRef.current.close();
     }
 
-    const eventSource = new EventSource("/api/stream");
+    const eventSource = new EventSource(withProjectId("/api/stream"));
     eventSourceRef.current = eventSource;
 
     eventSource.onopen = () => {

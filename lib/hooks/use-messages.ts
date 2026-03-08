@@ -4,6 +4,20 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import type { Message } from "@/lib/types";
 import { useSSE } from "./use-sse";
 
+function withProjectId(path: string): string {
+  if (typeof window === "undefined") {
+    return path;
+  }
+
+  const projectId = new URLSearchParams(window.location.search).get("projectId");
+  if (!projectId) {
+    return path;
+  }
+
+  const separator = path.includes("?") ? "&" : "?";
+  return `${path}${separator}projectId=${encodeURIComponent(projectId)}`;
+}
+
 export function useThreadMessages(threadId: string | null) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
@@ -14,7 +28,7 @@ export function useThreadMessages(threadId: string | null) {
     
     setLoading(true);
     try {
-      const res = await fetch(`/api/threads/${threadId}/messages`);
+      const res = await fetch(withProjectId(`/api/threads/${threadId}/messages`));
       const json = await res.json();
       if (json.data) {
         setMessages(json.data);
@@ -35,7 +49,7 @@ export function useThreadMessages(threadId: string | null) {
   }) => {
     if (!threadId) return;
 
-    const res = await fetch("/api/messages/send", {
+    const res = await fetch(withProjectId("/api/messages/send"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -71,7 +85,7 @@ export function useInbox(agentId: string | null, pollInterval = 3000) {
     if (!agentId) return;
     
     try {
-      const res = await fetch(`/api/messages/inbox?agentId=${agentId}`);
+      const res = await fetch(withProjectId(`/api/messages/inbox?agentId=${agentId}`));
       const json = await res.json();
       if (json.data) {
         setMessages(json.data);
@@ -84,7 +98,7 @@ export function useInbox(agentId: string | null, pollInterval = 3000) {
   }, [agentId]);
 
   const ackMessage = useCallback(async (messageId: string) => {
-    const res = await fetch(`/api/messages/${messageId}/ack`, {
+    const res = await fetch(withProjectId(`/api/messages/${messageId}/ack`), {
       method: "POST",
     });
     if (!res.ok) {
@@ -121,7 +135,7 @@ export function useDlq() {
 
   const fetchDlq = useCallback(async () => {
     try {
-      const res = await fetch("/api/dlq");
+      const res = await fetch(withProjectId("/api/dlq"));
       const json = await res.json();
       if (json.data) {
         setMessages(json.data);
@@ -139,7 +153,7 @@ export function useDlq() {
     setMessages((prev) => prev.filter((m) => m.id !== messageId));
     
     try {
-      const res = await fetch(`/api/dlq/${messageId}/retry`, {
+      const res = await fetch(withProjectId(`/api/dlq/${messageId}/retry`), {
         method: "POST",
       });
       if (!res.ok) {
@@ -158,7 +172,7 @@ export function useDlq() {
     setMessages([]);
     
     try {
-      const res = await fetch("/api/dlq/retry-all", {
+      const res = await fetch(withProjectId("/api/dlq/retry-all"), {
         method: "POST",
       });
       if (!res.ok) {

@@ -54,3 +54,8 @@ export type Thread = Prisma.ThreadModel
  * 
  */
 export type Message = Prisma.MessageModel
+/**
+ * Model Project
+ * 
+ */
+export type Project = Prisma.ProjectModel

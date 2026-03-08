@@ -3,6 +3,30 @@
 import { useState, useEffect, useCallback } from "react";
 import type { Thread } from "@/lib/types";
 
+function withProjectId(path: string): string {
+  if (typeof window === "undefined") {
+    return path;
+  }
+
+  const projectId = new URLSearchParams(window.location.search).get("projectId");
+  if (!projectId) {
+    return path;
+  }
+
+  const separator = path.includes("?") ? "&" : "?";
+  return `${path}${separator}projectId=${encodeURIComponent(projectId)}`;
+}
+
+function getCurrentProjectId(): string {
+  if (typeof window === "undefined") {
+    return "00000000-0000-0000-0000-000000000001";
+  }
+  return (
+    new URLSearchParams(window.location.search).get("projectId") ??
+    "00000000-0000-0000-0000-000000000001"
+  );
+}
+
 export function useThreads() {
   const [threads, setThreads] = useState<Thread[]>([]);
   const [loading, setLoading] = useState(true);
@@ -10,7 +34,7 @@ export function useThreads() {
 
   const fetchThreads = useCallback(async () => {
     try {
-      const res = await fetch("/api/threads");
+      const res = await fetch(withProjectId("/api/threads"));
       const json = await res.json();
       if (json.data) {
         setThreads(json.data);
@@ -28,6 +52,7 @@ export function useThreads() {
     const tempId = `temp-${Date.now()}`;
     const optimisticThread: Thread = {
       id: tempId,
+      projectId: getCurrentProjectId(),
       title,
       status: "open",
       createdAt: new Date().toISOString(),
@@ -35,7 +60,7 @@ export function useThreads() {
     setThreads((prev) => [optimisticThread, ...prev]);
 
     try {
-      const res = await fetch("/api/threads", {
+      const res = await fetch(withProjectId("/api/threads"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title }),
@@ -65,7 +90,7 @@ export function useThreads() {
       );
 
       try {
-        const res = await fetch(`/api/threads/${threadId}`, {
+        const res = await fetch(withProjectId(`/api/threads/${threadId}`), {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ status }),
@@ -90,7 +115,7 @@ export function useThreads() {
       setThreads((prev) => prev.filter((t) => t.id !== threadId));
 
       try {
-        const res = await fetch(`/api/threads/${threadId}`, {
+        const res = await fetch(withProjectId(`/api/threads/${threadId}`), {
           method: "DELETE",
         });
         if (!res.ok) {

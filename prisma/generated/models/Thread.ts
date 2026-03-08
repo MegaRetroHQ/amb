@@ -26,6 +26,7 @@ export type AggregateThread = {
 
 export type ThreadMinAggregateOutputType = {
   id: string | null
+  projectId: string | null
   title: string | null
   status: string | null
   createdAt: Date | null
@@ -33,6 +34,7 @@ export type ThreadMinAggregateOutputType = {
 
 export type ThreadMaxAggregateOutputType = {
   id: string | null
+  projectId: string | null
   title: string | null
   status: string | null
   createdAt: Date | null
@@ -40,6 +42,7 @@ export type ThreadMaxAggregateOutputType = {
 
 export type ThreadCountAggregateOutputType = {
   id: number
+  projectId: number
   title: number
   status: number
   createdAt: number
@@ -49,6 +52,7 @@ export type ThreadCountAggregateOutputType = {
 
 export type ThreadMinAggregateInputType = {
   id?: true
+  projectId?: true
   title?: true
   status?: true
   createdAt?: true
@@ -56,6 +60,7 @@ export type ThreadMinAggregateInputType = {
 
 export type ThreadMaxAggregateInputType = {
   id?: true
+  projectId?: true
   title?: true
   status?: true
   createdAt?: true
@@ -63,6 +68,7 @@ export type ThreadMaxAggregateInputType = {
 
 export type ThreadCountAggregateInputType = {
   id?: true
+  projectId?: true
   title?: true
   status?: true
   createdAt?: true
@@ -143,6 +149,7 @@ export type ThreadGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalA
 
 export type ThreadGroupByOutputType = {
   id: string
+  projectId: string
   title: string
   status: string
   createdAt: Date
@@ -171,17 +178,21 @@ export type ThreadWhereInput = {
   OR?: Prisma.ThreadWhereInput[]
   NOT?: Prisma.ThreadWhereInput | Prisma.ThreadWhereInput[]
   id?: Prisma.StringFilter<"Thread"> | string
+  projectId?: Prisma.StringFilter<"Thread"> | string
   title?: Prisma.StringFilter<"Thread"> | string
   status?: Prisma.StringFilter<"Thread"> | string
   createdAt?: Prisma.DateTimeFilter<"Thread"> | Date | string
+  project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
   messages?: Prisma.MessageListRelationFilter
 }
 
 export type ThreadOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  project?: Prisma.ProjectOrderByWithRelationInput
   messages?: Prisma.MessageOrderByRelationAggregateInput
 }
 
@@ -190,14 +201,17 @@ export type ThreadWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.ThreadWhereInput | Prisma.ThreadWhereInput[]
   OR?: Prisma.ThreadWhereInput[]
   NOT?: Prisma.ThreadWhereInput | Prisma.ThreadWhereInput[]
+  projectId?: Prisma.StringFilter<"Thread"> | string
   title?: Prisma.StringFilter<"Thread"> | string
   status?: Prisma.StringFilter<"Thread"> | string
   createdAt?: Prisma.DateTimeFilter<"Thread"> | Date | string
+  project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
   messages?: Prisma.MessageListRelationFilter
 }, "id">
 
 export type ThreadOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -211,6 +225,7 @@ export type ThreadScalarWhereWithAggregatesInput = {
   OR?: Prisma.ThreadScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ThreadScalarWhereWithAggregatesInput | Prisma.ThreadScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Thread"> | string
+  projectId?: Prisma.StringWithAggregatesFilter<"Thread"> | string
   title?: Prisma.StringWithAggregatesFilter<"Thread"> | string
   status?: Prisma.StringWithAggregatesFilter<"Thread"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Thread"> | Date | string
@@ -221,11 +236,13 @@ export type ThreadCreateInput = {
   title: string
   status?: string
   createdAt?: Date | string
+  project: Prisma.ProjectCreateNestedOneWithoutThreadsInput
   messages?: Prisma.MessageCreateNestedManyWithoutThreadInput
 }
 
 export type ThreadUncheckedCreateInput = {
   id?: string
+  projectId: string
   title: string
   status?: string
   createdAt?: Date | string
@@ -237,11 +254,13 @@ export type ThreadUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  project?: Prisma.ProjectUpdateOneRequiredWithoutThreadsNestedInput
   messages?: Prisma.MessageUpdateManyWithoutThreadNestedInput
 }
 
 export type ThreadUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -250,6 +269,7 @@ export type ThreadUncheckedUpdateInput = {
 
 export type ThreadCreateManyInput = {
   id?: string
+  projectId: string
   title: string
   status?: string
   createdAt?: Date | string
@@ -264,6 +284,7 @@ export type ThreadUpdateManyMutationInput = {
 
 export type ThreadUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -271,6 +292,7 @@ export type ThreadUncheckedUpdateManyInput = {
 
 export type ThreadCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -278,6 +300,7 @@ export type ThreadCountOrderByAggregateInput = {
 
 export type ThreadMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -285,6 +308,7 @@ export type ThreadMaxOrderByAggregateInput = {
 
 export type ThreadMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -293,6 +317,16 @@ export type ThreadMinOrderByAggregateInput = {
 export type ThreadScalarRelationFilter = {
   is?: Prisma.ThreadWhereInput
   isNot?: Prisma.ThreadWhereInput
+}
+
+export type ThreadListRelationFilter = {
+  every?: Prisma.ThreadWhereInput
+  some?: Prisma.ThreadWhereInput
+  none?: Prisma.ThreadWhereInput
+}
+
+export type ThreadOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type ThreadCreateNestedOneWithoutMessagesInput = {
@@ -309,15 +343,59 @@ export type ThreadUpdateOneRequiredWithoutMessagesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ThreadUpdateToOneWithWhereWithoutMessagesInput, Prisma.ThreadUpdateWithoutMessagesInput>, Prisma.ThreadUncheckedUpdateWithoutMessagesInput>
 }
 
+export type ThreadCreateNestedManyWithoutProjectInput = {
+  create?: Prisma.XOR<Prisma.ThreadCreateWithoutProjectInput, Prisma.ThreadUncheckedCreateWithoutProjectInput> | Prisma.ThreadCreateWithoutProjectInput[] | Prisma.ThreadUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.ThreadCreateOrConnectWithoutProjectInput | Prisma.ThreadCreateOrConnectWithoutProjectInput[]
+  createMany?: Prisma.ThreadCreateManyProjectInputEnvelope
+  connect?: Prisma.ThreadWhereUniqueInput | Prisma.ThreadWhereUniqueInput[]
+}
+
+export type ThreadUncheckedCreateNestedManyWithoutProjectInput = {
+  create?: Prisma.XOR<Prisma.ThreadCreateWithoutProjectInput, Prisma.ThreadUncheckedCreateWithoutProjectInput> | Prisma.ThreadCreateWithoutProjectInput[] | Prisma.ThreadUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.ThreadCreateOrConnectWithoutProjectInput | Prisma.ThreadCreateOrConnectWithoutProjectInput[]
+  createMany?: Prisma.ThreadCreateManyProjectInputEnvelope
+  connect?: Prisma.ThreadWhereUniqueInput | Prisma.ThreadWhereUniqueInput[]
+}
+
+export type ThreadUpdateManyWithoutProjectNestedInput = {
+  create?: Prisma.XOR<Prisma.ThreadCreateWithoutProjectInput, Prisma.ThreadUncheckedCreateWithoutProjectInput> | Prisma.ThreadCreateWithoutProjectInput[] | Prisma.ThreadUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.ThreadCreateOrConnectWithoutProjectInput | Prisma.ThreadCreateOrConnectWithoutProjectInput[]
+  upsert?: Prisma.ThreadUpsertWithWhereUniqueWithoutProjectInput | Prisma.ThreadUpsertWithWhereUniqueWithoutProjectInput[]
+  createMany?: Prisma.ThreadCreateManyProjectInputEnvelope
+  set?: Prisma.ThreadWhereUniqueInput | Prisma.ThreadWhereUniqueInput[]
+  disconnect?: Prisma.ThreadWhereUniqueInput | Prisma.ThreadWhereUniqueInput[]
+  delete?: Prisma.ThreadWhereUniqueInput | Prisma.ThreadWhereUniqueInput[]
+  connect?: Prisma.ThreadWhereUniqueInput | Prisma.ThreadWhereUniqueInput[]
+  update?: Prisma.ThreadUpdateWithWhereUniqueWithoutProjectInput | Prisma.ThreadUpdateWithWhereUniqueWithoutProjectInput[]
+  updateMany?: Prisma.ThreadUpdateManyWithWhereWithoutProjectInput | Prisma.ThreadUpdateManyWithWhereWithoutProjectInput[]
+  deleteMany?: Prisma.ThreadScalarWhereInput | Prisma.ThreadScalarWhereInput[]
+}
+
+export type ThreadUncheckedUpdateManyWithoutProjectNestedInput = {
+  create?: Prisma.XOR<Prisma.ThreadCreateWithoutProjectInput, Prisma.ThreadUncheckedCreateWithoutProjectInput> | Prisma.ThreadCreateWithoutProjectInput[] | Prisma.ThreadUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.ThreadCreateOrConnectWithoutProjectInput | Prisma.ThreadCreateOrConnectWithoutProjectInput[]
+  upsert?: Prisma.ThreadUpsertWithWhereUniqueWithoutProjectInput | Prisma.ThreadUpsertWithWhereUniqueWithoutProjectInput[]
+  createMany?: Prisma.ThreadCreateManyProjectInputEnvelope
+  set?: Prisma.ThreadWhereUniqueInput | Prisma.ThreadWhereUniqueInput[]
+  disconnect?: Prisma.ThreadWhereUniqueInput | Prisma.ThreadWhereUniqueInput[]
+  delete?: Prisma.ThreadWhereUniqueInput | Prisma.ThreadWhereUniqueInput[]
+  connect?: Prisma.ThreadWhereUniqueInput | Prisma.ThreadWhereUniqueInput[]
+  update?: Prisma.ThreadUpdateWithWhereUniqueWithoutProjectInput | Prisma.ThreadUpdateWithWhereUniqueWithoutProjectInput[]
+  updateMany?: Prisma.ThreadUpdateManyWithWhereWithoutProjectInput | Prisma.ThreadUpdateManyWithWhereWithoutProjectInput[]
+  deleteMany?: Prisma.ThreadScalarWhereInput | Prisma.ThreadScalarWhereInput[]
+}
+
 export type ThreadCreateWithoutMessagesInput = {
   id?: string
   title: string
   status?: string
   createdAt?: Date | string
+  project: Prisma.ProjectCreateNestedOneWithoutThreadsInput
 }
 
 export type ThreadUncheckedCreateWithoutMessagesInput = {
   id?: string
+  projectId: string
   title: string
   status?: string
   createdAt?: Date | string
@@ -344,9 +422,94 @@ export type ThreadUpdateWithoutMessagesInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  project?: Prisma.ProjectUpdateOneRequiredWithoutThreadsNestedInput
 }
 
 export type ThreadUncheckedUpdateWithoutMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type ThreadCreateWithoutProjectInput = {
+  id?: string
+  title: string
+  status?: string
+  createdAt?: Date | string
+  messages?: Prisma.MessageCreateNestedManyWithoutThreadInput
+}
+
+export type ThreadUncheckedCreateWithoutProjectInput = {
+  id?: string
+  title: string
+  status?: string
+  createdAt?: Date | string
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutThreadInput
+}
+
+export type ThreadCreateOrConnectWithoutProjectInput = {
+  where: Prisma.ThreadWhereUniqueInput
+  create: Prisma.XOR<Prisma.ThreadCreateWithoutProjectInput, Prisma.ThreadUncheckedCreateWithoutProjectInput>
+}
+
+export type ThreadCreateManyProjectInputEnvelope = {
+  data: Prisma.ThreadCreateManyProjectInput | Prisma.ThreadCreateManyProjectInput[]
+  skipDuplicates?: boolean
+}
+
+export type ThreadUpsertWithWhereUniqueWithoutProjectInput = {
+  where: Prisma.ThreadWhereUniqueInput
+  update: Prisma.XOR<Prisma.ThreadUpdateWithoutProjectInput, Prisma.ThreadUncheckedUpdateWithoutProjectInput>
+  create: Prisma.XOR<Prisma.ThreadCreateWithoutProjectInput, Prisma.ThreadUncheckedCreateWithoutProjectInput>
+}
+
+export type ThreadUpdateWithWhereUniqueWithoutProjectInput = {
+  where: Prisma.ThreadWhereUniqueInput
+  data: Prisma.XOR<Prisma.ThreadUpdateWithoutProjectInput, Prisma.ThreadUncheckedUpdateWithoutProjectInput>
+}
+
+export type ThreadUpdateManyWithWhereWithoutProjectInput = {
+  where: Prisma.ThreadScalarWhereInput
+  data: Prisma.XOR<Prisma.ThreadUpdateManyMutationInput, Prisma.ThreadUncheckedUpdateManyWithoutProjectInput>
+}
+
+export type ThreadScalarWhereInput = {
+  AND?: Prisma.ThreadScalarWhereInput | Prisma.ThreadScalarWhereInput[]
+  OR?: Prisma.ThreadScalarWhereInput[]
+  NOT?: Prisma.ThreadScalarWhereInput | Prisma.ThreadScalarWhereInput[]
+  id?: Prisma.StringFilter<"Thread"> | string
+  projectId?: Prisma.StringFilter<"Thread"> | string
+  title?: Prisma.StringFilter<"Thread"> | string
+  status?: Prisma.StringFilter<"Thread"> | string
+  createdAt?: Prisma.DateTimeFilter<"Thread"> | Date | string
+}
+
+export type ThreadCreateManyProjectInput = {
+  id?: string
+  title: string
+  status?: string
+  createdAt?: Date | string
+}
+
+export type ThreadUpdateWithoutProjectInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  messages?: Prisma.MessageUpdateManyWithoutThreadNestedInput
+}
+
+export type ThreadUncheckedUpdateWithoutProjectInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutThreadNestedInput
+}
+
+export type ThreadUncheckedUpdateManyWithoutProjectInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -386,49 +549,63 @@ export type ThreadCountOutputTypeCountMessagesArgs<ExtArgs extends runtime.Types
 
 export type ThreadSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  projectId?: boolean
   title?: boolean
   status?: boolean
   createdAt?: boolean
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   messages?: boolean | Prisma.Thread$messagesArgs<ExtArgs>
   _count?: boolean | Prisma.ThreadCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["thread"]>
 
 export type ThreadSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  projectId?: boolean
   title?: boolean
   status?: boolean
   createdAt?: boolean
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["thread"]>
 
 export type ThreadSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  projectId?: boolean
   title?: boolean
   status?: boolean
   createdAt?: boolean
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["thread"]>
 
 export type ThreadSelectScalar = {
   id?: boolean
+  projectId?: boolean
   title?: boolean
   status?: boolean
   createdAt?: boolean
 }
 
-export type ThreadOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "status" | "createdAt", ExtArgs["result"]["thread"]>
+export type ThreadOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "projectId" | "title" | "status" | "createdAt", ExtArgs["result"]["thread"]>
 export type ThreadInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   messages?: boolean | Prisma.Thread$messagesArgs<ExtArgs>
   _count?: boolean | Prisma.ThreadCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type ThreadIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
-export type ThreadIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type ThreadIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
+}
+export type ThreadIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
+}
 
 export type $ThreadPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Thread"
   objects: {
+    project: Prisma.$ProjectPayload<ExtArgs>
     messages: Prisma.$MessagePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    projectId: string
     title: string
     status: string
     createdAt: Date
@@ -826,6 +1003,7 @@ readonly fields: ThreadFieldRefs;
  */
 export interface Prisma__ThreadClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  project<T extends Prisma.ProjectDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProjectDefaultArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   messages<T extends Prisma.Thread$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Thread$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -857,6 +1035,7 @@ export interface Prisma__ThreadClient<T, Null = never, ExtArgs extends runtime.T
  */
 export interface ThreadFieldRefs {
   readonly id: Prisma.FieldRef<"Thread", 'String'>
+  readonly projectId: Prisma.FieldRef<"Thread", 'String'>
   readonly title: Prisma.FieldRef<"Thread", 'String'>
   readonly status: Prisma.FieldRef<"Thread", 'String'>
   readonly createdAt: Prisma.FieldRef<"Thread", 'DateTime'>
@@ -1109,6 +1288,10 @@ export type ThreadCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensio
    */
   data: Prisma.ThreadCreateManyInput | Prisma.ThreadCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ThreadIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1179,6 +1362,10 @@ export type ThreadUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensio
    * Limit how many Threads to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ThreadIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**

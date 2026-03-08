@@ -53,7 +53,8 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   Agent: 'Agent',
   Thread: 'Thread',
-  Message: 'Message'
+  Message: 'Message',
+  Project: 'Project'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -74,6 +75,7 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 
 export const AgentScalarFieldEnum = {
   id: 'id',
+  projectId: 'projectId',
   name: 'name',
   role: 'role',
   status: 'status',
@@ -87,6 +89,7 @@ export type AgentScalarFieldEnum = (typeof AgentScalarFieldEnum)[keyof typeof Ag
 
 export const ThreadScalarFieldEnum = {
   id: 'id',
+  projectId: 'projectId',
   title: 'title',
   status: 'status',
   createdAt: 'createdAt'
@@ -97,6 +100,7 @@ export type ThreadScalarFieldEnum = (typeof ThreadScalarFieldEnum)[keyof typeof 
 
 export const MessageScalarFieldEnum = {
   id: 'id',
+  projectId: 'projectId',
   threadId: 'threadId',
   fromAgentId: 'fromAgentId',
   toAgentId: 'toAgentId',
@@ -108,6 +112,16 @@ export const MessageScalarFieldEnum = {
 } as const
 
 export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
+
+
+export const ProjectScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  createdAt: 'createdAt'
+} as const
+
+export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
 
 
 export const SortOrder = {

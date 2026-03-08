@@ -3,6 +3,7 @@ import { Prisma } from "../../prisma/generated/client";
 import { ConflictError, NotFoundError } from "@/lib/services/errors";
 
 export type SendMessageInput = {
+  projectId: string;
   threadId: string;
   fromAgentId: string;
   toAgentId?: string | null;
@@ -10,9 +11,9 @@ export type SendMessageInput = {
   parentId?: string | null;
 };
 
-async function ensureThreadExists(threadId: string) {
-  const thread = await prisma.thread.findUnique({
-    where: { id: threadId },
+async function ensureThreadExists(projectId: string, threadId: string) {
+  const thread = await prisma.thread.findFirst({
+    where: { id: threadId, projectId },
   });
 
   if (!thread) {
@@ -20,9 +21,9 @@ async function ensureThreadExists(threadId: string) {
   }
 }
 
-async function ensureAgentExists(agentId: string, label: "From agent" | "To agent") {
-  const agent = await prisma.agent.findUnique({
-    where: { id: agentId },
+async function ensureAgentExists(projectId: string, agentId: string, label: "From agent" | "To agent") {
+  const agent = await prisma.agent.findFirst({
+    where: { id: agentId, projectId },
   });
 
   if (!agent) {
@@ -30,9 +31,9 @@ async function ensureAgentExists(agentId: string, label: "From agent" | "To agen
   }
 }
 
-async function ensureMessageExists(messageId: string) {
-  const message = await prisma.message.findUnique({
-    where: { id: messageId },
+async function ensureMessageExists(projectId: string, messageId: string) {
+  const message = await prisma.message.findFirst({
+    where: { id: messageId, projectId },
   });
 
   if (!message) {
@@ -41,19 +42,20 @@ async function ensureMessageExists(messageId: string) {
 }
 
 export async function sendMessage(input: SendMessageInput) {
-  await ensureThreadExists(input.threadId);
-  await ensureAgentExists(input.fromAgentId, "From agent");
+  await ensureThreadExists(input.projectId, input.threadId);
+  await ensureAgentExists(input.projectId, input.fromAgentId, "From agent");
 
   if (input.toAgentId) {
-    await ensureAgentExists(input.toAgentId, "To agent");
+    await ensureAgentExists(input.projectId, input.toAgentId, "To agent");
   }
 
   if (input.parentId) {
-    await ensureMessageExists(input.parentId);
+    await ensureMessageExists(input.projectId, input.parentId);
   }
 
   return prisma.message.create({
     data: {
+      projectId: input.projectId,
       threadId: input.threadId,
       fromAgentId: input.fromAgentId,
       toAgentId: input.toAgentId ?? null,
@@ -65,13 +67,14 @@ export async function sendMessage(input: SendMessageInput) {
   });
 }
 
-export async function getInboxMessages(agentId: string) {
+export async function getInboxMessages(projectId: string, agentId: string) {
   return prisma.$transaction(async (tx) => {
     // Mark pending messages as delivered
     // Include both direct messages (toAgentId = agentId) and broadcast messages (toAgentId = null)
     // Exclude messages from the agent itself (fromAgentId != agentId)
     await tx.message.updateMany({
       where: {
+        projectId,
         OR: [
           { toAgentId: agentId },
           { toAgentId: null }, // Broadcast messages
@@ -88,6 +91,7 @@ export async function getInboxMessages(agentId: string) {
     // Include both direct and broadcast messages, exclude own messages
     return tx.message.findMany({
       where: {
+        projectId,
         OR: [
           { toAgentId: agentId },
           { toAgentId: null }, // Broadcast messages
@@ -102,9 +106,9 @@ export async function getInboxMessages(agentId: string) {
   });
 }
 
-export async function ackMessage(messageId: string) {
-  const message = await prisma.message.findUnique({
-    where: { id: messageId },
+export async function ackMessage(projectId: string, messageId: string) {
+  const message = await prisma.message.findFirst({
+    where: { id: messageId, projectId },
   });
 
   if (!message) {
@@ -128,11 +132,12 @@ export async function ackMessage(messageId: string) {
 const MAX_RETRIES = 3;
 const DELIVERY_TIMEOUT_MS = 60_000; // 1 minute
 
-export async function retryTimedOutMessages() {
+export async function retryTimedOutMessages(projectId: string) {
   const timeoutThreshold = new Date(Date.now() - DELIVERY_TIMEOUT_MS);
 
   const timedOutMessages = await prisma.message.findMany({
     where: {
+      projectId,
       status: "delivered",
       createdAt: { lt: timeoutThreshold },
     },
@@ -164,18 +169,19 @@ export async function retryTimedOutMessages() {
   return results;
 }
 
-export async function getDlqMessages() {
+export async function getDlqMessages(projectId: string) {
   return prisma.message.findMany({
-    where: { status: "dlq" },
+    where: { projectId, status: "dlq" },
     orderBy: { createdAt: "desc" },
   });
 }
 
-export async function cleanupOldMessages(retentionDays: number = 30) {
+export async function cleanupOldMessages(projectId: string, retentionDays: number = 30) {
   const threshold = new Date(Date.now() - retentionDays * 24 * 60 * 60 * 1000);
 
   const result = await prisma.message.deleteMany({
     where: {
+      projectId,
       status: { in: ["ack", "dlq"] },
       createdAt: { lt: threshold },
     },
@@ -184,9 +190,9 @@ export async function cleanupOldMessages(retentionDays: number = 30) {
   return { deleted: result.count };
 }
 
-export async function retryDlqMessage(messageId: string) {
-  const message = await prisma.message.findUnique({
-    where: { id: messageId },
+export async function retryDlqMessage(projectId: string, messageId: string) {
+  const message = await prisma.message.findFirst({
+    where: { id: messageId, projectId },
   });
 
   if (!message) {
@@ -206,9 +212,9 @@ export async function retryDlqMessage(messageId: string) {
   });
 }
 
-export async function retryAllDlqMessages() {
+export async function retryAllDlqMessages(projectId: string) {
   const result = await prisma.message.updateMany({
-    where: { status: "dlq" },
+    where: { projectId, status: "dlq" },
     data: { 
       status: "pending",
       retries: 0,

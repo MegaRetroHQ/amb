@@ -1,5 +1,6 @@
 export type Agent = {
   id: string;
+  projectId: string;
   name: string;
   role: string;
   status: string;
@@ -10,6 +11,7 @@ export type Agent = {
 
 export type Thread = {
   id: string;
+  projectId: string;
   title: string;
   status: "open" | "closed" | "archived";
   createdAt: string;
@@ -17,6 +19,7 @@ export type Thread = {
 
 export type Message = {
   id: string;
+  projectId: string;
   threadId: string;
   fromAgentId: string;
   toAgentId: string | null;

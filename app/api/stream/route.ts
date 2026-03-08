@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { resolveProjectId } from "@/lib/api/project-context";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -9,13 +10,17 @@ type SSEData =
   | { type: "connected"; data: { timestamp: string } }
   | { type: "new_message"; data: { messageId: string; threadId: string; fromAgentId: string; toAgentId: string | null; timestamp: string } };
 
-async function getInboxCounts(): Promise<Record<string, number>> {
-  const agents = await prisma.agent.findMany({ select: { id: true } });
+async function getInboxCounts(projectId: string): Promise<Record<string, number>> {
+  const agents = await prisma.agent.findMany({
+    where: { projectId },
+    select: { id: true },
+  });
   
   const counts = await Promise.all(
     agents.map(async (agent) => {
       const count = await prisma.message.count({
         where: {
+          projectId,
           toAgentId: agent.id,
           status: { in: ["pending", "delivered"] },
         },
@@ -33,13 +38,19 @@ async function getInboxCounts(): Promise<Record<string, number>> {
   );
 }
 
-async function getDlqCount(): Promise<number> {
+async function getDlqCount(projectId: string): Promise<number> {
   return prisma.message.count({
-    where: { status: "dlq" },
+    where: { projectId, status: "dlq" },
   });
 }
 
 export async function GET(req: Request) {
+  const project = await resolveProjectId(req);
+  if (project.error) {
+    return project.error;
+  }
+
+  const projectId = project.projectId;
   const encoder = new TextEncoder();
 
   const send = (controller: ReadableStreamDefaultController, data: SSEData) => {
@@ -57,8 +68,8 @@ export async function GET(req: Request) {
 
       // Send initial data
       const [inboxCounts, dlqCount] = await Promise.all([
-        getInboxCounts(),
-        getDlqCount(),
+        getInboxCounts(projectId),
+        getDlqCount(projectId),
       ]);
 
       send(controller, { type: "inbox_counts", data: inboxCounts });
@@ -68,8 +79,8 @@ export async function GET(req: Request) {
       const interval = setInterval(async () => {
         try {
           const [newInboxCounts, newDlqCount] = await Promise.all([
-            getInboxCounts(),
-            getDlqCount(),
+            getInboxCounts(projectId),
+            getDlqCount(projectId),
           ]);
 
           send(controller, { type: "inbox_counts", data: newInboxCounts });

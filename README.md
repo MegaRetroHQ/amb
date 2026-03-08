@@ -123,7 +123,7 @@ pnpm reset-db          # Сбросить БД и засеять заново
 ```typescript
 import { createClient } from "./lib/sdk";
 
-const client = createClient("http://localhost:3333");
+const client = createClient("http://localhost:3333", "<PROJECT_ID>");
 
 // Регистрация агента
 const agent = await client.registerAgent({
@@ -152,6 +152,12 @@ for await (const messages of client.pollInbox(agent.id)) {
 
 ## Интеграция с MCP
 
+Перед настройкой MCP можно создать отдельный проект в Dashboard:
+
+1. Откройте `http://localhost:3333`.
+2. В шапке выберите **Создать проект**.
+3. Скопируйте **ID проекта** кнопкой `ID`.
+
 1. Собрать MCP-сервер:
 
 ```bash
@@ -167,7 +173,8 @@ cd mcp-server && pnpm install && pnpm build
       "command": "node",
       "args": ["<путь>/mcp-server/dist/index.js"],
       "env": {
-        "MESSAGE_BUS_URL": "http://localhost:3333"
+        "MESSAGE_BUS_URL": "http://localhost:3333",
+        "MESSAGE_BUS_PROJECT_ID": "<PROJECT_ID>"
       }
     }
   }
@@ -229,7 +236,10 @@ const agent = await client.registerAgent({ name: "my-service", role: "worker" })
        "message-bus": {
          "command": "pnpm",
          "args": ["exec", "amb-mcp"],
-         "env": { "MESSAGE_BUS_URL": "http://localhost:3333" }
+       "env": {
+         "MESSAGE_BUS_URL": "http://localhost:3333",
+         "MESSAGE_BUS_PROJECT_ID": "<PROJECT_ID>"
+       }
        }
      }
    }
@@ -255,7 +265,10 @@ const agent = await client.registerAgent({ name: "my-service", role: "worker" })
          "command": "node",
          "args": ["/path/to/amb/mcp-server/dist/index.js"],
          "cwd": "/path/to/amb",
-         "env": { "MESSAGE_BUS_URL": "http://localhost:3333" }
+       "env": {
+         "MESSAGE_BUS_URL": "http://localhost:3333",
+         "MESSAGE_BUS_PROJECT_ID": "<PROJECT_ID>"
+       }
        }
      }
    }
@@ -322,6 +335,7 @@ Agent A                    Message Bus                    Agent B
 |------------|----------|--------------|
 | `DATABASE_URL` | Строка подключения к PostgreSQL | `postgresql://postgres:postgres@localhost:5432/messagebus` |
 | `PORT` | Порт сервера | `3333` |
+| `MESSAGE_BUS_PROJECT_ID` | ID проекта для CLI/MCP/SDK запросов | `00000000-0000-0000-0000-000000000001` |
 
 Полный список: `.env.example`.
 

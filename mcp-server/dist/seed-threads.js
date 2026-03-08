@@ -6,11 +6,15 @@ import "dotenv/config";
 import fs from "fs/promises";
 import path from "path";
 const API_URL = process.env.MESSAGE_BUS_URL ?? "http://localhost:3333";
+const PROJECT_ID = process.env.MESSAGE_BUS_PROJECT_ID;
 async function createThread(title) {
     try {
         const res = await fetch(`${API_URL}/api/threads`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+                ...(PROJECT_ID ? { "x-project-id": PROJECT_ID } : {}),
+            },
             body: JSON.stringify({ title, status: "open" }),
         });
         if (!res.ok) {
@@ -28,7 +32,9 @@ async function createThread(title) {
 }
 async function getExistingThreads() {
     try {
-        const res = await fetch(`${API_URL}/api/threads`);
+        const res = await fetch(`${API_URL}/api/threads`, {
+            headers: PROJECT_ID ? { "x-project-id": PROJECT_ID } : undefined,
+        });
         if (!res.ok)
             return new Set();
         const json = await res.json();

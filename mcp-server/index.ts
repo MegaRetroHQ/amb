@@ -11,9 +11,9 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
-import { z } from "zod";
 
 const BASE_URL = process.env.MESSAGE_BUS_URL || "http://localhost:3333";
+const PROJECT_ID = process.env.MESSAGE_BUS_PROJECT_ID;
 
 // ─────────────────────────────────────────────────────────────
 // API Client
@@ -27,6 +27,7 @@ async function apiCall<T>(
     ...options,
     headers: {
       "Content-Type": "application/json",
+      ...(PROJECT_ID ? { "x-project-id": PROJECT_ID } : {}),
       ...options.headers,
     },
   });

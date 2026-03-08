@@ -34,7 +34,8 @@
          "command": "node",
          "args": ["<абсолютный-путь>/amb/mcp-server/dist/index.js"],
          "env": {
-           "MESSAGE_BUS_URL": "http://localhost:3333"
+          "MESSAGE_BUS_URL": "http://localhost:3333",
+          "MESSAGE_BUS_PROJECT_ID": "<PROJECT_ID>"
          }
        }
      }
@@ -42,6 +43,8 @@
    ```
 
 3. Перезапустить Cursor (или перезагрузить MCP).
+
+`PROJECT_ID` можно получить в Dashboard: создайте проект в шапке и скопируйте его ID кнопкой `ID`.
 
 После этого агентам будут доступны инструменты: `list_agents`, `create_thread`, `send_message`, `get_inbox`, `ack_message` и др.
 
@@ -216,7 +219,8 @@ pnpm mcp:build
       "command": "node",
       "args": ["<абсолютный-путь>/mcp-server/dist/index.js"],
       "env": {
-        "MESSAGE_BUS_URL": "http://localhost:3333"
+        "MESSAGE_BUS_URL": "http://localhost:3333",
+        "MESSAGE_BUS_PROJECT_ID": "<PROJECT_ID>"
       }
     }
   }

@@ -77,7 +77,9 @@ async function main(): Promise<void> {
     console.error("  path: .cursor/agents, ./my-registry.json, /abs/path/to/agents");
     console.error("  If path is a folder, registry.json is expected inside it.");
     console.error("");
-    console.error("Environment: MESSAGE_BUS_URL (default: http://localhost:3333)");
+    console.error("Environment:");
+    console.error("  MESSAGE_BUS_URL (default: http://localhost:3333)");
+    console.error("  MESSAGE_BUS_PROJECT_ID (optional project scope)");
     process.exit(1);
   }
 }

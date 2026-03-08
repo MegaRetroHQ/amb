@@ -10,6 +10,7 @@ import fs from "fs/promises";
 import path from "path";
 
 const API_URL = process.env.MESSAGE_BUS_URL ?? "http://localhost:3333";
+const PROJECT_ID = process.env.MESSAGE_BUS_PROJECT_ID;
 
 type Registry = {
   project: string;
@@ -25,7 +26,10 @@ async function createThread(title: string): Promise<{ id: string; title: string 
   try {
     const res = await fetch(`${API_URL}/api/threads`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        ...(PROJECT_ID ? { "x-project-id": PROJECT_ID } : {}),
+      },
       body: JSON.stringify({ title, status: "open" }),
     });
 
@@ -45,7 +49,9 @@ async function createThread(title: string): Promise<{ id: string; title: string 
 
 async function getExistingThreads(): Promise<Set<string>> {
   try {
-    const res = await fetch(`${API_URL}/api/threads`);
+    const res = await fetch(`${API_URL}/api/threads`, {
+      headers: PROJECT_ID ? { "x-project-id": PROJECT_ID } : undefined,
+    });
     if (!res.ok) return new Set();
     const json = await res.json();
     return new Set(json.data.map((t: { title: string }) => t.title));

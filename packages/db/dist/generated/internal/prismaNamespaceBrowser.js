@@ -48,7 +48,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NullsOrder = exports.JsonNullValueFilter = exports.QueryMode = exports.JsonNullValueInput = exports.NullableJsonNullValueInput = exports.SortOrder = exports.IssueScalarFieldEnum = exports.ProjectScalarFieldEnum = exports.TenantScalarFieldEnum = exports.MessageScalarFieldEnum = exports.ThreadScalarFieldEnum = exports.AgentScalarFieldEnum = exports.TransactionIsolationLevel = exports.ModelName = exports.AnyNull = exports.JsonNull = exports.DbNull = exports.NullTypes = exports.Decimal = void 0;
+exports.NullsOrder = exports.JsonNullValueFilter = exports.QueryMode = exports.JsonNullValueInput = exports.NullableJsonNullValueInput = exports.SortOrder = exports.IssueScalarFieldEnum = exports.ProjectScalarFieldEnum = exports.UserScalarFieldEnum = exports.TenantScalarFieldEnum = exports.MessageScalarFieldEnum = exports.ThreadScalarFieldEnum = exports.AgentScalarFieldEnum = exports.TransactionIsolationLevel = exports.ModelName = exports.AnyNull = exports.JsonNull = exports.DbNull = exports.NullTypes = exports.Decimal = void 0;
 const runtime = __importStar(require("@prisma/client/runtime/index-browser"));
 exports.Decimal = runtime.Decimal;
 exports.NullTypes = {
@@ -79,6 +79,7 @@ exports.ModelName = {
     Thread: 'Thread',
     Message: 'Message',
     Tenant: 'Tenant',
+    User: 'User',
     Project: 'Project',
     Issue: 'Issue'
 };
@@ -128,6 +129,18 @@ exports.TenantScalarFieldEnum = {
     name: 'name',
     slug: 'slug',
     createdAt: 'createdAt'
+};
+exports.UserScalarFieldEnum = {
+    id: 'id',
+    tenantId: 'tenantId',
+    email: 'email',
+    passwordHash: 'passwordHash',
+    displayName: 'displayName',
+    roles: 'roles',
+    isActive: 'isActive',
+    lastLoginAt: 'lastLoginAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
 };
 exports.ProjectScalarFieldEnum = {
     id: 'id',

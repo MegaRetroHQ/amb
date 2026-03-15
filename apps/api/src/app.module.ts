@@ -8,6 +8,7 @@ import { MessagesModule } from "./messages/messages.module";
 import { IssuesModule } from "./issues/issues.module";
 import { DlqModule } from "./dlq/dlq.module";
 import { JwtAuthGuard } from "./common/jwt-auth.guard";
+import { AuthModule } from "./auth/auth.module";
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { JwtAuthGuard } from "./common/jwt-auth.guard";
     MessagesModule,
     IssuesModule,
     DlqModule,
+    AuthModule,
   ],
   providers: [
     {

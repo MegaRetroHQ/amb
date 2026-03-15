@@ -23,6 +23,11 @@ export type Message = Prisma.MessageModel;
  */
 export type Tenant = Prisma.TenantModel;
 /**
+ * Model User
+ *
+ */
+export type User = Prisma.UserModel;
+/**
  * Model Project
  *
  */

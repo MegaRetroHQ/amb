@@ -436,4 +436,60 @@ describe("API (e2e)", () => {
         .expect(400);
     });
   });
+
+  describe("user tokens and login (E3-S2)", () => {
+    it("returns 401 for invalid credentials", async () => {
+      await request(app.getHttpServer())
+        .post("/api/auth/login")
+        .send({ email: "admin@local.test", password: "wrong-password" })
+        .expect(401);
+    });
+
+    it("returns user JWT for valid credentials", async () => {
+      const loginRes = await request(app.getHttpServer())
+        .post("/api/auth/login")
+        .send({ email: "admin@local.test", password: "ChangeMe123!" })
+        .expect(200);
+
+      const token = loginRes.body.data?.accessToken as string;
+      expect(typeof token).toBe("string");
+      expect(token.split(".")).toHaveLength(3);
+      expect(loginRes.body.data?.tokenType).toBe("Bearer");
+      expect(loginRes.body.data?.user?.email).toBe("admin@local.test");
+      expect(loginRes.body.data?.user?.roles).toContain("tenant-admin");
+
+      const payload = JSON.parse(
+        Buffer.from(token.split(".")[1] ?? "", "base64url").toString("utf8")
+      ) as {
+        sub: string;
+        tenantId: string;
+        roles: string[];
+      };
+
+      expect(payload.sub).toBe("user");
+      expect(payload.tenantId).toBe(DEFAULT_TENANT_ID);
+      expect(Array.isArray(payload.roles)).toBe(true);
+      expect(payload.roles).toContain("tenant-admin");
+    });
+
+    it("allows project-scoped endpoints with user token and explicit x-project-id", async () => {
+      const projectRes = await request(app.getHttpServer())
+        .post("/api/projects")
+        .send({ name: `E3 Login Project ${Date.now().toString(36)}` })
+        .expect(201);
+      const projectId = projectRes.body.data.id as string;
+
+      const loginRes = await request(app.getHttpServer())
+        .post("/api/auth/login")
+        .send({ email: "admin@local.test", password: "ChangeMe123!" })
+        .expect(200);
+      const token = loginRes.body.data?.accessToken as string;
+
+      await request(app.getHttpServer())
+        .get("/api/agents")
+        .set("Authorization", `Bearer ${token}`)
+        .set("x-project-id", projectId)
+        .expect(200);
+    });
+  });
 });

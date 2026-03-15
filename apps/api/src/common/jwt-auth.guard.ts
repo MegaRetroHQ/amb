@@ -5,8 +5,10 @@ import {
   Injectable,
   UnauthorizedException,
 } from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import type { AuthContext, RequestWithAuth } from "./auth-context";
+import { IS_PUBLIC_KEY } from "./public.decorator";
 
 type JwtHeader = {
   alg?: string;
@@ -15,6 +17,7 @@ type JwtHeader = {
 
 type JwtPayload = {
   sub?: string;
+  userId?: string;
   tenantId?: string;
   projectId?: string;
   roles?: string[];
@@ -44,7 +47,17 @@ function decodeBase64Url(input: string): string {
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
+  constructor(private readonly reflector: Reflector) {}
+
   canActivate(context: ExecutionContext): boolean {
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+    if (isPublic) {
+      return true;
+    }
+
     const request = context.switchToHttp().getRequest<RequestWithAuth>();
     const authHeader = request.headers.authorization;
     const token = this.extractBearerToken(authHeader);
@@ -138,8 +151,20 @@ export class JwtAuthGuard implements CanActivate {
       throw new UnauthorizedException("JWT claim 'tenantId' must be a valid UUID");
     }
 
-    if (typeof payload.projectId !== "string" || !UUID_LIKE_RE.test(payload.projectId)) {
-      throw new UnauthorizedException("JWT claim 'projectId' must be a valid UUID");
+    if (payload.projectId !== undefined) {
+      if (typeof payload.projectId !== "string" || !UUID_LIKE_RE.test(payload.projectId)) {
+        throw new UnauthorizedException("JWT claim 'projectId' must be a valid UUID");
+      }
+    }
+
+    if (payload.sub === "project" && !payload.projectId) {
+      throw new UnauthorizedException("JWT claim 'projectId' is required for project token");
+    }
+
+    if (payload.sub === "user") {
+      if (!Array.isArray(payload.roles) || payload.roles.some((role) => typeof role !== "string")) {
+        throw new UnauthorizedException("JWT claim 'roles' is required for user token");
+      }
     }
 
     return {

@@ -92,6 +92,9 @@ export class ProjectGuard implements CanActivate {
     if (!project) {
       throw new NotFoundException("Project not found");
     }
+    if (tokenTenantId && (!project.tenantId || project.tenantId !== tokenTenantId)) {
+      throw new NotFoundException("Project not found");
+    }
     request.projectId = project.id;
     return true;
   }

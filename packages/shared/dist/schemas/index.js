@@ -20,3 +20,4 @@ __exportStar(require("./threads"), exports);
 __exportStar(require("./messages"), exports);
 __exportStar(require("./projects"), exports);
 __exportStar(require("./issues"), exports);
+__exportStar(require("./auth"), exports);

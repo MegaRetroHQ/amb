@@ -4,3 +4,4 @@ export * from "./threads";
 export * from "./messages";
 export * from "./projects";
 export * from "./issues";
+export * from "./auth";

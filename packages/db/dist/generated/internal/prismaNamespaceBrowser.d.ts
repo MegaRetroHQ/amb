@@ -30,6 +30,7 @@ export declare const ModelName: {
     readonly Thread: "Thread";
     readonly Message: "Message";
     readonly Tenant: "Tenant";
+    readonly User: "User";
     readonly Project: "Project";
     readonly Issue: "Issue";
 };
@@ -83,6 +84,19 @@ export declare const TenantScalarFieldEnum: {
     readonly createdAt: "createdAt";
 };
 export type TenantScalarFieldEnum = (typeof TenantScalarFieldEnum)[keyof typeof TenantScalarFieldEnum];
+export declare const UserScalarFieldEnum: {
+    readonly id: "id";
+    readonly tenantId: "tenantId";
+    readonly email: "email";
+    readonly passwordHash: "passwordHash";
+    readonly displayName: "displayName";
+    readonly roles: "roles";
+    readonly isActive: "isActive";
+    readonly lastLoginAt: "lastLoginAt";
+    readonly createdAt: "createdAt";
+    readonly updatedAt: "updatedAt";
+};
+export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum];
 export declare const ProjectScalarFieldEnum: {
     readonly id: "id";
     readonly tenantId: "tenantId";

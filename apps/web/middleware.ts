@@ -7,7 +7,11 @@ const intlMiddleware = createMiddleware(routing);
 
 function isProtectedLocalePath(pathname: string, locale: string): boolean {
   const base = `/${locale}`;
-  return pathname === base || pathname.startsWith(`${base}/tasks`);
+  return (
+    pathname === base ||
+    pathname.startsWith(`${base}/tasks`) ||
+    pathname.startsWith(`${base}/tokens`)
+  );
 }
 
 function isAuthPath(pathname: string, locale: string): boolean {

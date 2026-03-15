@@ -11,9 +11,14 @@ import { Input } from "@/components/ui/input";
 
 function sanitizeNextPath(nextValue: string | null, locale: string): string {
   if (!nextValue || !nextValue.startsWith(`/${locale}`)) {
-    return `/${locale}`;
+    return "/";
   }
-  return nextValue;
+
+  const withoutLocale = nextValue.slice(`/${locale}`.length);
+  if (!withoutLocale || withoutLocale === "/") {
+    return "/";
+  }
+  return withoutLocale;
 }
 
 export function LoginForm() {

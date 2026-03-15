@@ -9,6 +9,7 @@ import { IssuesModule } from "./issues/issues.module";
 import { DlqModule } from "./dlq/dlq.module";
 import { JwtAuthGuard } from "./common/jwt-auth.guard";
 import { AuthModule } from "./auth/auth.module";
+import { TenantsModule } from "./tenants/tenants.module";
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { AuthModule } from "./auth/auth.module";
     IssuesModule,
     DlqModule,
     AuthModule,
+    TenantsModule,
   ],
   providers: [
     {

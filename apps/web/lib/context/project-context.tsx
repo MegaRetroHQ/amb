@@ -12,6 +12,7 @@ const STORAGE_KEY = "amb-project-id";
 
 export type Project = {
   id: string;
+  tenantId?: string | null;
   name: string;
   slug: string;
   createdAt: string;

@@ -5,6 +5,7 @@ import { verifyPassword } from "./password";
 import type { AuthContext } from "../common/auth-context";
 import { NotFoundError } from "@amb-app/shared";
 import { hashProjectToken } from "./project-token-hash";
+import { resolveJwtSecret } from "./jwt-secret";
 
 const USER_TOKEN_TTL_SECONDS = 60 * 60;
 const PROJECT_TOKEN_TTL_SECONDS = 60 * 60 * 24 * 30;
@@ -40,7 +41,7 @@ export class AuthService {
       throw new UnauthorizedException("Invalid email or password");
     }
 
-    const secret = process.env.JWT_SECRET;
+    const secret = resolveJwtSecret();
     if (!secret) {
       throw new UnauthorizedException("JWT_SECRET is not configured");
     }
@@ -84,7 +85,7 @@ export class AuthService {
   ) {
     const authUser = await this.resolveAdminContext(auth, projectId);
 
-    const secret = process.env.JWT_SECRET;
+    const secret = resolveJwtSecret();
     if (!secret) {
       throw new UnauthorizedException("JWT_SECRET is not configured");
     }

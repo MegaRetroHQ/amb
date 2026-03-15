@@ -7,6 +7,9 @@ import type {
   Thread,
   Message,
   Project,
+  Tenant,
+  ProjectToken,
+  ProjectTokenIssueResult,
   Issue,
   ApiResponse,
   CreateAgentInput,
@@ -17,6 +20,8 @@ import type {
   UpdateThreadInput,
   WaitForResponseOptions,
   CreateProjectInput,
+  UpdateProjectInput,
+  CreateProjectTokenInput,
   CreateIssueInput,
   UpdateIssueInput,
   ListIssuesQuery,
@@ -267,6 +272,48 @@ export class MessageBusClient {
       method: "POST",
       body: JSON.stringify(input),
     });
+    return res.data;
+  }
+
+  async updateProject(projectId: string, input: UpdateProjectInput): Promise<Project> {
+    const res = await this.fetch<ApiResponse<Project>>(`/api/projects/${projectId}`, {
+      method: "PATCH",
+      body: JSON.stringify(input),
+    });
+    return res.data;
+  }
+
+  async listTenants(): Promise<Tenant[]> {
+    const res = await this.fetch<ApiResponse<Tenant[]>>("/api/tenants");
+    return res.data;
+  }
+
+  async listProjectTokens(projectId: string): Promise<ProjectToken[]> {
+    const res = await this.fetch<ApiResponse<ProjectToken[]>>(
+      `/api/admin/projects/${projectId}/tokens`
+    );
+    return res.data;
+  }
+
+  async createProjectToken(
+    projectId: string,
+    input: CreateProjectTokenInput
+  ): Promise<ProjectTokenIssueResult> {
+    const res = await this.fetch<ApiResponse<ProjectTokenIssueResult>>(
+      `/api/admin/projects/${projectId}/tokens`,
+      {
+        method: "POST",
+        body: JSON.stringify(input),
+      }
+    );
+    return res.data;
+  }
+
+  async revokeProjectToken(projectId: string, tokenId: string): Promise<ProjectToken> {
+    const res = await this.fetch<ApiResponse<ProjectToken>>(
+      `/api/admin/projects/${projectId}/tokens/${tokenId}/revoke`,
+      { method: "POST" }
+    );
     return res.data;
   }
 

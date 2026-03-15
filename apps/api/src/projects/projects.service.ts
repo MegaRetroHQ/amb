@@ -89,4 +89,14 @@ export class ProjectsService {
     if (!project) throw new NotFoundError("Project");
     return project;
   }
+
+  async update(id: string, name: string) {
+    await this.getById(id);
+    return this.prisma.project.update({
+      where: { id },
+      data: {
+        name: name.trim(),
+      },
+    });
+  }
 }

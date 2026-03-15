@@ -11,6 +11,7 @@ import type { AuthContext, RequestWithAuth } from "./auth-context";
 import { IS_PUBLIC_KEY } from "./public.decorator";
 import { PrismaService } from "../prisma/prisma.service";
 import { hashProjectToken } from "../auth/project-token-hash";
+import { resolveJwtSecret } from "../auth/jwt-secret";
 
 type JwtHeader = {
   alg?: string;
@@ -99,7 +100,7 @@ export class JwtAuthGuard implements CanActivate {
   }
 
   private verifyToken(token: string): AuthContext {
-    const secret = process.env.JWT_SECRET;
+    const secret = resolveJwtSecret();
     if (!secret) {
       throw new UnauthorizedException("JWT_SECRET is not configured");
     }

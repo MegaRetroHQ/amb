@@ -9,12 +9,54 @@ export type { Agent, Thread, Message, Issue };
 
 export interface Project {
   id: string;
+  tenantId?: string | null;
   name: string;
   slug: string;
+  createdAt?: string;
+}
+
+export interface Tenant {
+  id: string;
+  name: string;
+  slug: string;
+  createdAt: string;
 }
 
 export interface CreateProjectInput {
   name: string;
+}
+
+export interface UpdateProjectInput {
+  name: string;
+}
+
+export interface ProjectToken {
+  id: string;
+  name: string;
+  issuedBy: string | null;
+  createdAt: string;
+  updatedAt: string;
+  lastUsedAt: string | null;
+  expiresAt: string | null;
+  revokedAt: string | null;
+}
+
+export interface ProjectTokenIssueResult {
+  accessToken: string;
+  tokenType: string;
+  expiresIn: number;
+  claims: {
+    sub: string;
+    tenantId: string;
+    projectId: string;
+    type: string;
+    jti: string;
+  };
+}
+
+export interface CreateProjectTokenInput {
+  name: string;
+  expiresIn?: number;
 }
 
 export interface CreateIssueInput {

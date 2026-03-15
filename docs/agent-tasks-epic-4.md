@@ -1,6 +1,6 @@
 # Задачи агентов: Epic 4 — Dashboard как продукт
 
-**Обновлено:** 2026-03-15 (Orchestrator). E4-S1…E4-S3 Done. E4-S4 в работе.  
+**Обновлено:** 2026-03-16 (Orchestrator). E4-S1…E4-S6 Done. Epic 4 завершён.  
 **Тред:** [feature-workflow-epic-4.md](./feature-workflow-epic-4.md)  
 **Message Bus:** тред `fb0290b6-57a7-45ea-89c2-7d7af8bae5f8`
 
@@ -24,25 +24,21 @@ auth.ts (JWT/cookie, httpOnly set/clear), api/auth/login|logout|session, client.
 
 Prisma/@amb-app/db удалены из apps/web; lib/prisma.ts, lib/services/*, prisma.*, scripts (retry-worker, cleanup, reset-db); package.json и root scripts обновлены; Dockerfile без apps/web/prisma. build/typecheck pass.
 
-### Текущая задача: E4-S4 — User authentication flow
+### ✅ E4-S4 — User authentication flow (Done)
 
-**Статус:** In progress | **area:** frontend
+/[locale]/login, protected routes (middleware + server auth gate), logout в header, session check + re-login redirect при expiry/401 (backend /api/auth/refresh нет — реализовано через session-check). httpOnly cookie, i18n Auth/logout. build/typecheck pass.
 
-**Сделать:**
-1. Проверить backend refresh endpoint.
-2. Login page + protected dashboard access.
-3. Refresh/session-renewal стратегия на текущем API.
+### ✅ E4-S5 — Tenant/Project management UI (Done)
 
-**AC:** Login страница; JWT storage (httpOnly cookies); refresh flow.  
-**Справочно:** [backlog](./backlog.md) Epic 4.
+ProjectSwitcher: список tenant/project, фильтрация по tenant, создание проекта, редактирование имени проекта, переключение контекста (projectId) и копирование projectId.  
 
-### Очередь (Frontend)
+### ✅ E4-S6 — Token management UI (Done)
 
-| Story   | Задача |
-|---------|--------|
-| E4-S4   | User authentication flow: Login страница, JWT storage (httpOnly cookies), refresh flow |
-| E4-S5   | Tenant/Project management UI: список tenant/project, создание/редактирование, переключение контекста |
-| E4-S6   | Token management UI: список project tokens, создание, revocation, копирование |
+/[locale]/tokens + TokensModule: список project tokens, создание токена, отображение выданного access token с копированием, revoke токена.
+
+### Следующая задача (Frontend)
+
+Epic 5 / E5-S1 — обновить SDK с JWT-поддержкой и auth error handling.
 
 ---
 

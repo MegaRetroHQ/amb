@@ -2,7 +2,7 @@
 
 **Версия:** 1.0  
 **Дата:** 2026-01-28  
-**Последняя проверка статуса:** 2026-03-15 (Orchestrator). Epic 1–3 завершены. Epic 4: E4-S1…E4-S3 — Done; E4-S4 — в работе (react-next-engineer).  
+**Последняя проверка статуса:** 2026-03-16 (Orchestrator). Epic 1–4 завершены. Epic 5: E5-S1 — в работе (react-next-engineer).  
 **Автор:** Product Owner Agent  
 **Статус:** Актуально
 
@@ -16,7 +16,7 @@
 | [E1: Архитектурная миграция](#epic-1-архитектурная-миграция)           | P0        | ✅ Done        | Sprint 1-2 |
 | [E2: Multi-tenant инфраструктура](#epic-2-multi-tenant-инфраструктура) | P0        | ✅ Done        | Sprint 2-3 |
 | [E3: JWT авторизация](#epic-3-jwt-авторизация)                         | P0        | ✅ Done        | Sprint 3-4 |
-| [E4: Dashboard как продукт](#epic-4-dashboard-как-продукт)             | P0        | 🚧 In Progress | Sprint 4-5 |
+| [E4: Dashboard как продукт](#epic-4-dashboard-как-продукт)             | P0        | ✅ Done        | Sprint 4-5 |
 | [E5: Developer Experience](#epic-5-developer-experience)               | P1        | 📋 Planned     | Sprint 5-6 |
 | [E6: Операционная готовность](#epic-6-операционная-готовность)         | P1        | 📋 Planned     | Sprint 6-7 |
 | [E7: Локализация (i18n)](#epic-7-локализация-i18n)                     | P1        | 📋 Planned     | Sprint 6-7 |
@@ -114,9 +114,9 @@
 | E4-S1 | Создать `apps/web` (Next.js Dashboard) | P0        | ✅ Done    | • Next.js Dashboard • Структура сохранена • HTTP клиент к apps/api (getApiClient, @amb-app/sdk) |
 | E4-S2 | HTTP клиент к `apps/api`               | P0        | ✅ Done    | • auth.ts JWT/cookie • login/logout/session routes • client token+projectId • http.ts ApiHttpError • typecheck pass |
 | E4-S3 | Удалить прямой доступ к БД             | P0        | ✅ Done    | • Prisma/@amb-app/db удалены из apps/web • scripts/DB-слой убраны • build/typecheck pass     |
-| E4-S4 | User authentication flow               | P0        | 🚧 In Progress | • Login страница • JWT storage (httpOnly) • Refresh flow (в работе)                       |
-| E4-S5 | Tenant/Project management UI           | P0        | 📋 Planned      | • Список tenant'ов и проектов • Создание/редактирование • Переключение контекста             |
-| E4-S6 | Token management UI                    | P0        | 📋 Planned      | • Список project tokens • Создание токенов • Revocation токенов • Копирование токенов        |
+| E4-S4 | User authentication flow               | P0        | ✅ Done    | • /[locale]/login • protected routes (middleware + server auth gate) • session check + re-login on 401 • httpOnly • build/typecheck pass |
+| E4-S5 | Tenant/Project management UI           | P0        | ✅ Done    | • ProjectSwitcher: список tenant/project • создание и редактирование проекта • переключение контекста и сохранение projectId |
+| E4-S6 | Token management UI                    | P0        | ✅ Done    | • /[locale]/tokens + TokensModule • список project tokens • создание, revoke и копирование токена |
 
 
 **Definition of Done:**
@@ -137,7 +137,7 @@
 
 | ID    | Story                                   | Приоритет | Статус     | Acceptance Criteria                                                                        |
 | ----- | --------------------------------------- | --------- | ---------- | ------------------------------------------------------------------------------------------ |
-| E5-S1 | Обновить SDK с JWT поддержкой           | P1        | 📋 Planned      | • `createClient({ baseUrl, token })` • Автоматическая передача JWT • Обработка ошибок auth |
+| E5-S1 | Обновить SDK с JWT поддержкой           | P1        | 🚧 In Progress | • `createClient({ baseUrl, token })` • Автоматическая передача JWT • Обработка ошибок auth |
 | E5-S2 | Документация по интеграции              | P1        | 📋 Planned      | • Quick start guide • API reference • Примеры кода                                         |
 | E5-S3 | Docker Compose для локальной разработки | P1        | 📋 Planned      | • `docker compose up` запускает все • DB + API + Web • Seed данные                         |
 | E5-S4 | Migration guide                         | P1        | 📋 Planned      | • Guide для v1 → vNext • SDK migration steps • Breaking changes список                     |
@@ -283,4 +283,3 @@
 - [Product Vision](./product-vision.md)
 - [Productization Plan](./productization-multi-tenant-nestjs.md)
 - [Architecture](./architecture.md)
-

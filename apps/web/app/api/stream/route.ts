@@ -1,5 +1,6 @@
 import { resolveProjectId } from "@/lib/api/project-context";
 import { getApiClient } from "@/lib/api/client";
+import { handleApiError } from "@/lib/api/errors";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -35,7 +36,12 @@ async function getDlqCount(projectId: string): Promise<number> {
 }
 
 export async function GET(req: Request) {
-  const project = await resolveProjectId(req);
+  let project;
+  try {
+    project = await resolveProjectId(req);
+  } catch (error) {
+    return handleApiError(error);
+  }
   if (project.error) {
     return project.error;
   }

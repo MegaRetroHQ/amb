@@ -25,9 +25,20 @@ createClient({ baseUrl, token }), Authorization Bearer + x-project-id, MessageBu
 
 | Story   | Задача |
 |---------|--------|
-| E5-S3   | Docker Compose: docker compose up запускает DB + API + Web, seed данные (текущая) |
+| E5-S3   | Docker Compose: docker compose up запускает DB + API + Web, seed данные ✅ |
 | E5-S4   | Migration guide: v1 → vNext, SDK migration steps, breaking changes |
 | E5-S5   | Примеры интеграций: разные языки, best practices, common patterns |
+
+### ✅ E5-S3 — Docker Compose для локальной разработки (Done)
+
+Сделано:
+1. `docker-compose.yml`: `postgres + api + web + seed`.
+2. Добавлен `apps/web/scripts/seed-docker.ts` (login -> token -> project -> seed agents/threads).
+3. Проверка запуска: `docker compose up -d --build` с портами `API_PORT=4334 WEB_PORT=4333`; `api/web` healthy, `seed` завершается с кодом `0`.
+
+### Текущая задача: E5-S4 — Migration guide
+
+**Статус:** In progress
 
 ---
 
@@ -37,4 +48,4 @@ createClient({ baseUrl, token }), Authorization Bearer + x-project-id, MessageBu
 
 ## QA
 
-**Queued:** проверка документации (после E5-S2), docker compose up (после E5-S3).
+**Queued:** проверка docker compose и migration guide (после E5-S4).

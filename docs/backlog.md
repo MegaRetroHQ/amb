@@ -2,7 +2,7 @@
 
 **Версия:** 1.0  
 **Дата:** 2026-01-28  
-**Последняя проверка статуса:** 2026-03-16 (Orchestrator). Инбокс пуст. Epic 1–4 завершены; Epic 5: E5-S1, E5-S2 — Done, E5-S3 — в работе (react-next-engineer).  
+**Последняя проверка статуса:** 2026-03-16 (Orchestrator). Инбокс пуст. Epic 1–4 завершены; Epic 5: E5-S1…E5-S3 — Done, E5-S4 — в работе (react-next-engineer).  
 **Автор:** Product Owner Agent  
 **Статус:** Актуально
 
@@ -139,8 +139,8 @@
 | ----- | --------------------------------------- | --------- | ---------- | ------------------------------------------------------------------------------------------ |
 | E5-S1 | Обновить SDK с JWT поддержкой           | P1        | ✅ Done    | • `createClient({ baseUrl, token })` • Authorization Bearer + x-project-id • MessageBusError: isUnauthorized/isForbidden/isAuthError |
 | E5-S2 | Документация по интеграции              | P1        | ✅ Done    | • Quick start: docs/integration-guide.md • API reference: docs/api.md (+ auth headers) • Примеры кода: README + docs/getting-started.md |
-| E5-S3 | Docker Compose для локальной разработки | P1        | 🚧 In Progress | • `docker compose up` запускает все • DB + API + Web • Seed данные                         |
-| E5-S4 | Migration guide                         | P1        | 📋 Planned      | • Guide для v1 → vNext • SDK migration steps • Breaking changes список                     |
+| E5-S3 | Docker Compose для локальной разработки | P1        | ✅ Done    | • docker-compose: postgres + api + web + seed • auth-aware seed script • проверка `compose up` (api/web healthy, seed exit 0) |
+| E5-S4 | Migration guide                         | P1        | 🚧 In Progress | • Guide для v1 → vNext • SDK migration steps • Breaking changes список                     |
 | E5-S5 | Примеры интеграций                      | P1        | 📋 Planned      | • Примеры для разных языков • Best practices • Common patterns                             |
 
 

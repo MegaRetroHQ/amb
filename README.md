@@ -80,23 +80,30 @@ pnpm seed:agents
 ### Вариант 2: Полный запуск в Docker/Podman
 
 ```bash
-# Собрать и запустить PostgreSQL + Next.js приложение (дождитесь запуска обоих контейнеров)
-docker compose up -d --build
+# Предусловие: зависимости уже установлены (pnpm install)
+
+# Поднять полный стек: postgres + migrate + api + web + seed
+docker compose up --build
 # или: podman compose up -d --build
-
-# Применить миграции внутри контейнера app
-docker compose exec app pnpm db:migrate:deploy
-# или: podman compose exec app pnpm db:migrate:deploy
-
-# Засеять данные
-docker compose exec app pnpm seed:agents
 ```
 
-Если при запуске сидов в контейнере возникает `ECONNREFUSED`, засевайте с хоста (приложение должно быть запущено и доступно на порту 3333): `MESSAGE_BUS_URL=http://localhost:3333 pnpm seed:agents`.
+Если порты заняты, переопределите их перед запуском:
 
-Если контейнер `app` не запущен, миграции можно применить с хоста (при настроенном `DATABASE_URL` в `.env`): `pnpm db:migrate:deploy`.
+```bash
+API_PORT=4334 WEB_PORT=4333 docker compose up --build
+```
 
-Откройте [http://localhost:3333](http://localhost:3333)
+После старта:
+- Web: [http://localhost:3333](http://localhost:3333)
+- API: [http://localhost:3334](http://localhost:3334)
+- Seed-данные создаются сервисом `seed` автоматически.
+
+Если нужен фоновый режим:
+
+```bash
+docker compose up -d --build
+docker compose logs -f seed
+```
 
 > **Важно:** MCP-сервер запускается локально в вашем MCP-клиенте (Cursor, Codex, Claude Code и т.д.), не в Docker.
 
@@ -127,6 +134,7 @@ pnpm reset-db          # Сбросить БД и засеять заново
 ## Документация API
 
 Полное описание API с примерами: [docs/api.md](docs/api.md).
+Быстрый гайд интеграции (SDK + REST + примеры): [docs/integration-guide.md](docs/integration-guide.md).
 
 Краткая справка:
 
@@ -138,9 +146,13 @@ pnpm reset-db          # Сбросить БД и засеять заново
 ## Использование SDK
 
 ```typescript
-import { createClient } from "./lib/sdk";
+import { createClient, MessageBusError } from "@amb-app/sdk";
 
-const client = createClient("http://localhost:3333", "<PROJECT_ID>");
+const client = createClient({
+  baseUrl: "http://localhost:3333",
+  token: process.env.AMB_TOKEN,
+  projectId: process.env.AMB_PROJECT_ID,
+});
 
 // Регистрация агента
 const agent = await client.registerAgent({
@@ -163,6 +175,14 @@ for await (const messages of client.pollInbox(agent.id)) {
   for (const msg of messages) {
     console.log(msg.payload);
     await client.ackMessage(msg.id);
+  }
+}
+
+try {
+  await client.listThreads();
+} catch (error) {
+  if (error instanceof MessageBusError && error.isAuthError) {
+    console.error("AMB auth error, check token/project scope");
   }
 }
 ```
@@ -226,13 +246,17 @@ curl http://localhost:3333/api/agents
 Скопировать файлы SDK в проект для типизированного клиента:
 
 ```bash
-cp -r lib/sdk your-project/lib/message-bus-sdk
+cp -r packages/sdk/src your-project/lib/message-bus-sdk
 ```
 
 ```typescript
 import { createClient } from "./lib/message-bus-sdk";
 
-const client = createClient("http://localhost:3333");
+const client = createClient({
+  baseUrl: "http://localhost:3333",
+  token: process.env.AMB_TOKEN,
+  projectId: process.env.AMB_PROJECT_ID,
+});
 const agent = await client.registerAgent({ name: "my-service", role: "worker" });
 ```
 
@@ -352,7 +376,7 @@ Agent A                    Message Bus                    Agent B
 
 | Переменная | Описание | По умолчанию |
 |------------|----------|--------------|
-| `DATABASE_URL` | Строка подключения к PostgreSQL | `postgresql://postgres:postgres@localhost:5432/messagebus` |
+| `DATABASE_URL` | Строка подключения к PostgreSQL | `postgresql://postgres:postgres@localhost:5432/amb` |
 | `PORT` | Порт сервера | `3333` |
 | `MESSAGE_BUS_PROJECT_ID` | ID проекта для CLI/MCP/SDK запросов | `00000000-0000-0000-0000-000000000001` |
 

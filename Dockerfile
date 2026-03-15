@@ -16,7 +16,7 @@ RUN pnpm install --frozen-lockfile
 FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN pnpm turbo build --filter=mcp-message-bus
+RUN pnpm turbo build --filter=amb-web
 
 # Runner
 FROM base AS runner

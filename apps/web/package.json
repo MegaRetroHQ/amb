@@ -1,5 +1,5 @@
 {
-  "name": "mcp-message-bus",
+  "name": "amb-web",
   "version": "0.1.2",
   "private": true,
   "scripts": {

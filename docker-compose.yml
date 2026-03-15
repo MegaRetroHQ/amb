@@ -58,8 +58,8 @@ services:
     command: >
       sh -lc "corepack enable &&
       pnpm install --frozen-lockfile &&
-      pnpm --filter mcp-message-bus build &&
-      pnpm --filter mcp-message-bus start"
+      pnpm --filter amb-web build &&
+      pnpm --filter amb-web start"
     depends_on:
       - api
     ports:
@@ -87,7 +87,7 @@ services:
       pnpm install --frozen-lockfile &&
       until nc -z api 3334; do echo 'waiting for api...'; sleep 2; done &&
       until nc -z web 3333; do echo 'waiting for web...'; sleep 2; done &&
-      pnpm --filter mcp-message-bus run seed:docker"
+      pnpm --filter amb-web run seed:docker"
     depends_on:
       - web
     restart: "no"

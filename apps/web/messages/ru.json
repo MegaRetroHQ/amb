@@ -35,9 +35,19 @@
     "realtime": "В реальном времени",
     "lightTheme": "Светлая тема",
     "darkTheme": "Тёмная тема",
+    "logout": "Выйти",
     "messages": "Сообщения",
     "inbox": "Входящие",
     "errors": "Ошибки"
+  },
+  "Auth": {
+    "title": "Вход",
+    "subtitle": "Войдите под пользовательским токеном для доступа к панели.",
+    "email": "Email",
+    "password": "Пароль",
+    "signIn": "Войти",
+    "signingIn": "Вход...",
+    "loginFailed": "Неверный email или пароль"
   },
   "CommandPalette": {
     "title": "Командная палитра",

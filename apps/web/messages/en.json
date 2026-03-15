@@ -35,9 +35,19 @@
     "realtime": "Real-time",
     "lightTheme": "Light theme",
     "darkTheme": "Dark theme",
+    "logout": "Log out",
     "messages": "Messages",
     "inbox": "Inbox",
     "errors": "Errors"
+  },
+  "Auth": {
+    "title": "Sign in",
+    "subtitle": "Use your user token account to access the dashboard.",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign in",
+    "signingIn": "Signing in...",
+    "loginFailed": "Invalid email or password"
   },
   "CommandPalette": {
     "title": "Command palette",

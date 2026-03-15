@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { clearAccessTokenCookie, decodeJwtPayload, getRequestAuthToken } from "@/lib/api/auth";
+import { clearAccessTokenCookie, getRequestAuthToken } from "@/lib/api/auth";
+import { decodeJwtPayload, isJwtExpired } from "@/lib/auth/jwt";
 
 export async function GET(request: Request) {
   const token = getRequestAuthToken(request);
@@ -15,7 +16,7 @@ export async function GET(request: Request) {
   }
 
   const expiresAtMs = payload.exp * 1000;
-  if (Date.now() >= expiresAtMs) {
+  if (isJwtExpired(payload)) {
     const response = NextResponse.json({ data: { authenticated: false } }, { status: 401 });
     clearAccessTokenCookie(response);
     return response;

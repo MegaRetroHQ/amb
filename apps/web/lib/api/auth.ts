@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-
-export const ACCESS_TOKEN_COOKIE_NAME = "amb_access_token";
+import { ACCESS_TOKEN_COOKIE_NAME } from "@/lib/auth/constants";
 
 function parseBearerToken(authorization: string | null): string | undefined {
   if (!authorization) return undefined;
@@ -51,31 +50,4 @@ export function clearAccessTokenCookie(response: NextResponse) {
     path: "/",
     maxAge: 0,
   });
-}
-
-type JwtPayload = {
-  sub?: string;
-  userId?: string;
-  tenantId?: string;
-  projectId?: string;
-  roles?: string[];
-  type?: string;
-  iat?: number;
-  exp?: number;
-};
-
-export function decodeJwtPayload(token: string): JwtPayload | null {
-  const parts = token.split(".");
-  if (parts.length !== 3 || !parts[1]) return null;
-
-  try {
-    const payload = parts[1];
-    const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
-    const padLength = (4 - (normalized.length % 4)) % 4;
-    const padded = normalized + "=".repeat(padLength);
-    const json = Buffer.from(padded, "base64").toString("utf8");
-    return JSON.parse(json) as JwtPayload;
-  } catch {
-    return null;
-  }
 }

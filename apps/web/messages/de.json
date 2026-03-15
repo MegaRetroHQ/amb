@@ -35,9 +35,19 @@
     "realtime": "Echtzeit",
     "lightTheme": "Hell",
     "darkTheme": "Dunkel",
+    "logout": "Abmelden",
     "messages": "Nachrichten",
     "inbox": "Eingang",
     "errors": "Fehler"
+  },
+  "Auth": {
+    "title": "Anmelden",
+    "subtitle": "Melden Sie sich mit Ihrem Benutzertoken-Konto an.",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "signIn": "Anmelden",
+    "signingIn": "Anmeldung...",
+    "loginFailed": "Ungültige E-Mail oder Passwort"
   },
   "CommandPalette": {
     "title": "Befehlspalette",

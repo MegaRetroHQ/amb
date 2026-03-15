@@ -1,15 +1,21 @@
 # Agent Message Bus (AMB)
 
-Локальная шина сообщений для оркестрации ИИ-агентов. Репозиторий: [github.com/bizmedia/amb](https://github.com/bizmedia/amb).
+Агенты могут работать в разных средах: один — в Cursor, другой — в Codex, третий — в Claude Code или в своём сервисе. **AMB** — общая шина сообщений: все подключаются по REST API, SDK или MCP и обмениваются задачами и сообщениями в тредах с доставкой, ACK, retry и DLQ.
+
+Репозиторий: [github.com/bizmedia/amb](https://github.com/bizmedia/amb).
 
 ![Dashboard](docs/screen.png)
+
+## Зачем это нужно
+
+Несколько ИИ-агентов (PO, Architect, Dev, QA в Cursor, Codex, Claude Code или свои воркеры) должны передавать друг другу задачи и контекст. Без общей шины это ad-hoc скрипты, потеря сообщений, сложная отладка. AMB даёт треды (темы задач), inbox на каждого агента, подтверждение доставки (ACK), повторы и DLQ. Подключение: REST API, TypeScript SDK или MCP в Cursor, Codex, Claude Code и других клиентах — агенты в чате или воркеры могут создавать треды, слать сообщения, смотреть inbox и DLQ. **Для кого:** разработчики и команды, которые используют несколько ИИ-агентов в разных средах и хотят координировать их через единый поток сообщений локально, без облака.
 
 ## Чем является (текущее состояние)
 
 - **Локальный dev-инструмент** — запуск на своей машине или в Docker; без облачного сервиса.
 - **Шина сообщений** — треды, inbox, ACK, retry, DLQ для оркестрации ИИ-агентов.
 - **Монолит на Next.js** — одно приложение: REST API + Dashboard UI, PostgreSQL.
-- **SDK + MCP** — TypeScript SDK и MCP-сервер для Cursor (и других MCP-клиентов).
+- **SDK + MCP** — TypeScript SDK и MCP-сервер для Cursor, Codex, Claude Code и других MCP-клиентов.
 - **Без аутентификации** — открытый API для локального использования; сценарий одного пользователя / одного проекта.
 - **Ориентация на разработку** — быстрый старт, seed агентов, примеры, сценарии оркестратора.
 
@@ -27,7 +33,7 @@
 - Обмен сообщениями между агентами в рамках тредов
 - Inbox с ACK, retry и DLQ
 - TypeScript SDK
-- Интеграция с MCP-сервером
+- Интеграция с MCP-сервером (Cursor, Codex, Claude Code и др.)
 - Dashboard UI
 - Сценарии оркестратора
 
@@ -81,7 +87,7 @@ docker compose exec app pnpm seed:agents
 
 Откройте [http://localhost:3333](http://localhost:3333)
 
-> **Важно:** MCP-сервер запускается локально через Cursor (stdio), не в Docker.
+> **Важно:** MCP-сервер запускается локально в вашем MCP-клиенте (Cursor, Codex, Claude Code и т.д.), не в Docker.
 
 ### Команды для работы с БД
 
@@ -188,6 +194,8 @@ pnpm install && pnpm mcp:build
 - `get_inbox`, `ack_message`
 - `get_dlq`
 
+Аналогично настраивается MCP в Codex, Claude Code и других клиентах с поддержкой MCP (конфиг зависит от клиента).
+
 ## Использование в другом проекте
 
 ### Вариант 1: Сервис в Docker (рекомендуется)
@@ -217,9 +225,9 @@ const client = createClient("http://localhost:3333");
 const agent = await client.registerAgent({ name: "my-service", role: "worker" });
 ```
 
-### Вариант 3: MCP в Cursor (AMB в Docker, подключаемся из другого проекта)
+### Вариант 3: MCP в Cursor, Codex или другом клиенте (AMB в Docker, подключаемся из другого проекта)
 
-Если AMB развёрнут в Docker и доступен на `http://localhost:3333`, а вы работаете в другом репозитории (например, `cloudpbx-ui`), можно подключить MCP **через npm-пакет** (рекомендуется) или по пути к клону AMB.
+Если AMB развёрнут в Docker и доступен на `http://localhost:3333`, а вы работаете в другом репозитории (например, `cloudpbx-ui`), можно подключить MCP **через npm-пакет** (рекомендуется) или по пути к клону AMB. Ниже — пример для Cursor; в Codex, Claude Code и других MCP-клиентах конфиг задаётся аналогично (см. документацию клиента).
 
 #### Через npm-пакет @bizmedia/amb-mcp (рекомендуется)
 
@@ -274,7 +282,7 @@ const agent = await client.registerAgent({ name: "my-service", role: "worker" })
    }
    ```
 
-Перезапустите Cursor или перезагрузите MCP-серверы — в чате появятся инструменты `list_agents`, `send_message`, `get_inbox` и др.
+Перезапустите Cursor (или другой MCP-клиент) / перезагрузите MCP-серверы — в чате появятся инструменты `list_agents`, `send_message`, `get_inbox` и др.
 
 Подробнее: [docs/getting-started.md](docs/getting-started.md).
 

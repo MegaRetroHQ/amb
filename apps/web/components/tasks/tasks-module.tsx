@@ -1,6 +1,7 @@
 "use client";
 
 import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import { ArrowLeftIcon, FileTextIcon, PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
@@ -76,6 +77,8 @@ function toFormState(issue: Issue): IssueFormState {
 }
 
 export function TasksModule({ projectId, projectName }: TasksModuleProps) {
+  const t = useTranslations("Tasks");
+  const tCommon = useTranslations("Common");
   const [viewMode, setViewMode] = useState<ViewMode>("list");
   const [sortMode, setSortMode] = useState<"created_desc" | "due_asc" | "priority_desc">("created_desc");
 
@@ -153,7 +156,7 @@ export function TasksModule({ projectId, projectName }: TasksModuleProps) {
 
   const submitCreate = async () => {
     if (!form.title.trim()) {
-      setFormError("Title is required");
+      setFormError(t("titleRequired"));
       return;
     }
 
@@ -169,7 +172,7 @@ export function TasksModule({ projectId, projectName }: TasksModuleProps) {
       });
       closeDialogs();
     } catch (submitError) {
-      setFormError(submitError instanceof Error ? submitError.message : "Failed to create issue");
+      setFormError(submitError instanceof Error ? submitError.message : t("failedToCreateIssue"));
     } finally {
       setSubmitting(false);
     }
@@ -181,7 +184,7 @@ export function TasksModule({ projectId, projectName }: TasksModuleProps) {
     }
 
     if (!form.title.trim()) {
-      setFormError("Title is required");
+      setFormError(t("titleRequired"));
       return;
     }
 
@@ -197,7 +200,7 @@ export function TasksModule({ projectId, projectName }: TasksModuleProps) {
       });
       closeDialogs();
     } catch (submitError) {
-      setFormError(submitError instanceof Error ? submitError.message : "Failed to update issue");
+      setFormError(submitError instanceof Error ? submitError.message : t("failedToUpdateIssue"));
     } finally {
       setSubmitting(false);
     }
@@ -212,7 +215,7 @@ export function TasksModule({ projectId, projectName }: TasksModuleProps) {
       await deleteIssue(deleteIssueId);
       setDeleteIssueId(null);
     } catch (deleteError) {
-      setFormError(deleteError instanceof Error ? deleteError.message : "Failed to delete issue");
+      setFormError(deleteError instanceof Error ? deleteError.message : t("failedToDeleteIssue"));
     }
   };
 
@@ -243,12 +246,12 @@ export function TasksModule({ projectId, projectName }: TasksModuleProps) {
               <Button asChild variant="ghost" size="sm" className="gap-2 px-2">
                 <Link href="/">
                   <ArrowLeftIcon className="size-4" />
-                  Back to Dashboard
+                  {t("backToDashboard")}
                 </Link>
               </Button>
             </div>
-            <h1 className="text-2xl font-semibold">Tasks</h1>
-            <p className="text-sm text-muted-foreground">Project: {projectName}</p>
+            <h1 className="text-2xl font-semibold">{t("tasksTitle")}</h1>
+            <p className="text-sm text-muted-foreground">{t("projectLabel")}: {projectName}</p>
           </div>
 
           <div className="flex items-center gap-2">
@@ -258,14 +261,14 @@ export function TasksModule({ projectId, projectName }: TasksModuleProps) {
                 variant={viewMode === "list" ? "default" : "ghost"}
                 onClick={() => setAndStoreViewMode("list")}
               >
-                List
+                {t("list")}
               </Button>
               <Button
                 size="sm"
                 variant={viewMode === "kanban" ? "default" : "ghost"}
                 onClick={() => setAndStoreViewMode("kanban")}
               >
-                Kanban
+                {t("kanban")}
               </Button>
             </div>
 
@@ -273,13 +276,13 @@ export function TasksModule({ projectId, projectName }: TasksModuleProps) {
               <DialogTrigger asChild>
                 <Button onClick={openCreateDialog} className="gap-2">
                   <PlusIcon className="size-4" />
-                  New Issue
+                  {t("newIssue")}
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-2xl">
                 <DialogHeader>
-                  <DialogTitle>Create Issue</DialogTitle>
-                  <DialogDescription>Add a new task to the project.</DialogDescription>
+                  <DialogTitle>{t("createIssue")}</DialogTitle>
+                  <DialogDescription>{t("createIssueDesc")}</DialogDescription>
                 </DialogHeader>
                 <IssueForm
                   form={form}
@@ -290,10 +293,10 @@ export function TasksModule({ projectId, projectName }: TasksModuleProps) {
                 />
                 <DialogFooter>
                   <Button variant="outline" onClick={closeDialogs}>
-                    Cancel
+                    {tCommon("cancel")}
                   </Button>
                   <Button onClick={submitCreate} disabled={submitting}>
-                    Create
+                    {tCommon("create")}
                   </Button>
                 </DialogFooter>
               </DialogContent>
@@ -308,7 +311,7 @@ export function TasksModule({ projectId, projectName }: TasksModuleProps) {
               value={filters.state ?? "ALL"}
               onChange={(event) => setFilters((prev) => ({ ...prev, state: event.target.value as IssueState | "ALL" }))}
             >
-              <option value="ALL">All states</option>
+              <option value="ALL">{t("allStates")}</option>
               {ISSUE_STATES.map((state) => (
                 <option key={state} value={state}>
                   {ISSUE_STATE_LABELS[state]}
@@ -323,7 +326,7 @@ export function TasksModule({ projectId, projectName }: TasksModuleProps) {
                 setFilters((prev) => ({ ...prev, priority: event.target.value as IssuePriority | "ALL" }))
               }
             >
-              <option value="ALL">All priorities</option>
+              <option value="ALL">{t("allPriorities")}</option>
               {ISSUE_PRIORITIES.map((priority) => (
                 <option key={priority} value={priority}>
                   {ISSUE_PRIORITY_LABELS[priority]}
@@ -336,7 +339,7 @@ export function TasksModule({ projectId, projectName }: TasksModuleProps) {
               value={filters.assigneeId ?? "ALL"}
               onChange={(event) => setFilters((prev) => ({ ...prev, assigneeId: event.target.value || "ALL" }))}
             >
-              <option value="ALL">All assignees</option>
+              <option value="ALL">{t("allAssignees")}</option>
               {members.map((member) => (
                 <option key={member.id} value={member.id}>
                   {member.name}
@@ -347,13 +350,13 @@ export function TasksModule({ projectId, projectName }: TasksModuleProps) {
             <DatePicker
               value={filters.dueFrom ?? ""}
               onChange={(value) => setFilters((prev) => ({ ...prev, dueFrom: value }))}
-              placeholder="Due from"
+              placeholder={t("dueFrom")}
             />
 
             <DatePicker
               value={filters.dueTo ?? ""}
               onChange={(value) => setFilters((prev) => ({ ...prev, dueTo: value }))}
-              placeholder="Due to"
+              placeholder={t("dueTo")}
             />
 
             <select
@@ -363,9 +366,9 @@ export function TasksModule({ projectId, projectName }: TasksModuleProps) {
                 setSortMode(event.target.value as "created_desc" | "due_asc" | "priority_desc")
               }
             >
-              <option value="created_desc">Newest</option>
-              <option value="due_asc">Due Date</option>
-              <option value="priority_desc">Priority</option>
+              <option value="created_desc">{t("newest")}</option>
+              <option value="due_asc">{t("dueDate")}</option>
+              <option value="priority_desc">{t("priority")}</option>
             </select>
           </div>
         </Card>
@@ -379,12 +382,12 @@ export function TasksModule({ projectId, projectName }: TasksModuleProps) {
             <table className="w-full min-w-[780px] text-sm">
               <thead>
                 <tr className="border-b text-left text-muted-foreground">
-                  <th className="px-3 py-2 font-medium">Title</th>
-                  <th className="px-3 py-2 font-medium">State</th>
-                  <th className="px-3 py-2 font-medium">Priority</th>
-                  <th className="px-3 py-2 font-medium">Assignee</th>
-                  <th className="px-3 py-2 font-medium">Due Date</th>
-                  <th className="px-3 py-2 font-medium">Actions</th>
+                  <th className="px-3 py-2 font-medium">{t("title")}</th>
+                  <th className="px-3 py-2 font-medium">{t("state")}</th>
+                  <th className="px-3 py-2 font-medium">{t("priority")}</th>
+                  <th className="px-3 py-2 font-medium">{t("assignee")}</th>
+                  <th className="px-3 py-2 font-medium">{t("dueDateCol")}</th>
+                  <th className="px-3 py-2 font-medium">{t("actions")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -402,7 +405,7 @@ export function TasksModule({ projectId, projectName }: TasksModuleProps) {
                             size="icon"
                             className="size-7 shrink-0"
                             onClick={() => setViewDescriptionIssue(issue)}
-                            title="Open description"
+                            title={t("openDescription")}
                           >
                             <FileTextIcon className="size-3.5" />
                           </Button>
@@ -470,17 +473,17 @@ export function TasksModule({ projectId, projectName }: TasksModuleProps) {
                               }}
                             >
                               <FileTextIcon className="mr-1 size-3" />
-                              More
+                              {t("more")}
                             </Button>
                           </div>
                         ) : null}
                         <div className="mb-2 flex items-center gap-2 text-xs text-muted-foreground">
                           <span>{ISSUE_PRIORITY_LABELS[issue.priority]}</span>
                           <span>•</span>
-                          <span>{issue.assignee?.name ?? "Unassigned"}</span>
+                          <span>{issue.assignee?.name ?? t("unassigned")}</span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-xs text-muted-foreground">Due: {formatDate(issue.dueDate)}</span>
+                          <span className="text-xs text-muted-foreground">{t("due")}: {formatDate(issue.dueDate)}</span>
                           <div className="flex items-center gap-1">
                             <Button variant="ghost" size="icon" onClick={() => openEditDialog(issue)}>
                               <PencilIcon className="size-4" />
@@ -503,8 +506,8 @@ export function TasksModule({ projectId, projectName }: TasksModuleProps) {
       <Dialog open={Boolean(editIssue)} onOpenChange={(open) => (open ? null : closeDialogs())}>
         <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Edit Issue</DialogTitle>
-            <DialogDescription>Update task data.</DialogDescription>
+            <DialogTitle>{t("editIssue")}</DialogTitle>
+            <DialogDescription>{t("editIssueDesc")}</DialogDescription>
           </DialogHeader>
           <IssueForm
             form={form}
@@ -515,10 +518,10 @@ export function TasksModule({ projectId, projectName }: TasksModuleProps) {
           />
           <DialogFooter>
             <Button variant="outline" onClick={closeDialogs}>
-              Cancel
+              {tCommon("cancel")}
             </Button>
             <Button onClick={submitEdit} disabled={submitting}>
-              Save
+              {tCommon("save")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -533,7 +536,7 @@ export function TasksModule({ projectId, projectName }: TasksModuleProps) {
             {viewDescriptionIssue?.description ? (
               <MarkdownContent content={viewDescriptionIssue.description} className="text-sm" />
             ) : (
-              <p className="text-sm text-muted-foreground">No description</p>
+              <p className="text-sm text-muted-foreground">{t("noDescription")}</p>
             )}
           </div>
         </DialogContent>
@@ -542,15 +545,15 @@ export function TasksModule({ projectId, projectName }: TasksModuleProps) {
       <Dialog open={Boolean(deleteIssueId)} onOpenChange={(open) => (open ? null : setDeleteIssueId(null))}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete issue</DialogTitle>
-            <DialogDescription>This action cannot be undone.</DialogDescription>
+            <DialogTitle>{t("deleteIssue")}</DialogTitle>
+            <DialogDescription>{t("deleteIssueDesc")}</DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteIssueId(null)}>
-              Cancel
+              {tCommon("cancel")}
             </Button>
             <Button variant="destructive" onClick={confirmDelete}>
-              Delete
+              {tCommon("delete")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -568,12 +571,13 @@ type IssueFormProps = {
 };
 
 function IssueForm({ form, setForm, formError, members, membersLoading }: IssueFormProps) {
+  const t = useTranslations("Tasks");
   return (
     <div className="space-y-3">
       {formError ? <p className="text-sm text-destructive">{formError}</p> : null}
 
       <Input
-        placeholder="Issue title"
+        placeholder={t("issueTitlePlaceholder")}
         value={form.title}
         onChange={(event) => setForm((prev) => ({ ...prev, title: event.target.value }))}
       />
@@ -581,7 +585,6 @@ function IssueForm({ form, setForm, formError, members, membersLoading }: IssueF
       <DescriptionEditor
         value={form.description}
         onChange={(description) => setForm((prev) => ({ ...prev, description }))}
-        placeholder="Description (Markdown: **bold**, *italic*, ## headings, lists, code...)"
         minHeight="12rem"
       />
 
@@ -616,7 +619,7 @@ function IssueForm({ form, setForm, formError, members, membersLoading }: IssueF
           onChange={(event) => setForm((prev) => ({ ...prev, assigneeId: event.target.value }))}
           disabled={membersLoading}
         >
-          <option value="">Unassigned</option>
+          <option value="">{t("unassigned")}</option>
           {members.map((member) => (
             <option key={member.id} value={member.id}>
               {member.name}
@@ -627,7 +630,7 @@ function IssueForm({ form, setForm, formError, members, membersLoading }: IssueF
         <DatePicker
           value={form.dueDate}
           onChange={(value) => setForm((prev) => ({ ...prev, dueDate: value }))}
-          placeholder="Due date"
+          placeholder={t("dueDatePlaceholder")}
         />
       </div>
     </div>

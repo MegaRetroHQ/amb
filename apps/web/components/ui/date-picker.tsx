@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { ChevronLeftIcon, ChevronRightIcon, CalendarIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -30,7 +31,9 @@ function monthLabel(date: Date): string {
   return date.toLocaleDateString(undefined, { month: "long", year: "numeric" });
 }
 
-export function DatePicker({ value, onChange, placeholder = "Select date" }: DatePickerProps) {
+export function DatePicker({ value, onChange, placeholder: placeholderProp }: DatePickerProps) {
+  const t = useTranslations("Ui");
+  const placeholder = placeholderProp ?? t("selectDate");
   const [open, setOpen] = useState(false);
   const selectedDate = parseValue(value);
   const [viewDate, setViewDate] = useState<Date>(selectedDate ?? new Date());

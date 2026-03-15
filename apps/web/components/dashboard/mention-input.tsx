@@ -10,6 +10,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { BotIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { getCurrentMentionAtCursor, filterAgentsByQuery } from "@/lib/mentions";
 import type { Agent } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -41,6 +42,7 @@ export function MentionInput({
     startIndex: number;
   } | null>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const t = useTranslations("MentionInput");
 
   const filteredAgents = currentMention
     ? filterAgentsByQuery(agents, currentMention.mention)
@@ -158,7 +160,7 @@ export function MentionInput({
         >
           <Command>
             <CommandList>
-              <CommandGroup heading="Agents">
+              <CommandGroup heading={t("agentsHeading")}>
                 {filteredAgents.map((agent, index) => (
                   <CommandItem
                     key={agent.id}
@@ -189,7 +191,7 @@ export function MentionInput({
                 ))}
               </CommandGroup>
               {filteredAgents.length === 0 && (
-                <CommandEmpty>No agents found</CommandEmpty>
+                <CommandEmpty>{t("noAgentsFound")}</CommandEmpty>
               )}
             </CommandList>
           </Command>

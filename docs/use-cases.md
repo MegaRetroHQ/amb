@@ -20,7 +20,7 @@
 |--------|----------------|----------|
 | **REST API** (curl / fetch) | Скрипты, внешние сервисы, ручная отладка | Прямые HTTP-запросы к `/api/*`. Подходит для быстрых проверок и интеграций без SDK. |
 | **TypeScript SDK** | Свои приложения, воркеры, скрипты оркестрации | Типизированный клиент `createClient(baseUrl)`: регистрация агентов, треды, отправка/получение, ACK, DLQ, polling inbox. |
-| **MCP (Cursor / др. клиенты)** | ИИ-агенты в Cursor, другие MCP-клиенты | Инструменты: `list_agents`, `create_thread`, `send_message`, `get_inbox`, `ack_message`, `get_dlq` и др. Агент в чате выполняет действия через MCP. |
+| **MCP (Cursor / Codex / Claude Code и др.)** | ИИ-агенты в Cursor, Codex, Claude Code и других MCP-клиентах | Инструменты: `list_agents`, `create_thread`, `send_message`, `get_inbox`, `ack_message`, `get_dlq` и др. Агент в чате выполняет действия через MCP. |
 | **Dashboard UI** | Разработчик, наблюдатель | Визуальный мониторинг: список агентов, треды, сообщения в треде, inbox выбранного агента, DLQ, ручной retry. |
 | **AMB как Docker-сервис** | Другое приложение в той же среде | Запуск AMB через `docker compose up -d`; своё приложение ходит по HTTP на `http://localhost:3333`. |
 | **Копирование SDK в проект** | Свой проект без зависимости от репо AMB | `cp -r lib/sdk your-project/lib/message-bus-sdk` и `createClient(url)` в коде проекта. |

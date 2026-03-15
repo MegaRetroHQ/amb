@@ -1,6 +1,7 @@
 "use client";
 
 import { useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useRouter, usePathname } from "@/i18n/navigation";
 import {
   DropdownMenu,
@@ -23,6 +24,7 @@ export function LocaleSwitcher() {
   const router = useRouter();
   const pathname = usePathname();
 
+  const tCommon = useTranslations("Common");
   const setLocale = (newLocale: string) => {
     router.replace(pathname, { locale: newLocale });
   };
@@ -30,7 +32,7 @@ export function LocaleSwitcher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="size-9" title="Language">
+        <Button variant="ghost" size="icon" className="size-9" title={tCommon("language")}>
           <LanguagesIcon className="size-4" />
         </Button>
       </DropdownMenuTrigger>

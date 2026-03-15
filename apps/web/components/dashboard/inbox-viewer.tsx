@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useInbox } from "@/lib/hooks/use-messages";
 import { useAgents } from "@/lib/hooks/use-agents";
 import { Badge } from "@/components/ui/badge";
@@ -56,6 +57,8 @@ const statusConfig = {
 };
 
 export function InboxViewer({ agentId }: Props) {
+  const t = useTranslations("InboxViewer");
+  const tCommon = useTranslations("Common");
   const { messages, loading, ackMessage, refetch } = useInbox(agentId);
   const { agents } = useAgents();
   const [ackingIds, setAckingIds] = useState<Set<string>>(new Set());
@@ -98,8 +101,8 @@ export function InboxViewer({ agentId }: Props) {
     return (
       <div className="h-full rounded-lg border bg-card flex flex-col items-center justify-center text-muted-foreground">
         <InboxIcon className="size-12 mb-4 opacity-20" />
-        <p className="font-medium">No agent selected</p>
-        <p className="text-sm mt-1">Select an agent to view their inbox</p>
+        <p className="font-medium">{t("noAgentSelected")}</p>
+        <p className="text-sm mt-1">{t("selectAgentForInbox")}</p>
       </div>
     );
   }
@@ -111,7 +114,7 @@ export function InboxViewer({ agentId }: Props) {
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <InboxIcon className="size-4 text-muted-foreground" />
-            <span className="font-medium text-sm">Inbox</span>
+            <span className="font-medium text-sm">{t("inbox")}</span>
           </div>
           {currentAgent && (
             <Badge variant="outline" className="gap-1 text-xs">
@@ -121,7 +124,7 @@ export function InboxViewer({ agentId }: Props) {
           )}
           {messages.length > 0 && (
             <Badge variant="default" className="text-xs">
-              {messages.length} unread
+              {messages.length} {t("unread")}
             </Badge>
           )}
         </div>
@@ -141,10 +144,10 @@ export function InboxViewer({ agentId }: Props) {
                   ) : (
                     <CheckCheckIcon className="size-3" />
                   )}
-                  Ack All
+                  {t("ackAll")}
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Acknowledge all messages</TooltipContent>
+              <TooltipContent>{t("ackAllTooltip")}</TooltipContent>
             </Tooltip>
           )}
           <Tooltip>
@@ -158,7 +161,7 @@ export function InboxViewer({ agentId }: Props) {
                 <RefreshCwIcon className="size-3.5" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Refresh inbox</TooltipContent>
+            <TooltipContent>{t("refreshInbox")}</TooltipContent>
           </Tooltip>
         </div>
       </div>
@@ -169,14 +172,14 @@ export function InboxViewer({ agentId }: Props) {
           {loading && messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
               <Loader2Icon className="size-6 animate-spin mb-2" />
-              <p className="text-sm">Loading inbox...</p>
+              <p className="text-sm">{t("loadingInbox")}</p>
             </div>
           ) : messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
               <MailIcon className="size-10 mb-3 opacity-20" />
-              <p className="text-sm font-medium">Inbox is empty</p>
+              <p className="text-sm font-medium">{t("inboxEmpty")}</p>
               <p className="text-xs mt-1 text-center">
-                New messages addressed to {currentAgent?.name || "this agent"} will appear here
+                {t("newMessagesHere", { name: currentAgent?.name || "this agent" })}
               </p>
             </div>
           ) : (
@@ -208,7 +211,7 @@ export function InboxViewer({ agentId }: Props) {
                             {fromAgent?.name || msg.fromAgentId.slice(0, 8)}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            {fromAgent?.role || "Unknown role"}
+                            {fromAgent?.role || t("unknownRole")}
                           </p>
                         </div>
                       </div>
@@ -226,10 +229,10 @@ export function InboxViewer({ agentId }: Props) {
                             ) : (
                               <CheckIcon className="size-3" />
                             )}
-                            Acknowledge
+                            {t("acknowledge")}
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent>Mark as read</TooltipContent>
+                        <TooltipContent>{tCommon("markAsRead")}</TooltipContent>
                       </Tooltip>
                     </div>
 

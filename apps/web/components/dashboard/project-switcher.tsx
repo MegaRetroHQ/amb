@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -33,6 +34,8 @@ import { Link } from "@/i18n/navigation";
 import { useProjectContext } from "@/lib/context/project-context";
 
 export function ProjectSwitcher() {
+  const t = useTranslations("ProjectSwitcher");
+  const tCommon = useTranslations("Common");
   const { projectId, setProjectId, projects, loading, selectedProject, loadProjects: reloadProjects } = useProjectContext();
   const [newProjectName, setNewProjectName] = useState("");
   const [creating, setCreating] = useState(false);
@@ -57,7 +60,7 @@ export function ProjectSwitcher() {
       });
       const json = await res.json().catch(() => null);
       if (!res.ok) {
-        setCreateError(json?.error?.message || "Failed to create project");
+        setCreateError(json?.error?.message || tCommon("failedToCreate"));
         return;
       }
 
@@ -84,7 +87,7 @@ export function ProjectSwitcher() {
           <Button variant="outline" size="sm" className="gap-2">
             <FolderKanbanIcon className="size-4" />
             <span className="max-w-[180px] truncate">
-              {loading ? "Loading projects..." : (selectedProject?.name ?? "Select project")}
+              {loading ? t("loadingProjects") : (selectedProject?.name ?? t("selectProject"))}
             </span>
             <ChevronDownIcon className="size-4 text-muted-foreground" />
           </Button>
@@ -99,7 +102,7 @@ export function ProjectSwitcher() {
               <span className="truncate">{project.name}</span>
               {selectedProject?.id === project.id && (
                 <Badge variant="secondary" className="text-[10px] px-1.5">
-                  current
+                  {t("current")}
                 </Badge>
               )}
             </DropdownMenuItem>
@@ -109,21 +112,21 @@ export function ProjectSwitcher() {
             <DialogTrigger asChild>
               <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                 <PlusIcon className="size-4 mr-2" />
-                Create project
+                {t("createProject")}
               </DropdownMenuItem>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>New project</DialogTitle>
+                <DialogTitle>{t("newProject")}</DialogTitle>
                 <DialogDescription>
-                  Create a project and use its ID in the MCP settings of another repository.
+                  {t("newProjectDesc")}
                 </DialogDescription>
               </DialogHeader>
               {createError && (
                 <p className="text-sm text-destructive">{createError}</p>
               )}
               <Input
-                placeholder="Project name"
+                placeholder={t("projectNamePlaceholder")}
                 value={newProjectName}
                 onChange={(event) => setNewProjectName(event.target.value)}
                 onKeyDown={(event) => {
@@ -134,10 +137,10 @@ export function ProjectSwitcher() {
               />
               <DialogFooter>
                 <Button variant="outline" onClick={() => setDialogOpen(false)}>
-                  Cancel
+                  {tCommon("cancel")}
                 </Button>
                 <Button onClick={createProject} disabled={!newProjectName.trim() || creating}>
-                  Create
+                  {tCommon("create")}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -151,7 +154,7 @@ export function ProjectSwitcher() {
         onClick={copyProjectId}
         disabled={!selectedProject}
         className="gap-2"
-        title="Copy project ID"
+        title={t("copyProjectId")}
       >
         {copied ? <CheckIcon className="size-4 text-green-500" /> : <CopyIcon className="size-4" />}
         <span className="hidden sm:inline">ID</span>
@@ -161,13 +164,13 @@ export function ProjectSwitcher() {
         <Button variant="outline" size="sm" asChild className="gap-2">
           <Link href="/tasks">
             <ListTodoIcon className="size-4" />
-            <span className="hidden sm:inline">Tasks</span>
+            <span className="hidden sm:inline">{t("tasks")}</span>
           </Link>
         </Button>
       ) : (
         <Button variant="outline" size="sm" disabled className="gap-2">
           <ListTodoIcon className="size-4" />
-          <span className="hidden sm:inline">Tasks</span>
+          <span className="hidden sm:inline">{t("tasks")}</span>
         </Button>
       )}
     </div>

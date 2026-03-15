@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useDlq } from "@/lib/hooks/use-messages";
 import { useAgents } from "@/lib/hooks/use-agents";
 import { Badge } from "@/components/ui/badge";
@@ -35,6 +36,8 @@ import {
 import type { Message } from "@/lib/types";
 
 export function DlqViewer() {
+  const t = useTranslations("DlqViewer");
+  const tCommon = useTranslations("Common");
   const { messages, loading, error, refetch, retryMessage, retryAll } = useDlq();
   const { agents } = useAgents();
   const [retryingIds, setRetryingIds] = useState<Set<string>>(new Set());
@@ -97,11 +100,11 @@ export function DlqViewer() {
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <AlertTriangleIcon className="size-4 text-destructive" />
-            <span className="font-medium text-sm">Error queue (DLQ)</span>
+            <span className="font-medium text-sm">{t("errorQueue")}</span>
           </div>
           {messages.length > 0 && (
             <Badge variant="destructive" className="text-xs">
-              {messages.length} errors
+              {messages.length} {t("errorsCount")}
             </Badge>
           )}
         </div>
@@ -121,10 +124,10 @@ export function DlqViewer() {
                   ) : (
                     <RotateCcwIcon className="size-3" />
                   )}
-                  Retry all
+                  {t("retryAll")}
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Retry all failed messages</TooltipContent>
+              <TooltipContent>{t("retryAllTooltip")}</TooltipContent>
             </Tooltip>
           )}
           <Tooltip>
@@ -138,7 +141,7 @@ export function DlqViewer() {
                 <RefreshCwIcon className="size-3.5" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Refresh</TooltipContent>
+            <TooltipContent>{t("refreshTooltip")}</TooltipContent>
           </Tooltip>
         </div>
       </div>
@@ -149,12 +152,12 @@ export function DlqViewer() {
           {loading ? (
             <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
               <Loader2Icon className="size-6 animate-spin mb-2" />
-              <p className="text-sm">Loading...</p>
+              <p className="text-sm">{t("loading")}</p>
             </div>
           ) : error ? (
             <div className="flex flex-col items-center justify-center py-12">
               <AlertTriangleIcon className="size-6 text-destructive mb-2" />
-              <p className="text-sm font-medium text-destructive">Load error</p>
+              <p className="text-sm font-medium text-destructive">{t("loadError")}</p>
               <p className="text-xs text-muted-foreground mt-1">{error}</p>
               <Button
                 size="sm"
@@ -162,7 +165,7 @@ export function DlqViewer() {
                 onClick={refetch}
                 className="mt-3"
               >
-                Retry
+                {tCommon("retry")}
               </Button>
             </div>
           ) : messages.length === 0 ? (
@@ -173,9 +176,9 @@ export function DlqViewer() {
                   <span className="text-green-600 text-xs">✓</span>
                 </div>
               </div>
-              <p className="text-sm font-medium">No errors</p>
+              <p className="text-sm font-medium">{t("noErrors")}</p>
               <p className="text-xs mt-1 text-center">
-                All messages processed successfully
+                {t("allProcessed")}
               </p>
             </div>
           ) : (
@@ -249,7 +252,7 @@ export function DlqViewer() {
                         {/* Actions */}
                         <div className="flex items-center gap-2 shrink-0">
                           <Badge variant="destructive" className="text-[10px]">
-                            {msg.retries} attempts
+                            {msg.retries} {t("attempts")}
                           </Badge>
                           <Tooltip>
                             <TooltipTrigger asChild>
@@ -265,10 +268,10 @@ export function DlqViewer() {
                                 ) : (
                                   <RotateCcwIcon className="size-3" />
                                 )}
-                                Retry
+                                {t("retryMessage")}
                               </Button>
                             </TooltipTrigger>
-                            <TooltipContent>Retry this message</TooltipContent>
+                            <TooltipContent>{t("retryMessageTooltip")}</TooltipContent>
                           </Tooltip>
                         </div>
                       </div>
@@ -277,7 +280,7 @@ export function DlqViewer() {
                       <div className="flex items-center gap-1.5 mt-2 ml-7 text-xs text-muted-foreground">
                         <ClockIcon className="size-3" />
                         <span>
-                          Failed: {new Date(msg.createdAt).toLocaleString()}
+                          {t("failed")}: {new Date(msg.createdAt).toLocaleString()}
                         </span>
                       </div>
                     </div>
@@ -289,7 +292,7 @@ export function DlqViewer() {
                           <div className="flex items-start gap-2">
                             <HashIcon className="size-3.5 text-muted-foreground mt-0.5" />
                             <div>
-                              <p className="text-muted-foreground">Message ID</p>
+                              <p className="text-muted-foreground">{t("messageId")}</p>
                               <p className="font-mono">{msg.id}</p>
                             </div>
                           </div>
@@ -297,7 +300,7 @@ export function DlqViewer() {
                           <div className="flex items-start gap-2">
                             <HashIcon className="size-3.5 text-muted-foreground mt-0.5" />
                             <div>
-                              <p className="text-muted-foreground">Thread ID</p>
+                              <p className="text-muted-foreground">{t("threadId")}</p>
                               <p className="font-mono">{msg.threadId}</p>
                             </div>
                           </div>
@@ -306,7 +309,7 @@ export function DlqViewer() {
                             <div className="flex items-start gap-2">
                               <HashIcon className="size-3.5 text-muted-foreground mt-0.5" />
                               <div>
-                                <p className="text-muted-foreground">Parent message ID</p>
+                                <p className="text-muted-foreground">{t("parentMessageId")}</p>
                                 <p className="font-mono">{msg.parentId}</p>
                               </div>
                             </div>
@@ -315,7 +318,7 @@ export function DlqViewer() {
                           <div className="flex items-start gap-2">
                             <FileJsonIcon className="size-3.5 text-muted-foreground mt-0.5" />
                             <div className="flex-1 min-w-0">
-                              <p className="text-muted-foreground mb-1">Content</p>
+                              <p className="text-muted-foreground mb-1">{t("content")}</p>
                               <pre className="bg-muted/50 rounded p-2 overflow-x-auto text-[11px] font-mono whitespace-pre-wrap break-all">
                                 {formatPayload(msg.payload)}
                               </pre>
@@ -335,7 +338,7 @@ export function DlqViewer() {
       {/* Info footer */}
       {messages.length > 0 && (
         <div className="px-4 py-2 border-t bg-muted/30 text-xs text-muted-foreground text-center">
-          Messages in the error queue exceeded the maximum number of attempts (3)
+          {t("footerInfo")}
         </div>
       )}
 
@@ -345,19 +348,18 @@ export function DlqViewer() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <RotateCcwIcon className="size-5" />
-              Retry all messages
+              {t("retryAllTitle")}
             </DialogTitle>
             <DialogDescription>
-              This will return all {messages.length} messages from the error queue
-              to pending status. They will be processed again with reset counters.
+              {t("retryAllDesc", { count: messages.length })}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setConfirmRetryAll(false)}>
-              Cancel
+              {tCommon("cancel")}
             </Button>
             <Button onClick={handleRetryAll}>
-              Retry all ({messages.length})
+              {t("retryAllConfirm", { count: messages.length })}
             </Button>
           </DialogFooter>
         </DialogContent>

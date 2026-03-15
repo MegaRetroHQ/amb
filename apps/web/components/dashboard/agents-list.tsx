@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, RefObject } from "react";
+import { useTranslations } from "next-intl";
 import { useAgents } from "@/lib/hooks/use-agents";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,8 @@ type Props = {
 };
 
 export function AgentsList({ selectedAgentId, onSelectAgent, searchInputRef, inboxCounts = {} }: Props) {
+  const t = useTranslations("AgentsList");
+  const tCommon = useTranslations("Common");
   const { agents, loading, error, refetch } = useAgents();
   const [searchQuery, setSearchQuery] = useState("");
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -57,7 +60,7 @@ export function AgentsList({ selectedAgentId, onSelectAgent, searchInputRef, inb
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <UsersIcon className="size-4 text-muted-foreground" />
-            <h2 className="font-semibold text-sm">Agents</h2>
+            <h2 className="font-semibold text-sm">{t("agents")}</h2>
             <Badge variant="secondary" className="text-xs">
               {onlineCount}/{agents.length}
             </Badge>
@@ -81,7 +84,7 @@ export function AgentsList({ selectedAgentId, onSelectAgent, searchInputRef, inb
           <Input
             ref={searchInputRef}
             type="text"
-            placeholder="Search agents..."
+            placeholder={t("searchAgents")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="h-8 pl-8 text-sm"
@@ -95,12 +98,12 @@ export function AgentsList({ selectedAgentId, onSelectAgent, searchInputRef, inb
           {loading ? (
             <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
               <Loader2Icon className="size-6 animate-spin mb-2" />
-              <p className="text-sm">Loading agents...</p>
+              <p className="text-sm">{t("loadingAgents")}</p>
             </div>
           ) : error ? (
             <div className="flex flex-col items-center justify-center py-12 text-destructive">
               <AlertCircleIcon className="size-6 mb-2" />
-              <p className="text-sm font-medium">Failed to load</p>
+              <p className="text-sm font-medium">{t("failedToLoad")}</p>
               <p className="text-xs text-muted-foreground mt-1">{error}</p>
               <Button
                 size="sm"
@@ -108,7 +111,7 @@ export function AgentsList({ selectedAgentId, onSelectAgent, searchInputRef, inb
                 onClick={handleRefresh}
                 className="mt-3"
               >
-                Try again
+                {tCommon("tryAgain")}
               </Button>
             </div>
           ) : filteredAgents.length === 0 ? (
@@ -116,9 +119,9 @@ export function AgentsList({ selectedAgentId, onSelectAgent, searchInputRef, inb
               <BotIcon className="size-10 mb-3 opacity-20" />
               {searchQuery ? (
                 <>
-                  <p className="text-sm font-medium">No agents found</p>
+                  <p className="text-sm font-medium">{t("noAgentsFound")}</p>
                   <p className="text-xs mt-1">
-                    Try a different search term
+                    {t("tryDifferentSearch")}
                   </p>
                   <Button
                     size="sm"
@@ -126,14 +129,14 @@ export function AgentsList({ selectedAgentId, onSelectAgent, searchInputRef, inb
                     onClick={() => setSearchQuery("")}
                     className="mt-2"
                   >
-                    Clear search
+                    {tCommon("clearSearch")}
                   </Button>
                 </>
               ) : (
                 <>
-                  <p className="text-sm font-medium">No agents yet</p>
+                  <p className="text-sm font-medium">{t("noAgentsYet")}</p>
                   <p className="text-xs mt-1 text-center px-4">
-                    Agents will appear here once they connect to the message bus
+                    {t("agentsAppearHere")}
                   </p>
                 </>
               )}
@@ -202,7 +205,7 @@ export function AgentsList({ selectedAgentId, onSelectAgent, searchInputRef, inb
                     </div>
                     {agent.lastSeen && (
                       <p className="text-[10px] text-muted-foreground mt-1.5 pl-10">
-                        Last seen: {new Date(agent.lastSeen).toLocaleString()}
+                        {t("lastSeen")}: {new Date(agent.lastSeen).toLocaleString()}
                       </p>
                     )}
                   </button>

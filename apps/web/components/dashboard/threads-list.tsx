@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { useThreads } from "@/lib/hooks/use-threads";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -73,6 +74,9 @@ export function ThreadsList({
   const [filterStatus, setFilterStatus] = useState<FilterStatus>("all");
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [copiedThreadId, setCopiedThreadId] = useState<string | null>(null);
+
+  const t = useTranslations("ThreadsList");
+  const tCommon = useTranslations("Common");
 
   const filteredThreads = useMemo(() => {
     let result = threads;
@@ -189,7 +193,7 @@ export function ThreadsList({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <MessageSquareIcon className="size-4 text-muted-foreground" />
-            <h2 className="font-semibold text-sm">Threads</h2>
+            <h2 className="font-semibold text-sm">{t("threads")}</h2>
             <Badge variant="secondary" className="text-xs">
               {threads.length}
             </Badge>
@@ -214,13 +218,13 @@ export function ThreadsList({
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Create new thread</DialogTitle>
+                  <DialogTitle>{t("createNewThread")}</DialogTitle>
                   <DialogDescription>
-                    Create a new thread for agent communication.
+                    {t("createThreadDesc")}
                   </DialogDescription>
                 </DialogHeader>
                 <Input
-                  placeholder="Thread title"
+                  placeholder={t("threadTitlePlaceholder")}
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleCreate()}
@@ -231,7 +235,7 @@ export function ThreadsList({
                     variant="outline"
                     onClick={() => setDialogOpen(false)}
                   >
-                    Cancel
+                    {tCommon("cancel")}
                   </Button>
                   <Button
                     onClick={handleCreate}
@@ -240,10 +244,10 @@ export function ThreadsList({
                     {creating ? (
                       <>
                         <Loader2Icon className="size-4 mr-2 animate-spin" />
-                        Creating...
+                        {tCommon("creating")}
                       </>
                     ) : (
-                      "Create thread"
+                      t("createThread")
                     )}
                   </Button>
                 </DialogFooter>
@@ -257,7 +261,7 @@ export function ThreadsList({
           <SearchIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
           <Input
             type="text"
-            placeholder="Search threads..."
+            placeholder={t("searchThreads")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="h-8 pl-8 text-sm"
@@ -269,10 +273,10 @@ export function ThreadsList({
           {(["all", "open", "closed", "archived"] as FilterStatus[]).map(
             (status) => {
               const labels: Record<FilterStatus, string> = {
-                all: "All",
-                open: "Open",
-                closed: "Closed",
-                archived: "Archived",
+                all: t("filterAll"),
+                open: t("filterOpen"),
+                closed: t("filterClosed"),
+                archived: t("filterArchived"),
               };
               return (
                 <Button
@@ -303,12 +307,12 @@ export function ThreadsList({
           {loading ? (
             <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
               <Loader2Icon className="size-6 animate-spin mb-2" />
-              <p className="text-sm">Loading threads...</p>
+              <p className="text-sm">{t("loadingThreads")}</p>
             </div>
           ) : error ? (
             <div className="flex flex-col items-center justify-center py-12 text-destructive">
               <AlertCircleIcon className="size-6 mb-2" />
-              <p className="text-sm font-medium">Load error</p>
+              <p className="text-sm font-medium">{t("loadError")}</p>
               <p className="text-xs text-muted-foreground mt-1">{error}</p>
               <Button
                 size="sm"
@@ -316,7 +320,7 @@ export function ThreadsList({
                 onClick={handleRefresh}
                 className="mt-3"
               >
-                Retry
+                {tCommon("retry")}
               </Button>
             </div>
           ) : filteredThreads.length === 0 ? (
@@ -324,8 +328,8 @@ export function ThreadsList({
               <MessageSquareIcon className="size-10 mb-3 opacity-20" />
               {searchQuery || filterStatus !== "all" ? (
                 <>
-                  <p className="text-sm font-medium">No threads found</p>
-                  <p className="text-xs mt-1">Try changing filters</p>
+                  <p className="text-sm font-medium">{t("noThreadsFound")}</p>
+                  <p className="text-xs mt-1">{t("tryFilters")}</p>
                   <Button
                     size="sm"
                     variant="ghost"
@@ -335,14 +339,14 @@ export function ThreadsList({
                     }}
                     className="mt-2"
                   >
-                    Reset filters
+                    {tCommon("resetFilters")}
                   </Button>
                 </>
               ) : (
                 <>
-                  <p className="text-sm font-medium">No threads yet</p>
+                  <p className="text-sm font-medium">{t("noThreadsYet")}</p>
                   <p className="text-xs mt-1 text-center px-4">
-                    Create the first thread to get started
+                    {t("createFirstThread")}
                   </p>
                   <Button
                     size="sm"
@@ -350,7 +354,7 @@ export function ThreadsList({
                     className="mt-3 gap-1.5"
                   >
                     <PlusIcon className="size-4" />
-                    Create thread
+                    {t("createThread")}
                   </Button>
                 </>
               )}
@@ -397,7 +401,7 @@ export function ThreadsList({
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>
-                              {copiedThreadId === thread.id ? "Copied!" : "Copy title"}
+                              {copiedThreadId === thread.id ? tCommon("copied") : tCommon("copyTitle")}
                             </TooltipContent>
                           </Tooltip>
                         </div>
@@ -436,7 +440,7 @@ export function ThreadsList({
                               onClick={() => updateThreadStatus(thread.id, "open")}
                             >
                               <CircleIcon className="size-4 mr-2 text-green-500" />
-                              Open
+                              {t("openAction")}
                             </DropdownMenuItem>
                           )}
                           {thread.status === "open" && (
@@ -444,7 +448,7 @@ export function ThreadsList({
                               onClick={() => updateThreadStatus(thread.id, "closed")}
                             >
                               <CheckCircleIcon className="size-4 mr-2 text-blue-500" />
-                              Close
+                              {t("closeAction")}
                             </DropdownMenuItem>
                           )}
                           {thread.status !== "archived" && (
@@ -452,7 +456,7 @@ export function ThreadsList({
                               onClick={() => updateThreadStatus(thread.id, "archived")}
                             >
                               <ArchiveIcon className="size-4 mr-2" />
-                              Archive
+                              {t("archiveAction")}
                             </DropdownMenuItem>
                           )}
                           <DropdownMenuSeparator />
@@ -464,7 +468,7 @@ export function ThreadsList({
                             }}
                           >
                             <Trash2Icon className="size-4 mr-2" />
-                            Delete
+                            {t("deleteAction")}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -481,10 +485,9 @@ export function ThreadsList({
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete thread</DialogTitle>
+            <DialogTitle>{t("deleteThread")}</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete this thread? All messages in it
-              will be permanently removed. This action cannot be undone.
+              {t("deleteThreadConfirm")}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -492,10 +495,10 @@ export function ThreadsList({
               variant="outline"
               onClick={() => setDeleteDialogOpen(false)}
             >
-              Cancel
+              {tCommon("cancel")}
             </Button>
             <Button variant="destructive" onClick={handleDelete}>
-              Delete
+              {tCommon("delete")}
             </Button>
           </DialogFooter>
         </DialogContent>

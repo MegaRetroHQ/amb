@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { useThreadMessages } from "@/lib/hooks/use-messages";
 import { useAgents } from "@/lib/hooks/use-agents";
 import { Badge } from "@/components/ui/badge";
@@ -85,6 +86,7 @@ function groupMessagesByDate(messages: Message[]) {
 }
 
 export function ThreadViewer({ threadId, currentAgentId }: Props) {
+  const t = useTranslations("ThreadViewer");
   const { messages, loading, sendMessage, refetch } = useThreadMessages(threadId);
   const { agents } = useAgents();
   const [messageText, setMessageText] = useState("");
@@ -197,8 +199,8 @@ export function ThreadViewer({ threadId, currentAgentId }: Props) {
     return (
       <div className="h-full rounded-lg border bg-card flex flex-col items-center justify-center text-muted-foreground">
         <MessageSquareIcon className="size-12 mb-4 opacity-20" />
-        <p className="font-medium">No thread selected</p>
-        <p className="text-sm mt-1">Select a thread from the list to view messages</p>
+        <p className="font-medium">{t("noThreadSelected")}</p>
+        <p className="text-sm mt-1">{t("selectThreadToView")}</p>
       </div>
     );
   }
@@ -210,7 +212,7 @@ export function ThreadViewer({ threadId, currentAgentId }: Props) {
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <MessageSquareIcon className="size-4 text-muted-foreground" />
-            <span className="font-medium text-sm">Messages</span>
+            <span className="font-medium text-sm">{t("messages")}</span>
           </div>
           <Badge variant="secondary" className="text-xs">
             {messages.length}
@@ -219,7 +221,7 @@ export function ThreadViewer({ threadId, currentAgentId }: Props) {
         <div className="flex items-center gap-2">
           {currentAgent && (
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground mr-2">
-              <span>Sending as</span>
+              <span>{t("sendingAs")}</span>
               <Badge variant="outline" className="gap-1">
                 <BotIcon className="size-3" />
                 {currentAgent.name}
@@ -237,7 +239,7 @@ export function ThreadViewer({ threadId, currentAgentId }: Props) {
                 <RefreshCwIcon className="size-3.5" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Refresh messages</TooltipContent>
+            <TooltipContent>{t("refreshMessages")}</TooltipContent>
           </Tooltip>
         </div>
       </div>
@@ -260,16 +262,16 @@ export function ThreadViewer({ threadId, currentAgentId }: Props) {
           {loading && messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
               <Loader2Icon className="size-6 animate-spin mb-2" />
-              <p className="text-sm">Loading messages...</p>
+              <p className="text-sm">{t("loadingMessages")}</p>
             </div>
           ) : messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
               <MessageSquareIcon className="size-10 mb-3 opacity-20" />
-              <p className="text-sm font-medium">No messages yet</p>
+              <p className="text-sm font-medium">{t("noMessagesYet")}</p>
               <p className="text-xs mt-1">
                 {currentAgentId
-                  ? "Send the first message to start the conversation"
-                  : "Select an agent to send messages"}
+                  ? t("sendFirstMessage")
+                  : t("selectAgentToSend")}
               </p>
             </div>
           ) : (
@@ -326,12 +328,12 @@ export function ThreadViewer({ threadId, currentAgentId }: Props) {
                                 )}
                                 {isBroadcast && (
                                   <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 font-normal">
-                                    broadcast
+                                    {t("broadcast")}
                                   </Badge>
                                 )}
                               </div>
                               <p className="text-xs text-muted-foreground">
-                                {fromAgent?.role || "Unknown role"}
+                                {fromAgent?.role || t("unknownRole")}
                               </p>
                             </div>
                           </div>
@@ -432,8 +434,8 @@ export function ThreadViewer({ threadId, currentAgentId }: Props) {
             agents={agents}
             placeholder={
               !currentAgentId
-                ? "Select an agent to send to"
-                : "Type a message... (use @ to mention)"
+                ? t("selectAgentPlaceholder")
+                : t("messagePlaceholder")
             }
             disabled={!currentAgentId || sending}
           />
@@ -451,12 +453,12 @@ export function ThreadViewer({ threadId, currentAgentId }: Props) {
                 )}
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Send (Enter)</TooltipContent>
+            <TooltipContent>{t("sendEnter")}</TooltipContent>
           </Tooltip>
         </div>
         {!currentAgentId && (
           <p className="text-xs text-muted-foreground mt-2 text-center">
-            Select an agent in the sidebar to send messages
+            {t("selectAgentSidebar")}
           </p>
         )}
       </div>

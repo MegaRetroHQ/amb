@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { BotIcon, ChevronDownIcon, XIcon, AtSignIcon } from "lucide-react";
 import type { Agent } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 type Props = {
   agents: Agent[];
@@ -29,7 +30,7 @@ export function AgentSelector({
   disabled,
   currentAgentId,
 }: Props) {
-  // Исключаем текущего агента из списка получателей
+  const t = useTranslations("AgentSelector");
   const availableAgents = currentAgentId
     ? agents.filter((a) => a.id !== currentAgentId)
     : agents;
@@ -67,12 +68,12 @@ export function AgentSelector({
               disabled={disabled}
             >
               <AtSignIcon className="size-3.5" />
-              <span className="hidden sm:inline">To</span>
+              <span className="hidden sm:inline">{t("to")}</span>
               <ChevronDownIcon className="size-3.5" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-56">
-            <DropdownMenuLabel>Select recipient</DropdownMenuLabel>
+            <DropdownMenuLabel>{t("selectRecipient")}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {availableAgents.map((agent) => (
               <DropdownMenuItem
@@ -100,7 +101,7 @@ export function AgentSelector({
             ))}
             {availableAgents.length === 0 && (
               <div className="px-2 py-4 text-center text-sm text-muted-foreground">
-                No agents available
+                {t("noAgentsAvailable")}
               </div>
             )}
           </DropdownMenuContent>

@@ -1,7 +1,8 @@
 "use client"
 
 import { useEffect, useState, useCallback } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter } from "@/i18n/navigation"
+import { useTranslations } from "next-intl"
 import {
   CommandDialog,
   CommandEmpty,
@@ -44,6 +45,7 @@ export function CommandPalette({
   onRefresh,
 }: CommandPaletteProps) {
   const router = useRouter()
+  const t = useTranslations("CommandPalette")
   const runCommand = useCallback(
     (command: () => void) => {
       onOpenChange(false)
@@ -53,45 +55,45 @@ export function CommandPalette({
   )
 
   return (
-    <CommandDialog open={open} onOpenChange={onOpenChange} title="Command palette">
-      <CommandInput placeholder="Type a command or search..." />
+    <CommandDialog open={open} onOpenChange={onOpenChange} title={t("title")}>
+      <CommandInput placeholder={t("placeholder")} />
       <CommandList>
-        <CommandEmpty>No command found.</CommandEmpty>
+        <CommandEmpty>{t("empty")}</CommandEmpty>
 
-        <CommandGroup heading="Navigation">
+        <CommandGroup heading={t("navHeading")}>
           <CommandItem onSelect={() => runCommand(() => onNavigate("messages"))}>
             <MessageSquareIcon className="size-4" />
-            <span>Messages</span>
+            <span>{t("messages")}</span>
             <CommandShortcut>1</CommandShortcut>
           </CommandItem>
           <CommandItem onSelect={() => runCommand(() => onNavigate("inbox"))}>
             <InboxIcon className="size-4" />
-            <span>Inbox</span>
+            <span>{t("inbox")}</span>
             <CommandShortcut>2</CommandShortcut>
           </CommandItem>
           <CommandItem onSelect={() => runCommand(() => onNavigate("dlq"))}>
             <AlertTriangleIcon className="size-4" />
-            <span>Error queue (DLQ)</span>
+            <span>{t("errorQueue")}</span>
             <CommandShortcut>3</CommandShortcut>
           </CommandItem>
         </CommandGroup>
 
         <CommandSeparator />
 
-        <CommandGroup heading="Actions">
+        <CommandGroup heading={t("actionsHeading")}>
           <CommandItem onSelect={() => runCommand(onNewThread)}>
             <PlusIcon className="size-4" />
-            <span>New thread</span>
+            <span>{t("newThread")}</span>
             <CommandShortcut>N</CommandShortcut>
           </CommandItem>
           <CommandItem onSelect={() => runCommand(onRefresh)}>
             <RefreshCwIcon className="size-4" />
-            <span>Refresh</span>
+            <span>{t("refresh")}</span>
             <CommandShortcut>R</CommandShortcut>
           </CommandItem>
           <CommandItem onSelect={() => runCommand(() => {})}>
             <SearchIcon className="size-4" />
-            <span>Search</span>
+            <span>{t("search")}</span>
             <CommandShortcut>/</CommandShortcut>
           </CommandItem>
           <CommandItem
@@ -100,42 +102,42 @@ export function CommandPalette({
             }
           >
             <BookOpenIcon className="size-4" />
-            <span>API docs (Swagger)</span>
+            <span>{t("apiDocsSwagger")}</span>
           </CommandItem>
           <CommandItem
             onSelect={() => runCommand(() => router.push("/help"))}
           >
             <HelpCircleIcon className="size-4" />
-            <span>Help</span>
+            <span>{t("help")}</span>
           </CommandItem>
         </CommandGroup>
 
         <CommandSeparator />
 
-        <CommandGroup heading="Selection">
+        <CommandGroup heading={t("selectionHeading")}>
           <CommandItem disabled>
             <ArrowUpIcon className="size-4" />
-            <span>Previous item</span>
+            <span>{t("previousItem")}</span>
             <CommandShortcut>K / ↑</CommandShortcut>
           </CommandItem>
           <CommandItem disabled>
             <ArrowDownIcon className="size-4" />
-            <span>Next item</span>
+            <span>{t("nextItem")}</span>
             <CommandShortcut>J / ↓</CommandShortcut>
           </CommandItem>
         </CommandGroup>
 
         <CommandSeparator />
 
-        <CommandGroup heading="Messages">
+        <CommandGroup heading={t("messagesHeading")}>
           <CommandItem disabled>
             <CheckIcon className="size-4" />
-            <span>Ack message</span>
+            <span>{t("ackMessage")}</span>
             <CommandShortcut>A</CommandShortcut>
           </CommandItem>
           <CommandItem disabled>
             <SendIcon className="size-4" />
-            <span>Send message</span>
+            <span>{t("sendMessage")}</span>
             <CommandShortcut>⌘ Enter</CommandShortcut>
           </CommandItem>
         </CommandGroup>

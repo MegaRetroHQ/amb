@@ -63,6 +63,7 @@ export class AuthController {
     const data = await this.authService.issueProjectToken(
       req.auth,
       parsed.data.projectId,
+      parsed.data.name,
       parsed.data.expiresIn
     );
     return { data };

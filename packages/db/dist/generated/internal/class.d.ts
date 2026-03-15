@@ -178,6 +178,17 @@ export interface PrismaClient<in LogOpts extends Prisma.LogLevel = never, in out
         omit: OmitOpts;
     }>;
     /**
+     * `prisma.projectToken`: Exposes CRUD operations for the **ProjectToken** model.
+      * Example usage:
+      * ```ts
+      * // Fetch zero or more ProjectTokens
+      * const projectTokens = await prisma.projectToken.findMany()
+      * ```
+      */
+    get projectToken(): Prisma.ProjectTokenDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
+    /**
      * `prisma.issue`: Exposes CRUD operations for the **Issue** model.
       * Example usage:
       * ```ts

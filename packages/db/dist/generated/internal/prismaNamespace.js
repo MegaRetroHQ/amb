@@ -48,7 +48,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.defineExtension = exports.NullsOrder = exports.JsonNullValueFilter = exports.QueryMode = exports.JsonNullValueInput = exports.NullableJsonNullValueInput = exports.SortOrder = exports.IssueScalarFieldEnum = exports.ProjectScalarFieldEnum = exports.UserScalarFieldEnum = exports.TenantScalarFieldEnum = exports.MessageScalarFieldEnum = exports.ThreadScalarFieldEnum = exports.AgentScalarFieldEnum = exports.TransactionIsolationLevel = exports.ModelName = exports.AnyNull = exports.JsonNull = exports.DbNull = exports.NullTypes = exports.prismaVersion = exports.getExtensionContext = exports.Decimal = exports.Sql = exports.raw = exports.join = exports.empty = exports.sql = exports.PrismaClientValidationError = exports.PrismaClientInitializationError = exports.PrismaClientRustPanicError = exports.PrismaClientUnknownRequestError = exports.PrismaClientKnownRequestError = void 0;
+exports.defineExtension = exports.NullsOrder = exports.JsonNullValueFilter = exports.QueryMode = exports.JsonNullValueInput = exports.NullableJsonNullValueInput = exports.SortOrder = exports.IssueScalarFieldEnum = exports.ProjectTokenScalarFieldEnum = exports.ProjectScalarFieldEnum = exports.UserScalarFieldEnum = exports.TenantScalarFieldEnum = exports.MessageScalarFieldEnum = exports.ThreadScalarFieldEnum = exports.AgentScalarFieldEnum = exports.TransactionIsolationLevel = exports.ModelName = exports.AnyNull = exports.JsonNull = exports.DbNull = exports.NullTypes = exports.prismaVersion = exports.getExtensionContext = exports.Decimal = exports.Sql = exports.raw = exports.join = exports.empty = exports.sql = exports.PrismaClientValidationError = exports.PrismaClientInitializationError = exports.PrismaClientRustPanicError = exports.PrismaClientUnknownRequestError = exports.PrismaClientKnownRequestError = void 0;
 const runtime = __importStar(require("@prisma/client/runtime/client"));
 /**
  * Prisma Errors
@@ -109,6 +109,7 @@ exports.ModelName = {
     Tenant: 'Tenant',
     User: 'User',
     Project: 'Project',
+    ProjectToken: 'ProjectToken',
     Issue: 'Issue'
 };
 /**
@@ -176,6 +177,19 @@ exports.ProjectScalarFieldEnum = {
     name: 'name',
     slug: 'slug',
     createdAt: 'createdAt'
+};
+exports.ProjectTokenScalarFieldEnum = {
+    id: 'id',
+    tenantId: 'tenantId',
+    projectId: 'projectId',
+    name: 'name',
+    tokenHash: 'tokenHash',
+    issuedBy: 'issuedBy',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    lastUsedAt: 'lastUsedAt',
+    expiresAt: 'expiresAt',
+    revokedAt: 'revokedAt'
 };
 exports.IssueScalarFieldEnum = {
     id: 'id',

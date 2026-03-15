@@ -33,6 +33,11 @@ export type User = Prisma.UserModel;
  */
 export type Project = Prisma.ProjectModel;
 /**
+ * Model ProjectToken
+ *
+ */
+export type ProjectToken = Prisma.ProjectTokenModel;
+/**
  * Model Issue
  *
  */

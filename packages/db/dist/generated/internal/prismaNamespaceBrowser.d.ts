@@ -32,6 +32,7 @@ export declare const ModelName: {
     readonly Tenant: "Tenant";
     readonly User: "User";
     readonly Project: "Project";
+    readonly ProjectToken: "ProjectToken";
     readonly Issue: "Issue";
 };
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
@@ -105,6 +106,20 @@ export declare const ProjectScalarFieldEnum: {
     readonly createdAt: "createdAt";
 };
 export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum];
+export declare const ProjectTokenScalarFieldEnum: {
+    readonly id: "id";
+    readonly tenantId: "tenantId";
+    readonly projectId: "projectId";
+    readonly name: "name";
+    readonly tokenHash: "tokenHash";
+    readonly issuedBy: "issuedBy";
+    readonly createdAt: "createdAt";
+    readonly updatedAt: "updatedAt";
+    readonly lastUsedAt: "lastUsedAt";
+    readonly expiresAt: "expiresAt";
+    readonly revokedAt: "revokedAt";
+};
+export type ProjectTokenScalarFieldEnum = (typeof ProjectTokenScalarFieldEnum)[keyof typeof ProjectTokenScalarFieldEnum];
 export declare const IssueScalarFieldEnum: {
     readonly id: "id";
     readonly projectId: "projectId";

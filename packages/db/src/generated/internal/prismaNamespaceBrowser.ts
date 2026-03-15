@@ -57,6 +57,7 @@ export const ModelName = {
   Tenant: 'Tenant',
   User: 'User',
   Project: 'Project',
+  ProjectToken: 'ProjectToken',
   Issue: 'Issue'
 } as const
 
@@ -155,6 +156,23 @@ export const ProjectScalarFieldEnum = {
 } as const
 
 export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
+
+
+export const ProjectTokenScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  projectId: 'projectId',
+  name: 'name',
+  tokenHash: 'tokenHash',
+  issuedBy: 'issuedBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  lastUsedAt: 'lastUsedAt',
+  expiresAt: 'expiresAt',
+  revokedAt: 'revokedAt'
+} as const
+
+export type ProjectTokenScalarFieldEnum = (typeof ProjectTokenScalarFieldEnum)[keyof typeof ProjectTokenScalarFieldEnum]
 
 
 export const IssueScalarFieldEnum = {

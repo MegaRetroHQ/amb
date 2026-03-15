@@ -1,5 +1,6 @@
 export type AuthContext = {
   subject: string;
+  userId?: string;
   tenantId: string;
   projectId?: string;
   roles?: string[];

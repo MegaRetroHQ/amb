@@ -511,7 +511,7 @@ describe("API (e2e)", () => {
       const issueRes = await request(app.getHttpServer())
         .post("/api/auth/project-tokens")
         .set("Authorization", `Bearer ${userToken}`)
-        .send({ projectId })
+        .send({ name: "integration-main", projectId })
         .expect(201);
 
       const projectToken = issueRes.body.data?.accessToken as string;
@@ -555,7 +555,7 @@ describe("API (e2e)", () => {
       await request(app.getHttpServer())
         .post("/api/auth/project-tokens")
         .set("Authorization", `Bearer ${readerToken}`)
-        .send({ projectId })
+        .send({ name: "reader-attempt", projectId })
         .expect(403);
     });
 
@@ -575,7 +575,7 @@ describe("API (e2e)", () => {
       const issueRes = await request(app.getHttpServer())
         .post("/api/auth/project-tokens")
         .set("Authorization", `Bearer ${userToken}`)
-        .send({ projectId })
+        .send({ name: "integration-usage", projectId })
         .expect(201);
       const projectToken = issueRes.body.data?.accessToken as string;
 
@@ -583,6 +583,78 @@ describe("API (e2e)", () => {
         .get("/api/threads")
         .set("Authorization", `Bearer ${projectToken}`)
         .expect(200);
+    });
+  });
+
+  describe("admin project tokens API (E3-S4)", () => {
+    it("supports create/list/revoke/delete for tenant-admin", async () => {
+      const projectRes = await request(app.getHttpServer())
+        .post("/api/projects")
+        .send({ name: `E3 Admin Tokens ${Date.now().toString(36)}` })
+        .expect(201);
+      const projectId = projectRes.body.data.id as string;
+
+      const loginRes = await request(app.getHttpServer())
+        .post("/api/auth/login")
+        .send({ email: "admin@local.test", password: "ChangeMe123!" })
+        .expect(200);
+      const userToken = loginRes.body.data?.accessToken as string;
+
+      const createRes = await request(app.getHttpServer())
+        .post(`/api/admin/projects/${projectId}/tokens`)
+        .set("Authorization", `Bearer ${userToken}`)
+        .send({ name: "admin-issued", expiresIn: 3600 })
+        .expect(201);
+      const tokenId = createRes.body.data?.claims?.jti as string;
+      expect(tokenId).toBeDefined();
+
+      const listRes = await request(app.getHttpServer())
+        .get(`/api/admin/projects/${projectId}/tokens`)
+        .set("Authorization", `Bearer ${userToken}`)
+        .expect(200);
+      expect(
+        (listRes.body.data as Array<{ id: string; name: string }>).some(
+          (item) => item.id === tokenId && item.name === "admin-issued"
+        )
+      ).toBe(true);
+
+      const revokeRes = await request(app.getHttpServer())
+        .post(`/api/admin/projects/${projectId}/tokens/${tokenId}/revoke`)
+        .set("Authorization", `Bearer ${userToken}`)
+        .expect(201);
+      expect(revokeRes.body.data?.revokedAt).toBeTruthy();
+
+      await request(app.getHttpServer())
+        .delete(`/api/admin/projects/${projectId}/tokens/${tokenId}`)
+        .set("Authorization", `Bearer ${userToken}`)
+        .expect(200);
+    });
+
+    it("returns 403 for reader on admin API", async () => {
+      const projectRes = await request(app.getHttpServer())
+        .post("/api/projects")
+        .send({ name: `E3 Admin Tokens Reader ${Date.now().toString(36)}` })
+        .expect(201);
+      const projectId = projectRes.body.data.id as string;
+
+      const now = Math.floor(Date.now() / 1000);
+      const readerToken = signJwt(
+        {
+          sub: "user",
+          userId: "00000000-0000-0000-0000-0000000000d1",
+          tenantId: DEFAULT_TENANT_ID,
+          roles: ["reader"],
+          iat: now,
+          exp: now + 3600,
+        },
+        process.env.JWT_SECRET!
+      );
+
+      await request(app.getHttpServer())
+        .post(`/api/admin/projects/${projectId}/tokens`)
+        .set("Authorization", `Bearer ${readerToken}`)
+        .send({ name: "nope", expiresIn: 3600 })
+        .expect(403);
     });
   });
 });

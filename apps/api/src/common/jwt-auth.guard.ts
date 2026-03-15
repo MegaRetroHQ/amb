@@ -173,6 +173,7 @@ export class JwtAuthGuard implements CanActivate {
 
     return {
       subject: payload.sub,
+      userId: typeof payload.userId === "string" ? payload.userId : undefined,
       tenantId: payload.tenantId,
       projectId: payload.projectId,
       roles: Array.isArray(payload.roles) ? payload.roles : undefined,

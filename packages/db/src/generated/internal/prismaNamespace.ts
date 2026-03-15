@@ -390,6 +390,7 @@ export const ModelName = {
   Tenant: 'Tenant',
   User: 'User',
   Project: 'Project',
+  ProjectToken: 'ProjectToken',
   Issue: 'Issue'
 } as const
 
@@ -406,7 +407,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "agent" | "thread" | "message" | "tenant" | "user" | "project" | "issue"
+    modelProps: "agent" | "thread" | "message" | "tenant" | "user" | "project" | "projectToken" | "issue"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -854,6 +855,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ProjectToken: {
+      payload: Prisma.$ProjectTokenPayload<ExtArgs>
+      fields: Prisma.ProjectTokenFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ProjectTokenFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectTokenPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ProjectTokenFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectTokenPayload>
+        }
+        findFirst: {
+          args: Prisma.ProjectTokenFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectTokenPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ProjectTokenFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectTokenPayload>
+        }
+        findMany: {
+          args: Prisma.ProjectTokenFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectTokenPayload>[]
+        }
+        create: {
+          args: Prisma.ProjectTokenCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectTokenPayload>
+        }
+        createMany: {
+          args: Prisma.ProjectTokenCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ProjectTokenCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectTokenPayload>[]
+        }
+        delete: {
+          args: Prisma.ProjectTokenDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectTokenPayload>
+        }
+        update: {
+          args: Prisma.ProjectTokenUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectTokenPayload>
+        }
+        deleteMany: {
+          args: Prisma.ProjectTokenDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ProjectTokenUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ProjectTokenUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectTokenPayload>[]
+        }
+        upsert: {
+          args: Prisma.ProjectTokenUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectTokenPayload>
+        }
+        aggregate: {
+          args: Prisma.ProjectTokenAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateProjectToken>
+        }
+        groupBy: {
+          args: Prisma.ProjectTokenGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProjectTokenGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ProjectTokenCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProjectTokenCountAggregateOutputType> | number
+        }
+      }
+    }
     Issue: {
       payload: Prisma.$IssuePayload<ExtArgs>
       fields: Prisma.IssueFieldRefs
@@ -1046,6 +1121,23 @@ export const ProjectScalarFieldEnum = {
 } as const
 
 export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
+
+
+export const ProjectTokenScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  projectId: 'projectId',
+  name: 'name',
+  tokenHash: 'tokenHash',
+  issuedBy: 'issuedBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  lastUsedAt: 'lastUsedAt',
+  expiresAt: 'expiresAt',
+  revokedAt: 'revokedAt'
+} as const
+
+export type ProjectTokenScalarFieldEnum = (typeof ProjectTokenScalarFieldEnum)[keyof typeof ProjectTokenScalarFieldEnum]
 
 
 export const IssueScalarFieldEnum = {
@@ -1323,6 +1415,7 @@ export type GlobalOmitConfig = {
   tenant?: Prisma.TenantOmit
   user?: Prisma.UserOmit
   project?: Prisma.ProjectOmit
+  projectToken?: Prisma.ProjectTokenOmit
   issue?: Prisma.IssueOmit
 }
 

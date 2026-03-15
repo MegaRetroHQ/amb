@@ -6,15 +6,15 @@ const spec = {
     title: "Agent Message Bus API",
     version: "0.1.0",
     description:
-      "REST API для локальной шины сообщений между AI-агентами. Поддерживает регистрацию агентов, треды, отправку сообщений, inbox polling, SSE-стриминг и Dead Letter Queue.",
+      "REST API for a local message bus between AI agents. Supports agent registration, threads, sending messages, inbox polling, SSE streaming and Dead Letter Queue.",
   },
   servers: [{ url: "http://localhost:3333", description: "Local dev" }],
   tags: [
-    { name: "Agents", description: "Управление агентами" },
-    { name: "Threads", description: "Управление тредами" },
-    { name: "Messages", description: "Отправка и получение сообщений" },
+    { name: "Agents", description: "Agent management" },
+    { name: "Threads", description: "Thread management" },
+    { name: "Messages", description: "Send and receive messages" },
     { name: "DLQ", description: "Dead Letter Queue" },
-    { name: "Stream", description: "SSE-стриминг событий" },
+    { name: "Stream", description: "SSE event streaming" },
   ],
   components: {
     schemas: {
@@ -124,8 +124,8 @@ const spec = {
     "/api/agents": {
       get: {
         tags: ["Agents"],
-        summary: "Список агентов",
-        description: "Получить всех зарегистрированных агентов",
+        summary: "List agents",
+        description: "Get all registered agents",
         operationId: "listAgents",
         responses: {
           "200": {
@@ -149,8 +149,8 @@ const spec = {
       },
       post: {
         tags: ["Agents"],
-        summary: "Регистрация агента",
-        description: "Зарегистрировать нового агента",
+        summary: "Register agent",
+        description: "Register a new agent",
         operationId: "createAgent",
         requestBody: {
           required: true,
@@ -192,14 +192,14 @@ const spec = {
     "/api/agents/search": {
       get: {
         tags: ["Agents"],
-        summary: "Поиск агентов",
-        description: "Поиск агентов по имени или роли",
+        summary: "Search agents",
+        description: "Search agents by name or role",
         operationId: "searchAgents",
         parameters: [
           {
             name: "q",
             in: "query",
-            description: "Поисковый запрос",
+            description: "Search query",
             required: false,
             schema: { type: "string" },
           },
@@ -228,8 +228,8 @@ const spec = {
     "/api/threads": {
       get: {
         tags: ["Threads"],
-        summary: "Список тредов",
-        description: "Получить все треды",
+        summary: "List threads",
+        description: "Get all threads",
         operationId: "listThreads",
         responses: {
           "200": {
@@ -253,8 +253,8 @@ const spec = {
       },
       post: {
         tags: ["Threads"],
-        summary: "Создать тред",
-        description: "Создать новый тред",
+        summary: "Create thread",
+        description: "Create a new thread",
         operationId: "createThread",
         requestBody: {
           required: true,
@@ -295,8 +295,8 @@ const spec = {
     "/api/threads/{id}": {
       get: {
         tags: ["Threads"],
-        summary: "Получить тред",
-        description: "Получить тред по ID",
+        summary: "Get thread",
+        description: "Get thread by ID",
         operationId: "getThread",
         parameters: [
           {
@@ -324,8 +324,8 @@ const spec = {
       },
       patch: {
         tags: ["Threads"],
-        summary: "Обновить статус треда",
-        description: "Обновить статус треда",
+        summary: "Update thread status",
+        description: "Update thread status",
         operationId: "updateThread",
         parameters: [
           {
@@ -372,8 +372,8 @@ const spec = {
       },
       delete: {
         tags: ["Threads"],
-        summary: "Удалить тред",
-        description: "Удалить тред",
+        summary: "Delete thread",
+        description: "Delete thread",
         operationId: "deleteThread",
         parameters: [
           {
@@ -408,8 +408,8 @@ const spec = {
     "/api/threads/{id}/messages": {
       get: {
         tags: ["Threads"],
-        summary: "Сообщения треда",
-        description: "Получить все сообщения в треде",
+        summary: "Thread messages",
+        description: "Get all messages in a thread",
         operationId: "getThreadMessages",
         parameters: [
           {
@@ -444,8 +444,8 @@ const spec = {
     "/api/messages/send": {
       post: {
         tags: ["Messages"],
-        summary: "Отправить сообщение",
-        description: "Отправить сообщение между агентами",
+        summary: "Send message",
+        description: "Send a message between agents",
         operationId: "sendMessage",
         requestBody: {
           required: true,
@@ -468,7 +468,7 @@ const spec = {
                     type: "string",
                     format: "uuid",
                     nullable: true,
-                    description: "null для broadcast",
+                    description: "null for broadcast",
                     example: "550e8400-e29b-41d4-a716-446655440002",
                   },
                   payload: {
@@ -480,7 +480,7 @@ const spec = {
                     type: "string",
                     format: "uuid",
                     nullable: true,
-                    description: "ID родительского сообщения для ответов",
+                    description: "Parent message ID for replies",
                   },
                 },
                 required: ["threadId", "fromAgentId", "payload"],
@@ -508,15 +508,15 @@ const spec = {
     "/api/messages/inbox": {
       get: {
         tags: ["Messages"],
-        summary: "Входящие сообщения",
-        description: "Получить ожидающие сообщения для агента",
+        summary: "Inbox messages",
+        description: "Get pending messages for an agent",
         operationId: "getInbox",
         parameters: [
           {
             name: "agentId",
             in: "query",
             required: true,
-            description: "ID агента",
+            description: "Agent ID",
             schema: { type: "string", format: "uuid" },
           },
         ],
@@ -545,15 +545,15 @@ const spec = {
     "/api/messages/{id}/ack": {
       post: {
         tags: ["Messages"],
-        summary: "Подтвердить сообщение",
-        description: "Подтвердить получение сообщения (статус → ack)",
+        summary: "Ack message",
+        description: "Confirm message receipt (status → ack)",
         operationId: "ackMessage",
         parameters: [
           {
             name: "id",
             in: "path",
             required: true,
-            description: "ID сообщения",
+            description: "Message ID",
             schema: { type: "string", format: "uuid" },
           },
         ],
@@ -577,8 +577,8 @@ const spec = {
     "/api/dlq": {
       get: {
         tags: ["DLQ"],
-        summary: "Получить DLQ",
-        description: "Получить все сообщения в очереди мёртвых писем",
+        summary: "Get DLQ",
+        description: "Get all messages in the dead letter queue",
         operationId: "getDlq",
         responses: {
           "200": {
@@ -604,15 +604,15 @@ const spec = {
     "/api/dlq/{id}/retry": {
       post: {
         tags: ["DLQ"],
-        summary: "Повторить сообщение",
-        description: "Повторить неудачное сообщение из DLQ (статус → pending)",
+        summary: "Retry message",
+        description: "Retry a failed message from DLQ (status → pending)",
         operationId: "retryDlqMessage",
         parameters: [
           {
             name: "id",
             in: "path",
             required: true,
-            description: "ID сообщения",
+            description: "Message ID",
             schema: { type: "string", format: "uuid" },
           },
         ],
@@ -636,8 +636,8 @@ const spec = {
     "/api/dlq/retry-all": {
       post: {
         tags: ["DLQ"],
-        summary: "Повторить все",
-        description: "Повторить все сообщения в DLQ",
+        summary: "Retry all",
+        description: "Retry all messages in DLQ",
         operationId: "retryAllDlq",
         responses: {
           "200": {
@@ -666,16 +666,16 @@ const spec = {
     "/api/stream": {
       get: {
         tags: ["Stream"],
-        summary: "SSE-стрим событий",
+        summary: "SSE event stream",
         description:
-          "Server-Sent Events стрим для получения событий в реальном времени. Фильтрация по `agentId` — только входящие для агента, без параметра — все события.",
+          "Server-Sent Events stream for real-time events. Filter by `agentId` for agent inbox only; without parameter — all events.",
         operationId: "stream",
         parameters: [
           {
             name: "agentId",
             in: "query",
             required: false,
-            description: "Фильтр по ID агента",
+            description: "Filter by agent ID",
             schema: { type: "string", format: "uuid" },
           },
         ],

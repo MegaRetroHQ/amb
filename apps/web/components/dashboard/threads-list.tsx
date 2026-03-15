@@ -189,7 +189,7 @@ export function ThreadsList({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <MessageSquareIcon className="size-4 text-muted-foreground" />
-            <h2 className="font-semibold text-sm">Треды</h2>
+            <h2 className="font-semibold text-sm">Threads</h2>
             <Badge variant="secondary" className="text-xs">
               {threads.length}
             </Badge>
@@ -214,13 +214,13 @@ export function ThreadsList({
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Создать новый тред</DialogTitle>
+                  <DialogTitle>Create new thread</DialogTitle>
                   <DialogDescription>
-                    Создайте новый тред для общения агентов.
+                    Create a new thread for agent communication.
                   </DialogDescription>
                 </DialogHeader>
                 <Input
-                  placeholder="Название треда"
+                  placeholder="Thread title"
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleCreate()}
@@ -231,7 +231,7 @@ export function ThreadsList({
                     variant="outline"
                     onClick={() => setDialogOpen(false)}
                   >
-                    Отмена
+                    Cancel
                   </Button>
                   <Button
                     onClick={handleCreate}
@@ -240,10 +240,10 @@ export function ThreadsList({
                     {creating ? (
                       <>
                         <Loader2Icon className="size-4 mr-2 animate-spin" />
-                        Создание...
+                        Creating...
                       </>
                     ) : (
-                      "Создать тред"
+                      "Create thread"
                     )}
                   </Button>
                 </DialogFooter>
@@ -257,7 +257,7 @@ export function ThreadsList({
           <SearchIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
           <Input
             type="text"
-            placeholder="Поиск тредов..."
+            placeholder="Search threads..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="h-8 pl-8 text-sm"
@@ -269,10 +269,10 @@ export function ThreadsList({
           {(["all", "open", "closed", "archived"] as FilterStatus[]).map(
             (status) => {
               const labels: Record<FilterStatus, string> = {
-                all: "Все",
-                open: "Открытые",
-                closed: "Закрытые",
-                archived: "В архиве",
+                all: "All",
+                open: "Open",
+                closed: "Closed",
+                archived: "Archived",
               };
               return (
                 <Button
@@ -303,12 +303,12 @@ export function ThreadsList({
           {loading ? (
             <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
               <Loader2Icon className="size-6 animate-spin mb-2" />
-              <p className="text-sm">Загрузка тредов...</p>
+              <p className="text-sm">Loading threads...</p>
             </div>
           ) : error ? (
             <div className="flex flex-col items-center justify-center py-12 text-destructive">
               <AlertCircleIcon className="size-6 mb-2" />
-              <p className="text-sm font-medium">Ошибка загрузки</p>
+              <p className="text-sm font-medium">Load error</p>
               <p className="text-xs text-muted-foreground mt-1">{error}</p>
               <Button
                 size="sm"
@@ -316,7 +316,7 @@ export function ThreadsList({
                 onClick={handleRefresh}
                 className="mt-3"
               >
-                Повторить
+                Retry
               </Button>
             </div>
           ) : filteredThreads.length === 0 ? (
@@ -324,8 +324,8 @@ export function ThreadsList({
               <MessageSquareIcon className="size-10 mb-3 opacity-20" />
               {searchQuery || filterStatus !== "all" ? (
                 <>
-                  <p className="text-sm font-medium">Треды не найдены</p>
-                  <p className="text-xs mt-1">Попробуйте изменить фильтры</p>
+                  <p className="text-sm font-medium">No threads found</p>
+                  <p className="text-xs mt-1">Try changing filters</p>
                   <Button
                     size="sm"
                     variant="ghost"
@@ -335,14 +335,14 @@ export function ThreadsList({
                     }}
                     className="mt-2"
                   >
-                    Сбросить фильтры
+                    Reset filters
                   </Button>
                 </>
               ) : (
                 <>
-                  <p className="text-sm font-medium">Тредов пока нет</p>
+                  <p className="text-sm font-medium">No threads yet</p>
                   <p className="text-xs mt-1 text-center px-4">
-                    Создайте первый тред для начала общения
+                    Create the first thread to get started
                   </p>
                   <Button
                     size="sm"
@@ -350,7 +350,7 @@ export function ThreadsList({
                     className="mt-3 gap-1.5"
                   >
                     <PlusIcon className="size-4" />
-                    Создать тред
+                    Create thread
                   </Button>
                 </>
               )}
@@ -397,7 +397,7 @@ export function ThreadsList({
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>
-                              {copiedThreadId === thread.id ? "Скопировано!" : "Копировать название"}
+                              {copiedThreadId === thread.id ? "Copied!" : "Copy title"}
                             </TooltipContent>
                           </Tooltip>
                         </div>
@@ -436,7 +436,7 @@ export function ThreadsList({
                               onClick={() => updateThreadStatus(thread.id, "open")}
                             >
                               <CircleIcon className="size-4 mr-2 text-green-500" />
-                              Открыть
+                              Open
                             </DropdownMenuItem>
                           )}
                           {thread.status === "open" && (
@@ -444,7 +444,7 @@ export function ThreadsList({
                               onClick={() => updateThreadStatus(thread.id, "closed")}
                             >
                               <CheckCircleIcon className="size-4 mr-2 text-blue-500" />
-                              Закрыть
+                              Close
                             </DropdownMenuItem>
                           )}
                           {thread.status !== "archived" && (
@@ -452,7 +452,7 @@ export function ThreadsList({
                               onClick={() => updateThreadStatus(thread.id, "archived")}
                             >
                               <ArchiveIcon className="size-4 mr-2" />
-                              В архив
+                              Archive
                             </DropdownMenuItem>
                           )}
                           <DropdownMenuSeparator />
@@ -464,7 +464,7 @@ export function ThreadsList({
                             }}
                           >
                             <Trash2Icon className="size-4 mr-2" />
-                            Удалить
+                            Delete
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -481,10 +481,10 @@ export function ThreadsList({
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Удалить тред</DialogTitle>
+            <DialogTitle>Delete thread</DialogTitle>
             <DialogDescription>
-              Вы уверены, что хотите удалить этот тред? Все сообщения в нём
-              будут безвозвратно удалены. Это действие нельзя отменить.
+              Are you sure you want to delete this thread? All messages in it
+              will be permanently removed. This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -492,10 +492,10 @@ export function ThreadsList({
               variant="outline"
               onClick={() => setDeleteDialogOpen(false)}
             >
-              Отмена
+              Cancel
             </Button>
             <Button variant="destructive" onClick={handleDelete}>
-              Удалить
+              Delete
             </Button>
           </DialogFooter>
         </DialogContent>

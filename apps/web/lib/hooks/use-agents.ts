@@ -2,29 +2,18 @@
 
 import { useState, useEffect, useCallback } from "react";
 import type { Agent } from "@/lib/types";
-
-function withProjectId(path: string): string {
-  if (typeof window === "undefined") {
-    return path;
-  }
-
-  const projectId = new URLSearchParams(window.location.search).get("projectId");
-  if (!projectId) {
-    return path;
-  }
-
-  const separator = path.includes("?") ? "&" : "?";
-  return `${path}${separator}projectId=${encodeURIComponent(projectId)}`;
-}
+import { useProjectId } from "@/lib/context/project-context";
+import { withProjectId } from "@/lib/api/build-url";
 
 export function useAgents() {
+  const projectId = useProjectId();
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchAgents = useCallback(async () => {
     try {
-      const res = await fetch(withProjectId("/api/agents"));
+      const res = await fetch(withProjectId(projectId, "/api/agents"));
       const json = await res.json();
       if (json.data) {
         setAgents(json.data);
@@ -35,7 +24,7 @@ export function useAgents() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [projectId]);
 
   useEffect(() => {
     fetchAgents();

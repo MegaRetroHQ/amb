@@ -158,7 +158,7 @@ export function MentionInput({
         >
           <Command>
             <CommandList>
-              <CommandGroup heading="Агенты">
+              <CommandGroup heading="Agents">
                 {filteredAgents.map((agent, index) => (
                   <CommandItem
                     key={agent.id}
@@ -189,7 +189,7 @@ export function MentionInput({
                 ))}
               </CommandGroup>
               {filteredAgents.length === 0 && (
-                <CommandEmpty>Агенты не найдены</CommandEmpty>
+                <CommandEmpty>No agents found</CommandEmpty>
               )}
             </CommandList>
           </Command>

@@ -53,45 +53,45 @@ export function CommandPalette({
   )
 
   return (
-    <CommandDialog open={open} onOpenChange={onOpenChange} title="Командная палитра">
-      <CommandInput placeholder="Введите команду или поиск..." />
+    <CommandDialog open={open} onOpenChange={onOpenChange} title="Command palette">
+      <CommandInput placeholder="Type a command or search..." />
       <CommandList>
-        <CommandEmpty>Команда не найдена.</CommandEmpty>
+        <CommandEmpty>No command found.</CommandEmpty>
 
-        <CommandGroup heading="Навигация">
+        <CommandGroup heading="Navigation">
           <CommandItem onSelect={() => runCommand(() => onNavigate("messages"))}>
             <MessageSquareIcon className="size-4" />
-            <span>Сообщения</span>
+            <span>Messages</span>
             <CommandShortcut>1</CommandShortcut>
           </CommandItem>
           <CommandItem onSelect={() => runCommand(() => onNavigate("inbox"))}>
             <InboxIcon className="size-4" />
-            <span>Входящие</span>
+            <span>Inbox</span>
             <CommandShortcut>2</CommandShortcut>
           </CommandItem>
           <CommandItem onSelect={() => runCommand(() => onNavigate("dlq"))}>
             <AlertTriangleIcon className="size-4" />
-            <span>Очередь ошибок</span>
+            <span>Error queue (DLQ)</span>
             <CommandShortcut>3</CommandShortcut>
           </CommandItem>
         </CommandGroup>
 
         <CommandSeparator />
 
-        <CommandGroup heading="Действия">
+        <CommandGroup heading="Actions">
           <CommandItem onSelect={() => runCommand(onNewThread)}>
             <PlusIcon className="size-4" />
-            <span>Новый тред</span>
+            <span>New thread</span>
             <CommandShortcut>N</CommandShortcut>
           </CommandItem>
           <CommandItem onSelect={() => runCommand(onRefresh)}>
             <RefreshCwIcon className="size-4" />
-            <span>Обновить</span>
+            <span>Refresh</span>
             <CommandShortcut>R</CommandShortcut>
           </CommandItem>
           <CommandItem onSelect={() => runCommand(() => {})}>
             <SearchIcon className="size-4" />
-            <span>Поиск</span>
+            <span>Search</span>
             <CommandShortcut>/</CommandShortcut>
           </CommandItem>
           <CommandItem
@@ -100,42 +100,42 @@ export function CommandPalette({
             }
           >
             <BookOpenIcon className="size-4" />
-            <span>Документация API (Swagger)</span>
+            <span>API docs (Swagger)</span>
           </CommandItem>
           <CommandItem
             onSelect={() => runCommand(() => router.push("/help"))}
           >
             <HelpCircleIcon className="size-4" />
-            <span>Помощь</span>
+            <span>Help</span>
           </CommandItem>
         </CommandGroup>
 
         <CommandSeparator />
 
-        <CommandGroup heading="Выбор элементов">
+        <CommandGroup heading="Selection">
           <CommandItem disabled>
             <ArrowUpIcon className="size-4" />
-            <span>Предыдущий элемент</span>
+            <span>Previous item</span>
             <CommandShortcut>K / ↑</CommandShortcut>
           </CommandItem>
           <CommandItem disabled>
             <ArrowDownIcon className="size-4" />
-            <span>Следующий элемент</span>
+            <span>Next item</span>
             <CommandShortcut>J / ↓</CommandShortcut>
           </CommandItem>
         </CommandGroup>
 
         <CommandSeparator />
 
-        <CommandGroup heading="Сообщения">
+        <CommandGroup heading="Messages">
           <CommandItem disabled>
             <CheckIcon className="size-4" />
-            <span>Подтвердить сообщение</span>
+            <span>Ack message</span>
             <CommandShortcut>A</CommandShortcut>
           </CommandItem>
           <CommandItem disabled>
             <SendIcon className="size-4" />
-            <span>Отправить сообщение</span>
+            <span>Send message</span>
             <CommandShortcut>⌘ Enter</CommandShortcut>
           </CommandItem>
         </CommandGroup>
@@ -144,18 +144,18 @@ export function CommandPalette({
   )
 }
 
-// Hook для открытия command palette через ⌘K
+// Hook to open command palette via ⌘K
 export function useCommandPalette() {
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      // ⌘K или Ctrl+K для открытия
+      // ⌘K or Ctrl+K to open
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault()
         setOpen((prev) => !prev)
       }
-      // ? для показа shortcuts
+      // ? to show shortcuts
       if (e.key === "?" && !e.metaKey && !e.ctrlKey) {
         const target = e.target as HTMLElement
         const isInput =

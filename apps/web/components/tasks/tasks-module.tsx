@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
-import { ArrowLeftIcon, PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
+import { ArrowLeftIcon, FileTextIcon, PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { DatePicker } from "@/components/ui/date-picker";
+import { MarkdownContent } from "@/components/ui/markdown-content";
+import { DescriptionEditor } from "@/components/ui/description-editor";
 import { ISSUE_PRIORITIES, ISSUE_PRIORITY_LABELS, ISSUE_STATES, ISSUE_STATE_LABELS } from "@/lib/issues";
 import { useIssues, type IssueFilters } from "@/lib/hooks/use-issues";
 import { useProjectMembers } from "@/lib/hooks/use-project-members";
@@ -87,6 +89,7 @@ export function TasksModule({ projectId, projectName }: TasksModuleProps) {
 
   const [createOpen, setCreateOpen] = useState(false);
   const [editIssue, setEditIssue] = useState<Issue | null>(null);
+  const [viewDescriptionIssue, setViewDescriptionIssue] = useState<Issue | null>(null);
   const [deleteIssueId, setDeleteIssueId] = useState<string | null>(null);
   const [form, setForm] = useState<IssueFormState>(defaultIssueForm);
   const [formError, setFormError] = useState<string | null>(null);
@@ -233,12 +236,12 @@ export function TasksModule({ projectId, projectName }: TasksModuleProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="mx-auto max-w-7xl px-4 py-6 md:px-8">
+      <div className="mx-auto max-w-screen-2xl px-4 py-6 md:px-8">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <div>
             <div className="mb-2 flex items-center gap-2">
               <Button asChild variant="ghost" size="sm" className="gap-2 px-2">
-                <Link href={`/?projectId=${projectId}`}>
+                <Link href="/">
                   <ArrowLeftIcon className="size-4" />
                   Back to Dashboard
                 </Link>
@@ -390,7 +393,20 @@ export function TasksModule({ projectId, projectName }: TasksModuleProps) {
                     <td className="px-3 py-2">
                       <p className="font-medium">{issue.title}</p>
                       {issue.description ? (
-                        <p className="line-clamp-2 text-xs text-muted-foreground">{issue.description}</p>
+                        <div className="mt-1 flex items-start gap-1">
+                          <div className="min-w-0 flex-1">
+                            <MarkdownContent content={issue.description} className="text-xs text-muted-foreground" clamped />
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="size-7 shrink-0"
+                            onClick={() => setViewDescriptionIssue(issue)}
+                            title="Open description"
+                          >
+                            <FileTextIcon className="size-3.5" />
+                          </Button>
+                        </div>
                       ) : null}
                     </td>
                     <td className="px-3 py-2">
@@ -417,7 +433,7 @@ export function TasksModule({ projectId, projectName }: TasksModuleProps) {
         ) : null}
 
         {!loading && viewMode === "kanban" ? (
-          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+          <div className="grid w-full grid-cols-4 gap-3">
             {ISSUE_STATES.map((state) => {
               const columnIssues = sortedIssues.filter((issue) => issue.state === state);
               return (
@@ -441,6 +457,23 @@ export function TasksModule({ projectId, projectName }: TasksModuleProps) {
                         className="rounded-md border bg-card p-3"
                       >
                         <p className="mb-1 text-sm font-medium">{issue.title}</p>
+                        {issue.description ? (
+                          <div className="mb-2">
+                            <MarkdownContent content={issue.description} className="text-xs text-muted-foreground" clamped />
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-6 px-1 text-xs"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setViewDescriptionIssue(issue);
+                              }}
+                            >
+                              <FileTextIcon className="mr-1 size-3" />
+                              More
+                            </Button>
+                          </div>
+                        ) : null}
                         <div className="mb-2 flex items-center gap-2 text-xs text-muted-foreground">
                           <span>{ISSUE_PRIORITY_LABELS[issue.priority]}</span>
                           <span>•</span>
@@ -491,6 +524,21 @@ export function TasksModule({ projectId, projectName }: TasksModuleProps) {
         </DialogContent>
       </Dialog>
 
+      <Dialog open={Boolean(viewDescriptionIssue)} onOpenChange={(open) => (open ? null : setViewDescriptionIssue(null))}>
+        <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{viewDescriptionIssue?.title}</DialogTitle>
+          </DialogHeader>
+          <div className="max-h-[70vh] overflow-y-auto">
+            {viewDescriptionIssue?.description ? (
+              <MarkdownContent content={viewDescriptionIssue.description} className="text-sm" />
+            ) : (
+              <p className="text-sm text-muted-foreground">No description</p>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <Dialog open={Boolean(deleteIssueId)} onOpenChange={(open) => (open ? null : setDeleteIssueId(null))}>
         <DialogContent>
           <DialogHeader>
@@ -530,11 +578,11 @@ function IssueForm({ form, setForm, formError, members, membersLoading }: IssueF
         onChange={(event) => setForm((prev) => ({ ...prev, title: event.target.value }))}
       />
 
-      <textarea
-        className="min-h-28 w-full rounded-md border bg-transparent px-3 py-2 text-sm"
-        placeholder="Description"
+      <DescriptionEditor
         value={form.description}
-        onChange={(event) => setForm((prev) => ({ ...prev, description: event.target.value }))}
+        onChange={(description) => setForm((prev) => ({ ...prev, description }))}
+        placeholder="Description (Markdown: **bold**, *italic*, ## headings, lists, code...)"
+        minHeight="12rem"
       />
 
       <div className="grid gap-3 md:grid-cols-2">

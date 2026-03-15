@@ -19,47 +19,47 @@ import {
 } from "@/components/ui/card";
 
 export const metadata: Metadata = {
-  title: "Сценарии использования — Помощь | Agent Message Bus",
-  description: "Все варианты применения AMB: подключение, потоки сообщений, роли, типовые сценарии",
+  title: "Use cases — Help | Agent Message Bus",
+  description: "All AMB use cases: connection, message flows, roles, typical scenarios",
 };
 
 const connectionTable = [
-  { way: "REST API (curl / fetch)", who: "Скрипты, внешние сервисы, отладка", desc: "Прямые HTTP-запросы к /api/*." },
-  { way: "TypeScript SDK", who: "Приложения, воркеры, оркестрация", desc: "createClient(baseUrl): агенты, треды, sendMessage, pollInbox, ACK, DLQ." },
-  { way: "MCP (Cursor и др.)", who: "ИИ-агенты в Cursor", desc: "list_agents, create_thread, send_message, get_inbox, ack_message, get_dlq." },
-  { way: "Dashboard UI", who: "Разработчик, наблюдатель", desc: "Мониторинг агентов, тредов, inbox, DLQ, ручной retry." },
-  { way: "AMB в Docker", who: "Другое приложение", desc: "docker compose up -d; приложение ходит на localhost:3333." },
-  { way: "Копирование SDK", who: "Свой проект", desc: "cp -r lib/sdk your-project/... и createClient(url)." },
+  { way: "REST API (curl / fetch)", who: "Scripts, external services, debugging", desc: "Direct HTTP requests to /api/*." },
+  { way: "TypeScript SDK", who: "Apps, workers, orchestration", desc: "createClient(baseUrl): agents, threads, sendMessage, pollInbox, ACK, DLQ." },
+  { way: "MCP (Cursor, etc.)", who: "AI agents in Cursor", desc: "list_agents, create_thread, send_message, get_inbox, ack_message, get_dlq." },
+  { way: "Dashboard UI", who: "Developer, observer", desc: "Monitor agents, threads, inbox, DLQ, manual retry." },
+  { way: "AMB in Docker", who: "Another application", desc: "docker compose up -d; app talks to localhost:3333." },
+  { way: "Copy SDK", who: "Your project", desc: "cp -r lib/sdk your-project/... and createClient(url)." },
 ];
 
 const flowTable = [
-  { scenario: "Точка–точка", desc: "Сообщение одному получателю (toAgentId задан).", how: "sendMessage({ ..., toAgentId: targetId, payload })." },
-  { scenario: "Broadcast", desc: "Одно сообщение видит каждый агент.", how: "sendMessage({ ..., toAgentId: null, payload })." },
-  { scenario: "Цепочка ответов", desc: "Ответ на сообщение (родитель–потомок).", how: "sendMessage({ ..., parentId: incoming.id, payload })." },
-  { scenario: "Последовательный workflow", desc: "Оркестратор шлёт задачи по шагам (PO → Architect → Dev → QA).", how: "createThread → цикл sendMessage. Пример: pnpm orchestrator." },
-  { scenario: "Polling inbox", desc: "Воркер периодически забирает входящие.", how: "for await (const msgs of client.pollInbox(agentId)) { ... ackMessage(id) }." },
-  { scenario: "Retry и DLQ", desc: "Повтор недоставленных, просмотр DLQ.", how: "POST /api/dlq/:id/retry, retryAllDLQ(), Dashboard." },
-  { scenario: "Закрытие треда", desc: "Тред помечен как завершённый.", how: "PATCH /api/threads/:id { status: \"closed\" }." },
+  { scenario: "Point-to-point", desc: "Message to one recipient (toAgentId set).", how: "sendMessage({ ..., toAgentId: targetId, payload })." },
+  { scenario: "Broadcast", desc: "One message visible to every agent.", how: "sendMessage({ ..., toAgentId: null, payload })." },
+  { scenario: "Reply chain", desc: "Reply to a message (parent–child).", how: "sendMessage({ ..., parentId: incoming.id, payload })." },
+  { scenario: "Sequential workflow", desc: "Orchestrator sends tasks step by step (PO → Architect → Dev → QA).", how: "createThread → loop sendMessage. Example: pnpm orchestrator." },
+  { scenario: "Polling inbox", desc: "Worker periodically fetches incoming.", how: "for await (const msgs of client.pollInbox(agentId)) { ... ackMessage(id) }." },
+  { scenario: "Retry and DLQ", desc: "Retry undelivered, view DLQ.", how: "POST /api/dlq/:id/retry, retryAllDLQ(), Dashboard." },
+  { scenario: "Close thread", desc: "Thread marked as completed.", how: "PATCH /api/threads/:id { status: \"closed\" }." },
 ];
 
 const roleTable = [
-  { role: "Разработчик (локально)", goal: "Запустить шину, отладить агентов.", actions: "pnpm dev, seed:agents, API/SDK, examples/." },
-  { role: "Разработчик (интеграция)", goal: "Встроить AMB в сервис или скрипт.", actions: "HTTP, SDK или MCP в своём коде." },
-  { role: "ИИ-агент в Cursor", goal: "Выполнять задачи через шину.", actions: "MCP: create_thread, send_message, get_inbox, ack_message." },
-  { role: "Оркестратор (скрипт)", goal: "Цепочка агентов, пайплайны.", actions: "SDK: createThread, цикл sendMessage, ожидание ответов." },
-  { role: "Наблюдатель", goal: "Состояние системы, тредов, DLQ.", actions: "Dashboard: агенты, треды, inbox, DLQ, retry." },
+  { role: "Developer (local)", goal: "Run the bus, debug agents.", actions: "pnpm dev, seed:agents, API/SDK, examples/." },
+  { role: "Developer (integration)", goal: "Integrate AMB into a service or script.", actions: "HTTP, SDK or MCP in your code." },
+  { role: "AI agent in Cursor", goal: "Execute tasks via the bus.", actions: "MCP: create_thread, send_message, get_inbox, ack_message." },
+  { role: "Orchestrator (script)", goal: "Agent chains, pipelines.", actions: "SDK: createThread, loop sendMessage, wait for replies." },
+  { role: "Observer", goal: "System state, threads, DLQ.", actions: "Dashboard: agents, threads, inbox, DLQ, retry." },
 ];
 
 const summaryTable = [
-  { scenario: "Локальная разработка", connection: "REST + Dashboard", ops: "Создание треда, отправка, просмотр inbox/DLQ" },
-  { scenario: "Интеграция приложения", connection: "SDK или REST", ops: "registerAgent, createThread, sendMessage, pollInbox, ackMessage" },
-  { scenario: "ИИ-агенты в Cursor", connection: "MCP", ops: "create_thread, send_message, get_inbox, ack_message" },
-  { scenario: "Оркестрация по шагам", connection: "SDK (скрипт)", ops: "createThread → цикл sendMessage по ролям" },
-  { scenario: "Воркер агента", connection: "SDK", ops: "pollInbox, обработка по payload.type, ackMessage" },
-  { scenario: "Broadcast", connection: "SDK / REST / MCP", ops: "sendMessage с toAgentId: null" },
-  { scenario: "Ответ в треде", connection: "SDK / REST / MCP", ops: "sendMessage с parentId" },
-  { scenario: "Работа с DLQ", connection: "Dashboard / REST / SDK", ops: "getDLQ, retryDLQMessage, retryAllDLQ" },
-  { scenario: "AMB как сервис", connection: "HTTP из приложения", ops: "Любые сценарии по URL AMB" },
+  { scenario: "Local development", connection: "REST + Dashboard", ops: "Create thread, send, view inbox/DLQ" },
+  { scenario: "App integration", connection: "SDK or REST", ops: "registerAgent, createThread, sendMessage, pollInbox, ackMessage" },
+  { scenario: "AI agents in Cursor", connection: "MCP", ops: "create_thread, send_message, get_inbox, ack_message" },
+  { scenario: "Step-by-step orchestration", connection: "SDK (script)", ops: "createThread → loop sendMessage by role" },
+  { scenario: "Agent worker", connection: "SDK", ops: "pollInbox, handle by payload.type, ackMessage" },
+  { scenario: "Broadcast", connection: "SDK / REST / MCP", ops: "sendMessage with toAgentId: null" },
+  { scenario: "Reply in thread", connection: "SDK / REST / MCP", ops: "sendMessage with parentId" },
+  { scenario: "Working with DLQ", connection: "Dashboard / REST / SDK", ops: "getDLQ, retryDLQMessage, retryAllDLQ" },
+  { scenario: "AMB as a service", connection: "HTTP from app", ops: "Any scenario via AMB URL" },
 ];
 
 function Table({
@@ -107,34 +107,34 @@ export default function UseCasesPage() {
           <Button variant="ghost" size="sm" asChild className="gap-2">
             <Link href="/help">
               <ArrowLeftIcon className="size-4" />
-              К разделу «Помощь»
+              Back to Help
             </Link>
           </Button>
-          <h1 className="text-lg font-semibold tracking-tight">Сценарии использования AMB</h1>
+          <h1 className="text-lg font-semibold tracking-tight">AMB use cases</h1>
           <div className="w-28" />
         </div>
       </header>
 
       <main className="max-w-3xl mx-auto px-6 py-8 space-y-8">
         <p className="text-muted-foreground text-sm">
-          Все возможные варианты применения AMB: кто использует, как подключается и какие потоки сообщений поддерживаются.
+          All AMB use cases: who uses it, how they connect, and what message flows are supported.
         </p>
 
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <NetworkIcon className="size-5" />
-              По способу подключения
+              By connection method
             </CardTitle>
-            <CardDescription>Как клиенты подключаются к шине</CardDescription>
+            <CardDescription>How clients connect to the bus</CardDescription>
           </CardHeader>
           <CardContent>
             <Table
-              headers={["Способ", "Кто использует", "Описание"]}
+              headers={["Method", "Who uses", "Description"]}
               rows={connectionTable.map((r) => ({
-                Способ: r.way,
-                "Кто использует": r.who,
-                Описание: r.desc,
+                Method: r.way,
+                "Who uses": r.who,
+                Description: r.desc,
               }))}
             />
           </CardContent>
@@ -144,17 +144,17 @@ export default function UseCasesPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <WorkflowIcon className="size-5" />
-              По типу потока сообщений
+              By message flow type
             </CardTitle>
-            <CardDescription>Точка–точка, broadcast, workflow, DLQ и др.</CardDescription>
+            <CardDescription>Point-to-point, broadcast, workflow, DLQ, etc.</CardDescription>
           </CardHeader>
           <CardContent>
             <Table
-              headers={["Сценарий", "Описание", "Как реализовать"]}
+              headers={["Scenario", "Description", "How to implement"]}
               rows={flowTable.map((r) => ({
-                Сценарий: r.scenario,
-                Описание: r.desc,
-                "Как реализовать": r.how,
+                Scenario: r.scenario,
+                Description: r.desc,
+                "How to implement": r.how,
               }))}
             />
           </CardContent>
@@ -164,17 +164,17 @@ export default function UseCasesPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <UserIcon className="size-5" />
-              По роли пользователя
+              By user role
             </CardTitle>
-            <CardDescription>Кто что делает</CardDescription>
+            <CardDescription>Who does what</CardDescription>
           </CardHeader>
           <CardContent>
             <Table
-              headers={["Роль", "Цель", "Типичные действия"]}
+              headers={["Role", "Goal", "Typical actions"]}
               rows={roleTable.map((r) => ({
-                Роль: r.role,
-                Цель: r.goal,
-                "Типичные действия": r.actions,
+                Role: r.role,
+                Goal: r.goal,
+                "Typical actions": r.actions,
               }))}
             />
           </CardContent>
@@ -184,54 +184,54 @@ export default function UseCasesPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <ListOrderedIcon className="size-5" />
-              Типовые сценарии по шагам
+              Step-by-step scenarios
             </CardTitle>
-            <CardDescription>Кратко: регистрация, MCP, broadcast, workflow, воркер, DLQ, Docker</CardDescription>
+            <CardDescription>Summary: registration, MCP, broadcast, workflow, worker, DLQ, Docker</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6 text-sm text-muted-foreground">
             <div>
-              <h4 className="font-medium text-foreground mb-1">Регистрация агента и первое сообщение (SDK)</h4>
-              <p>Запуск AMB → createClient → registerAgent → createThread → sendMessage. Получатель: getInbox / pollInbox → обработка → ackMessage.</p>
+              <h4 className="font-medium text-foreground mb-1">Agent registration and first message (SDK)</h4>
+              <p>Start AMB → createClient → registerAgent → createThread → sendMessage. Recipient: getInbox / pollInbox → process → ackMessage.</p>
             </div>
             <div>
-              <h4 className="font-medium text-foreground mb-1">Задача из Cursor (MCP)</h4>
-              <p>В чате: «Создай тред и отправь задачу агенту dev». ИИ вызывает create_thread → list_agents → send_message.</p>
+              <h4 className="font-medium text-foreground mb-1">Task from Cursor (MCP)</h4>
+              <p>In chat: “Create a thread and send a task to the dev agent”. AI calls create_thread → list_agents → send_message.</p>
             </div>
             <div>
               <h4 className="font-medium text-foreground mb-1">Broadcast</h4>
-              <p>sendMessage с toAgentId: null — все агенты видят сообщение в inbox.</p>
+              <p>sendMessage with toAgentId: null — every agent sees the message in inbox.</p>
             </div>
             <div>
               <h4 className="font-medium text-foreground mb-1">Workflow PO → Architect → Dev → QA</h4>
-              <p>Скрипт: создать тред, по шагам sendMessage по ролям, опционально ждать ответ, закрыть тред. Пример: pnpm orchestrator.</p>
+              <p>Script: create thread, sendMessage by role step by step, optionally wait for reply, close thread. Example: pnpm orchestrator.</p>
             </div>
             <div>
-              <h4 className="font-medium text-foreground mb-1">Воркер агента</h4>
-              <p>pollInbox(agentId) в цикле, обработка по payload.type, ackMessage. При падении — retry/DLQ.</p>
+              <h4 className="font-medium text-foreground mb-1">Agent worker</h4>
+              <p>pollInbox(agentId) in a loop, handle by payload.type, ackMessage. On failure — retry/DLQ.</p>
             </div>
             <div>
-              <h4 className="font-medium text-foreground mb-1">Мониторинг и DLQ</h4>
-              <p>Dashboard или GET /api/dlq → retry одного или retry-all через API / client.retryDLQMessage / retryAllDLQ.</p>
+              <h4 className="font-medium text-foreground mb-1">Monitoring and DLQ</h4>
+              <p>Dashboard or GET /api/dlq → retry one or retry-all via API / client.retryDLQMessage / retryAllDLQ.</p>
             </div>
             <div>
-              <h4 className="font-medium text-foreground mb-1">AMB как сервис</h4>
-              <p>docker compose up -d; своё приложение подключается по HTTP или через SDK к URL AMB.</p>
+              <h4 className="font-medium text-foreground mb-1">AMB as a service</h4>
+              <p>docker compose up -d; your app connects over HTTP or via SDK to the AMB URL.</p>
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Сводная таблица</CardTitle>
-            <CardDescription>Сценарий → подключение → основные операции</CardDescription>
+            <CardTitle>Summary table</CardTitle>
+            <CardDescription>Scenario → connection → main operations</CardDescription>
           </CardHeader>
           <CardContent>
             <Table
-              headers={["Сценарий", "Подключение", "Основные операции"]}
+              headers={["Scenario", "Connection", "Main operations"]}
               rows={summaryTable.map((r) => ({
-                Сценарий: r.scenario,
-                Подключение: r.connection,
-                "Основные операции": r.ops,
+                Scenario: r.scenario,
+                Connection: r.connection,
+                "Main operations": r.ops,
               }))}
             />
           </CardContent>
@@ -241,7 +241,7 @@ export default function UseCasesPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Link2Icon className="size-5" />
-              Документация
+              Documentation
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -250,13 +250,13 @@ export default function UseCasesPage() {
                 <Button variant="outline" size="sm" className="justify-start gap-2" asChild>
                   <Link href="/api-docs" target="_blank" rel="noopener noreferrer">
                     <BookOpenIcon className="size-4" />
-                    Документация API (Swagger)
+                    API docs (Swagger)
                   </Link>
                 </Button>
               </li>
               <li>
                 <span className="text-sm text-muted-foreground">
-                  Полная версия сценариев в репозитории: <code className="rounded bg-muted px-1">docs/use-cases.md</code>
+                  Full scenarios in the repo: <code className="rounded bg-muted px-1">docs/use-cases.md</code>
                 </span>
               </li>
             </ul>

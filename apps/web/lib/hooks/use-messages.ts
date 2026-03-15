@@ -3,22 +3,11 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import type { Message } from "@/lib/types";
 import { useSSE } from "./use-sse";
-
-function withProjectId(path: string): string {
-  if (typeof window === "undefined") {
-    return path;
-  }
-
-  const projectId = new URLSearchParams(window.location.search).get("projectId");
-  if (!projectId) {
-    return path;
-  }
-
-  const separator = path.includes("?") ? "&" : "?";
-  return `${path}${separator}projectId=${encodeURIComponent(projectId)}`;
-}
+import { useProjectId } from "@/lib/context/project-context";
+import { withProjectId } from "@/lib/api/build-url";
 
 export function useThreadMessages(threadId: string | null) {
+  const projectId = useProjectId();
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,7 +17,7 @@ export function useThreadMessages(threadId: string | null) {
     
     setLoading(true);
     try {
-      const res = await fetch(withProjectId(`/api/threads/${threadId}/messages`));
+      const res = await fetch(withProjectId(projectId, `/api/threads/${threadId}/messages`));
       const json = await res.json();
       if (json.data) {
         setMessages(json.data);
@@ -39,7 +28,7 @@ export function useThreadMessages(threadId: string | null) {
     } finally {
       setLoading(false);
     }
-  }, [threadId]);
+  }, [threadId, projectId]);
 
   const sendMessage = useCallback(async (params: {
     fromAgentId: string;
@@ -49,7 +38,7 @@ export function useThreadMessages(threadId: string | null) {
   }) => {
     if (!threadId) return;
 
-    const res = await fetch(withProjectId("/api/messages/send"), {
+    const res = await fetch(withProjectId(projectId, "/api/messages/send"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -63,7 +52,7 @@ export function useThreadMessages(threadId: string | null) {
     }
     await fetchMessages();
     return json.data;
-  }, [threadId, fetchMessages]);
+  }, [threadId, fetchMessages, projectId]);
 
   useEffect(() => {
     if (threadId) {
@@ -77,6 +66,7 @@ export function useThreadMessages(threadId: string | null) {
 }
 
 export function useInbox(agentId: string | null, pollInterval = 3000) {
+  const projectId = useProjectId();
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -85,7 +75,7 @@ export function useInbox(agentId: string | null, pollInterval = 3000) {
     if (!agentId) return;
     
     try {
-      const res = await fetch(withProjectId(`/api/messages/inbox?agentId=${agentId}`));
+      const res = await fetch(withProjectId(projectId, `/api/messages/inbox?agentId=${agentId}`));
       const json = await res.json();
       if (json.data) {
         setMessages(json.data);
@@ -95,10 +85,10 @@ export function useInbox(agentId: string | null, pollInterval = 3000) {
     } finally {
       setLoading(false);
     }
-  }, [agentId]);
+  }, [agentId, projectId]);
 
   const ackMessage = useCallback(async (messageId: string) => {
-    const res = await fetch(withProjectId(`/api/messages/${messageId}/ack`), {
+    const res = await fetch(withProjectId(projectId, `/api/messages/${messageId}/ack`), {
       method: "POST",
     });
     if (!res.ok) {
@@ -106,7 +96,7 @@ export function useInbox(agentId: string | null, pollInterval = 3000) {
       throw new Error(json.error?.message || "Failed to ack message");
     }
     await fetchInbox();
-  }, [fetchInbox]);
+  }, [fetchInbox, projectId]);
 
   useEffect(() => {
     if (agentId) {
@@ -129,13 +119,14 @@ export function useInbox(agentId: string | null, pollInterval = 3000) {
 }
 
 export function useDlq() {
+  const projectId = useProjectId();
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchDlq = useCallback(async () => {
     try {
-      const res = await fetch(withProjectId("/api/dlq"));
+      const res = await fetch(withProjectId(projectId, "/api/dlq"));
       const json = await res.json();
       if (json.data) {
         setMessages(json.data);
@@ -146,14 +137,14 @@ export function useDlq() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [projectId]);
 
   const retryMessage = useCallback(async (messageId: string) => {
     // Optimistic update
     setMessages((prev) => prev.filter((m) => m.id !== messageId));
     
     try {
-      const res = await fetch(withProjectId(`/api/dlq/${messageId}/retry`), {
+      const res = await fetch(withProjectId(projectId, `/api/dlq/${messageId}/retry`), {
         method: "POST",
       });
       if (!res.ok) {
@@ -165,14 +156,14 @@ export function useDlq() {
       await fetchDlq();
       throw err;
     }
-  }, [fetchDlq]);
+  }, [fetchDlq, projectId]);
 
   const retryAll = useCallback(async () => {
     const previousMessages = messages;
     setMessages([]);
     
     try {
-      const res = await fetch(withProjectId("/api/dlq/retry-all"), {
+      const res = await fetch(withProjectId(projectId, "/api/dlq/retry-all"), {
         method: "POST",
       });
       if (!res.ok) {
@@ -184,7 +175,7 @@ export function useDlq() {
       setMessages(previousMessages);
       throw err;
     }
-  }, [messages]);
+  }, [messages, projectId]);
 
   useEffect(() => {
     fetchDlq();

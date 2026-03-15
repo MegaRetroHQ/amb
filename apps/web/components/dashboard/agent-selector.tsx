@@ -67,12 +67,12 @@ export function AgentSelector({
               disabled={disabled}
             >
               <AtSignIcon className="size-3.5" />
-              <span className="hidden sm:inline">Кому</span>
+              <span className="hidden sm:inline">To</span>
               <ChevronDownIcon className="size-3.5" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-56">
-            <DropdownMenuLabel>Выберите получателя</DropdownMenuLabel>
+            <DropdownMenuLabel>Select recipient</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {availableAgents.map((agent) => (
               <DropdownMenuItem
@@ -100,7 +100,7 @@ export function AgentSelector({
             ))}
             {availableAgents.length === 0 && (
               <div className="px-2 py-4 text-center text-sm text-muted-foreground">
-                Нет доступных агентов
+                No agents available
               </div>
             )}
           </DropdownMenuContent>

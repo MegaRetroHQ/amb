@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
+import { ProjectProvider } from "@/lib/context/project-context";
 import "./globals.css";
 
 const jetbrainsMono = JetBrains_Mono({subsets:['latin'],variable:'--font-sans'});
@@ -17,7 +18,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Agent Message Bus",
-  description: "Панель управления агентами и сообщениями",
+  description: "Agent and message management dashboard",
 };
 
 export default function RootLayout({
@@ -30,7 +31,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <ProjectProvider>{children}</ProjectProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useCallback, useState } from "react";
+import { useProjectId } from "@/lib/context/project-context";
+import { withProjectId } from "@/lib/api/build-url";
 
 type SSEEvent =
   | { type: "connected"; data: { timestamp: string } }
@@ -18,21 +20,8 @@ type UseSSEOptions = {
   reconnectInterval?: number;
 };
 
-function withProjectId(path: string): string {
-  if (typeof window === "undefined") {
-    return path;
-  }
-
-  const projectId = new URLSearchParams(window.location.search).get("projectId");
-  if (!projectId) {
-    return path;
-  }
-
-  const separator = path.includes("?") ? "&" : "?";
-  return `${path}${separator}projectId=${encodeURIComponent(projectId)}`;
-}
-
 export function useSSE(options: UseSSEOptions = {}) {
+  const projectId = useProjectId();
   const { enabled = true, reconnectInterval = 3000 } = options;
 
   const [state, setState] = useState<SSEState>({
@@ -49,7 +38,7 @@ export function useSSE(options: UseSSEOptions = {}) {
       eventSourceRef.current.close();
     }
 
-    const eventSource = new EventSource(withProjectId("/api/stream"));
+    const eventSource = new EventSource(withProjectId(projectId, "/api/stream"));
     eventSourceRef.current = eventSource;
 
     eventSource.onopen = () => {
@@ -88,7 +77,7 @@ export function useSSE(options: UseSSEOptions = {}) {
         }
       }, reconnectInterval);
     };
-  }, [enabled, reconnectInterval]);
+  }, [enabled, reconnectInterval, projectId]);
 
   const disconnect = useCallback(() => {
     if (reconnectTimeoutRef.current) {

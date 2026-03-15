@@ -28,7 +28,7 @@ function Command({
 }
 
 function CommandDialog({
-  title = "Команды",
+  title = "Commands",
   children,
   ...props
 }: React.ComponentProps<typeof Dialog> & { title?: string }) {

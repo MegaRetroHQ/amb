@@ -432,8 +432,8 @@ export function ThreadViewer({ threadId, currentAgentId }: Props) {
             agents={agents}
             placeholder={
               !currentAgentId
-                ? "Выберите агента для отправки"
-                : "Введите сообщение... (используйте @ для упоминания)"
+                ? "Select an agent to send to"
+                : "Type a message... (use @ to mention)"
             }
             disabled={!currentAgentId || sending}
           />
@@ -451,12 +451,12 @@ export function ThreadViewer({ threadId, currentAgentId }: Props) {
                 )}
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Отправить (Enter)</TooltipContent>
+            <TooltipContent>Send (Enter)</TooltipContent>
           </Tooltip>
         </div>
         {!currentAgentId && (
           <p className="text-xs text-muted-foreground mt-2 text-center">
-            Выберите агента в боковой панели для отправки сообщений
+            Select an agent in the sidebar to send messages
           </p>
         )}
       </div>

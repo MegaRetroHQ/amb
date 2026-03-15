@@ -97,11 +97,11 @@ export function DlqViewer() {
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <AlertTriangleIcon className="size-4 text-destructive" />
-            <span className="font-medium text-sm">Очередь ошибок</span>
+            <span className="font-medium text-sm">Error queue (DLQ)</span>
           </div>
           {messages.length > 0 && (
             <Badge variant="destructive" className="text-xs">
-              {messages.length} ошибок
+              {messages.length} errors
             </Badge>
           )}
         </div>
@@ -121,10 +121,10 @@ export function DlqViewer() {
                   ) : (
                     <RotateCcwIcon className="size-3" />
                   )}
-                  Повторить все
+                  Retry all
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Повторить все неудачные сообщения</TooltipContent>
+              <TooltipContent>Retry all failed messages</TooltipContent>
             </Tooltip>
           )}
           <Tooltip>
@@ -138,7 +138,7 @@ export function DlqViewer() {
                 <RefreshCwIcon className="size-3.5" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Обновить</TooltipContent>
+            <TooltipContent>Refresh</TooltipContent>
           </Tooltip>
         </div>
       </div>
@@ -149,12 +149,12 @@ export function DlqViewer() {
           {loading ? (
             <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
               <Loader2Icon className="size-6 animate-spin mb-2" />
-              <p className="text-sm">Загрузка...</p>
+              <p className="text-sm">Loading...</p>
             </div>
           ) : error ? (
             <div className="flex flex-col items-center justify-center py-12">
               <AlertTriangleIcon className="size-6 text-destructive mb-2" />
-              <p className="text-sm font-medium text-destructive">Ошибка загрузки</p>
+              <p className="text-sm font-medium text-destructive">Load error</p>
               <p className="text-xs text-muted-foreground mt-1">{error}</p>
               <Button
                 size="sm"
@@ -162,7 +162,7 @@ export function DlqViewer() {
                 onClick={refetch}
                 className="mt-3"
               >
-                Повторить
+                Retry
               </Button>
             </div>
           ) : messages.length === 0 ? (
@@ -173,9 +173,9 @@ export function DlqViewer() {
                   <span className="text-green-600 text-xs">✓</span>
                 </div>
               </div>
-              <p className="text-sm font-medium">Ошибок нет</p>
+              <p className="text-sm font-medium">No errors</p>
               <p className="text-xs mt-1 text-center">
-                Все сообщения успешно обработаны
+                All messages processed successfully
               </p>
             </div>
           ) : (
@@ -249,7 +249,7 @@ export function DlqViewer() {
                         {/* Actions */}
                         <div className="flex items-center gap-2 shrink-0">
                           <Badge variant="destructive" className="text-[10px]">
-                            {msg.retries} попыток
+                            {msg.retries} attempts
                           </Badge>
                           <Tooltip>
                             <TooltipTrigger asChild>
@@ -265,10 +265,10 @@ export function DlqViewer() {
                                 ) : (
                                   <RotateCcwIcon className="size-3" />
                                 )}
-                                Повторить
+                                Retry
                               </Button>
                             </TooltipTrigger>
-                            <TooltipContent>Повторить это сообщение</TooltipContent>
+                            <TooltipContent>Retry this message</TooltipContent>
                           </Tooltip>
                         </div>
                       </div>
@@ -277,7 +277,7 @@ export function DlqViewer() {
                       <div className="flex items-center gap-1.5 mt-2 ml-7 text-xs text-muted-foreground">
                         <ClockIcon className="size-3" />
                         <span>
-                          Ошибка: {new Date(msg.createdAt).toLocaleString()}
+                          Failed: {new Date(msg.createdAt).toLocaleString()}
                         </span>
                       </div>
                     </div>
@@ -289,7 +289,7 @@ export function DlqViewer() {
                           <div className="flex items-start gap-2">
                             <HashIcon className="size-3.5 text-muted-foreground mt-0.5" />
                             <div>
-                              <p className="text-muted-foreground">ID сообщения</p>
+                              <p className="text-muted-foreground">Message ID</p>
                               <p className="font-mono">{msg.id}</p>
                             </div>
                           </div>
@@ -297,7 +297,7 @@ export function DlqViewer() {
                           <div className="flex items-start gap-2">
                             <HashIcon className="size-3.5 text-muted-foreground mt-0.5" />
                             <div>
-                              <p className="text-muted-foreground">ID треда</p>
+                              <p className="text-muted-foreground">Thread ID</p>
                               <p className="font-mono">{msg.threadId}</p>
                             </div>
                           </div>
@@ -306,7 +306,7 @@ export function DlqViewer() {
                             <div className="flex items-start gap-2">
                               <HashIcon className="size-3.5 text-muted-foreground mt-0.5" />
                               <div>
-                                <p className="text-muted-foreground">ID родительского сообщения</p>
+                                <p className="text-muted-foreground">Parent message ID</p>
                                 <p className="font-mono">{msg.parentId}</p>
                               </div>
                             </div>
@@ -315,7 +315,7 @@ export function DlqViewer() {
                           <div className="flex items-start gap-2">
                             <FileJsonIcon className="size-3.5 text-muted-foreground mt-0.5" />
                             <div className="flex-1 min-w-0">
-                              <p className="text-muted-foreground mb-1">Содержимое</p>
+                              <p className="text-muted-foreground mb-1">Content</p>
                               <pre className="bg-muted/50 rounded p-2 overflow-x-auto text-[11px] font-mono whitespace-pre-wrap break-all">
                                 {formatPayload(msg.payload)}
                               </pre>
@@ -335,7 +335,7 @@ export function DlqViewer() {
       {/* Info footer */}
       {messages.length > 0 && (
         <div className="px-4 py-2 border-t bg-muted/30 text-xs text-muted-foreground text-center">
-          Сообщения в очереди ошибок превысили максимальное число попыток (3)
+          Messages in the error queue exceeded the maximum number of attempts (3)
         </div>
       )}
 
@@ -345,19 +345,19 @@ export function DlqViewer() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <RotateCcwIcon className="size-5" />
-              Повторить все сообщения
+              Retry all messages
             </DialogTitle>
             <DialogDescription>
-              Это вернёт все {messages.length} сообщений из очереди ошибок
-              в статус ожидания. Они будут обработаны снова со сброшенными счётчиками.
+              This will return all {messages.length} messages from the error queue
+              to pending status. They will be processed again with reset counters.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setConfirmRetryAll(false)}>
-              Отмена
+              Cancel
             </Button>
             <Button onClick={handleRetryAll}>
-              Повторить все ({messages.length})
+              Retry all ({messages.length})
             </Button>
           </DialogFooter>
         </DialogContent>

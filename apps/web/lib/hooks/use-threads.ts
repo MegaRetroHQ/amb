@@ -2,39 +2,18 @@
 
 import { useState, useEffect, useCallback } from "react";
 import type { Thread } from "@/lib/types";
-
-function withProjectId(path: string): string {
-  if (typeof window === "undefined") {
-    return path;
-  }
-
-  const projectId = new URLSearchParams(window.location.search).get("projectId");
-  if (!projectId) {
-    return path;
-  }
-
-  const separator = path.includes("?") ? "&" : "?";
-  return `${path}${separator}projectId=${encodeURIComponent(projectId)}`;
-}
-
-function getCurrentProjectId(): string {
-  if (typeof window === "undefined") {
-    return "00000000-0000-0000-0000-000000000001";
-  }
-  return (
-    new URLSearchParams(window.location.search).get("projectId") ??
-    "00000000-0000-0000-0000-000000000001"
-  );
-}
+import { useProjectId } from "@/lib/context/project-context";
+import { withProjectId } from "@/lib/api/build-url";
 
 export function useThreads() {
+  const projectId = useProjectId();
   const [threads, setThreads] = useState<Thread[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchThreads = useCallback(async () => {
     try {
-      const res = await fetch(withProjectId("/api/threads"));
+      const res = await fetch(withProjectId(projectId, "/api/threads"));
       const json = await res.json();
       if (json.data) {
         setThreads(json.data);
@@ -45,14 +24,15 @@ export function useThreads() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [projectId]);
 
   const createThread = useCallback(async (title: string) => {
+    if (!projectId) return;
     // Optimistic update
     const tempId = `temp-${Date.now()}`;
     const optimisticThread: Thread = {
       id: tempId,
-      projectId: getCurrentProjectId(),
+      projectId,
       title,
       status: "open",
       createdAt: new Date().toISOString(),
@@ -60,7 +40,7 @@ export function useThreads() {
     setThreads((prev) => [optimisticThread, ...prev]);
 
     try {
-      const res = await fetch(withProjectId("/api/threads"), {
+      const res = await fetch(withProjectId(projectId, "/api/threads"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title }),
@@ -79,7 +59,7 @@ export function useThreads() {
       setThreads((prev) => prev.filter((t) => t.id !== tempId));
       throw err;
     }
-  }, []);
+  }, [projectId]);
 
   const updateThreadStatus = useCallback(
     async (threadId: string, status: "open" | "closed" | "archived") => {
@@ -90,7 +70,7 @@ export function useThreads() {
       );
 
       try {
-        const res = await fetch(withProjectId(`/api/threads/${threadId}`), {
+        const res = await fetch(withProjectId(projectId, `/api/threads/${threadId}`), {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ status }),
@@ -105,7 +85,7 @@ export function useThreads() {
         throw err;
       }
     },
-    [threads]
+    [threads, projectId]
   );
 
   const deleteThread = useCallback(
@@ -115,7 +95,7 @@ export function useThreads() {
       setThreads((prev) => prev.filter((t) => t.id !== threadId));
 
       try {
-        const res = await fetch(withProjectId(`/api/threads/${threadId}`), {
+        const res = await fetch(withProjectId(projectId, `/api/threads/${threadId}`), {
           method: "DELETE",
         });
         if (!res.ok) {
@@ -128,7 +108,7 @@ export function useThreads() {
         throw err;
       }
     },
-    [threads]
+    [threads, projectId]
   );
 
   useEffect(() => {

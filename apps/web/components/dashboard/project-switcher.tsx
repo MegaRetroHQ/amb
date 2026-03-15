@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -31,89 +30,18 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-type Project = {
-  id: string;
-  name: string;
-  slug: string;
-  createdAt: string;
-};
+import { useProjectContext } from "@/lib/context/project-context";
 
 export function ProjectSwitcher() {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { projectId, setProjectId, projects, loading, selectedProject, loadProjects: reloadProjects } = useProjectContext();
   const [newProjectName, setNewProjectName] = useState("");
   const [creating, setCreating] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
-  const [loadError, setLoadError] = useState<string | null>(null);
 
-  const router = useRouter();
-  const pathname = usePathname();
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
-
-  const selectedProject = useMemo(() => {
-    if (projects.length === 0) return null;
-    if (!selectedProjectId) return projects[0];
-    return projects.find((project) => project.id === selectedProjectId) ?? projects[0];
-  }, [projects, selectedProjectId]);
-
-  const loadProjects = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/projects");
-      const json = await res.json().catch(() => null);
-      if (!res.ok) {
-        setLoadError(json?.error?.message || "Не удалось загрузить проекты");
-        return;
-      }
-      if (json?.data) {
-        setProjects(json.data);
-        setLoadError(null);
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadProjects();
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    const currentProjectId = new URLSearchParams(window.location.search).get("projectId");
-    setSelectedProjectId(currentProjectId);
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    if (!selectedProject && !loading) {
-      return;
-    }
-
-    if (selectedProject && selectedProjectId !== selectedProject.id) {
-      const params = new URLSearchParams(window.location.search);
-      params.set("projectId", selectedProject.id);
-      router.replace(`${pathname}?${params.toString()}`);
-      setSelectedProjectId(selectedProject.id);
-    }
-  }, [selectedProject, selectedProjectId, pathname, router, loading]);
-
-  const selectProject = (projectId: string) => {
-    if (typeof window === "undefined") {
-      return;
-    }
-    const params = new URLSearchParams(window.location.search);
-    params.set("projectId", projectId);
-    router.push(`${pathname}?${params.toString()}`);
-    setSelectedProjectId(projectId);
+  const selectProject = (id: string) => {
+    setProjectId(id);
   };
 
   const createProject = async () => {
@@ -129,11 +57,11 @@ export function ProjectSwitcher() {
       });
       const json = await res.json().catch(() => null);
       if (!res.ok) {
-        setCreateError(json?.error?.message || "Не удалось создать проект");
+        setCreateError(json?.error?.message || "Failed to create project");
         return;
       }
 
-      await loadProjects();
+      await reloadProjects();
       setNewProjectName("");
       setDialogOpen(false);
       selectProject(json.data.id);
@@ -156,7 +84,7 @@ export function ProjectSwitcher() {
           <Button variant="outline" size="sm" className="gap-2">
             <FolderKanbanIcon className="size-4" />
             <span className="max-w-[180px] truncate">
-              {loading ? "Загрузка проектов..." : (selectedProject?.name ?? "Выбрать проект")}
+              {loading ? "Loading projects..." : (selectedProject?.name ?? "Select project")}
             </span>
             <ChevronDownIcon className="size-4 text-muted-foreground" />
           </Button>
@@ -181,21 +109,21 @@ export function ProjectSwitcher() {
             <DialogTrigger asChild>
               <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                 <PlusIcon className="size-4 mr-2" />
-                Создать проект
+                Create project
               </DropdownMenuItem>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Новый проект</DialogTitle>
+                <DialogTitle>New project</DialogTitle>
                 <DialogDescription>
-                  Создайте проект и используйте его ID в MCP-настройке другого репозитория.
+                  Create a project and use its ID in the MCP settings of another repository.
                 </DialogDescription>
               </DialogHeader>
               {createError && (
                 <p className="text-sm text-destructive">{createError}</p>
               )}
               <Input
-                placeholder="Название проекта"
+                placeholder="Project name"
                 value={newProjectName}
                 onChange={(event) => setNewProjectName(event.target.value)}
                 onKeyDown={(event) => {
@@ -206,10 +134,10 @@ export function ProjectSwitcher() {
               />
               <DialogFooter>
                 <Button variant="outline" onClick={() => setDialogOpen(false)}>
-                  Отмена
+                  Cancel
                 </Button>
                 <Button onClick={createProject} disabled={!newProjectName.trim() || creating}>
-                  Создать
+                  Create
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -223,7 +151,7 @@ export function ProjectSwitcher() {
         onClick={copyProjectId}
         disabled={!selectedProject}
         className="gap-2"
-        title={loadError ? loadError : "Скопировать ID проекта"}
+        title="Copy project ID"
       >
         {copied ? <CheckIcon className="size-4 text-green-500" /> : <CopyIcon className="size-4" />}
         <span className="hidden sm:inline">ID</span>
@@ -231,7 +159,7 @@ export function ProjectSwitcher() {
 
       {selectedProject ? (
         <Button variant="outline" size="sm" asChild className="gap-2">
-          <Link href={`/projects/${selectedProject.id}/tasks`}>
+          <Link href="/tasks">
             <ListTodoIcon className="size-4" />
             <span className="hidden sm:inline">Tasks</span>
           </Link>

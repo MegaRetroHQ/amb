@@ -18,20 +18,20 @@ import {
 } from "@/components/ui/card";
 
 export const metadata: Metadata = {
-  title: "Помощь — Agent Message Bus",
-  description: "О проекте, подключение нового проекта, горячие клавиши и документация",
+  title: "Help — Agent Message Bus",
+  description: "About the project, connecting a new project, keyboard shortcuts and documentation",
 };
 
 const shortcuts = [
-  { keys: "⌘K / Ctrl+K", description: "Командная палитра" },
-  { keys: "?", description: "Показать палитру (вне поля ввода)" },
-  { keys: "1", description: "Вкладка «Сообщения»" },
-  { keys: "2", description: "Вкладка «Входящие»" },
-  { keys: "3", description: "Вкладка «Ошибки» (DLQ)" },
-  { keys: "N", description: "Новый тред" },
-  { keys: "R", description: "Обновить страницу" },
-  { keys: "/", description: "Фокус в поиск" },
-  { keys: "Enter", description: "Отправить сообщение (в поле ввода сообщения)" },
+  { keys: "⌘K / Ctrl+K", description: "Command palette" },
+  { keys: "?", description: "Show palette (when not in input)" },
+  { keys: "1", description: "Messages tab" },
+  { keys: "2", description: "Inbox tab" },
+  { keys: "3", description: "Errors tab (DLQ)" },
+  { keys: "N", description: "New thread" },
+  { keys: "R", description: "Refresh page" },
+  { keys: "/", description: "Focus search" },
+  { keys: "Enter", description: "Send message (in message input)" },
 ];
 
 export default function HelpPage() {
@@ -42,10 +42,10 @@ export default function HelpPage() {
           <Button variant="ghost" size="sm" asChild className="gap-2">
             <Link href="/">
               <ArrowLeftIcon className="size-4" />
-              На главную
+              To Dashboard
             </Link>
           </Button>
-          <h1 className="text-lg font-semibold tracking-tight">Помощь</h1>
+          <h1 className="text-lg font-semibold tracking-tight">Help</h1>
           <div className="w-20" />
         </div>
       </header>
@@ -55,45 +55,45 @@ export default function HelpPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Info className="size-5" />
-              О проекте
+              About
             </CardTitle>
             <CardDescription>
-              Agent Message Bus — локальная шина сообщений для AI-агентов
+              Agent Message Bus — local message bus for AI agents
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <p className="text-sm text-muted-foreground">
-              Система позволяет AI-агентам обмениваться сообщениями через треды,
-              отслеживать доставку (inbox / ACK) и обрабатывать ошибки (retry / DLQ).
+              The system lets AI agents exchange messages via threads,
+              track delivery (inbox / ACK) and handle errors (retry / DLQ).
             </p>
 
             <div className="space-y-2">
-              <h3 className="text-sm font-semibold">Ключевые концепции</h3>
+              <h3 className="text-sm font-semibold">Key concepts</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 {[
                   {
-                    term: "Агент",
-                    def: "Участник системы с именем и ролью (po, dev, qa, architect…).",
+                    term: "Agent",
+                    def: "System participant with a name and role (po, dev, qa, architect…).",
                   },
                   {
-                    term: "Тред",
-                    def: "Именованный контейнер для переписки. Один тред — одна задача.",
+                    term: "Thread",
+                    def: "Named container for a conversation. One thread — one task.",
                   },
                   {
-                    term: "Сообщение",
-                    def: "JSON-payload от одного агента другому внутри треда.",
+                    term: "Message",
+                    def: "JSON payload from one agent to another within a thread.",
                   },
                   {
                     term: "Inbox",
-                    def: "Очередь входящих сообщений агента. Polling каждые 2–5 сек.",
+                    def: "Agent's incoming message queue. Polling every 2–5 sec.",
                   },
                   {
                     term: "ACK",
-                    def: "Подтверждение обработки сообщения. Без ACK — retry.",
+                    def: "Message processing confirmation. Without ACK — retry.",
                   },
                   {
                     term: "DLQ",
-                    def: "Dead Letter Queue — сообщения, исчерпавшие попытки доставки.",
+                    def: "Dead Letter Queue — messages that exhausted delivery attempts.",
                   },
                 ].map(({ term, def }) => (
                   <li key={term} className="flex gap-2">
@@ -105,7 +105,7 @@ export default function HelpPage() {
             </div>
 
             <div className="space-y-2">
-              <h3 className="text-sm font-semibold">Жизненный цикл сообщения</h3>
+              <h3 className="text-sm font-semibold">Message lifecycle</h3>
               <div className="font-mono text-xs text-muted-foreground bg-muted rounded-md px-4 py-3">
                 pending → delivered → ack
                 <br />
@@ -120,43 +120,43 @@ export default function HelpPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Plug className="size-5" />
-              Подключение нового проекта
+              Connecting a new project
             </CardTitle>
             <CardDescription>
-              Как подключить другой репозиторий к Message Bus
+              How to connect another repository to Message Bus
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="rounded-md border border-primary/30 bg-primary/5 p-4 space-y-3">
-              <h3 className="text-sm font-semibold">Кратчайший путь (базовый сценарий)</h3>
+              <h3 className="text-sm font-semibold">Quick start (basic scenario)</h3>
               <p className="text-sm text-muted-foreground">
-                В новом проекте уже есть <code className="rounded bg-muted px-1 font-mono text-xs">.cursor/agents</code> (как здесь), возможно monorepo (Turborepo). Цель — чтобы агенты в Cursor могли пользоваться тредами и сообщениями AMB.
+                The new project already has <code className="rounded bg-muted px-1 font-mono text-xs">.cursor/agents</code> (like here), possibly a monorepo (Turborepo). Goal: let Cursor agents use AMB threads and messages.
               </p>
               <ol className="text-sm text-muted-foreground space-y-2 list-decimal list-inside">
                 <li>
-                  <strong className="text-foreground">Запустите AMB.</strong> В этом репозитории: <code className="rounded bg-muted px-1 font-mono text-xs">pnpm dev</code> (и отдельно — PostgreSQL, миграции, при необходимости <code className="rounded bg-muted px-1 font-mono text-xs">pnpm seed:agents</code>). Либо поднимите AMB через Docker.
+                  <strong className="text-foreground">Start AMB.</strong> In this repo: <code className="rounded bg-muted px-1 font-mono text-xs">pnpm dev</code> (and separately — PostgreSQL, migrations, and if needed <code className="rounded bg-muted px-1 font-mono text-xs">pnpm seed:agents</code>). Or run AMB via Docker.
                 </li>
                 <li>
-                  <strong className="text-foreground">В новом проекте</strong> (корень репо или корень Turborepo) добавьте MCP-сервер Message Bus: в настройках Cursor → MCP укажите <code className="rounded bg-muted px-1 font-mono text-xs">command</code> = <code className="rounded bg-muted px-1 font-mono text-xs">node</code>, <code className="rounded bg-muted px-1 font-mono text-xs">args</code> = <code className="rounded bg-muted px-1 font-mono text-xs">["/абсолютный/путь/к/amb/packages/packages/mcp-server/dist/index.js"]</code>, <code className="rounded bg-muted px-1 font-mono text-xs">env.MESSAGE_BUS_URL</code> = <code className="rounded bg-muted px-1 font-mono text-xs">http://localhost:3333</code>.
+                  <strong className="text-foreground">In the new project</strong> (repo root or Turborepo root) add the Message Bus MCP server: in Cursor → MCP settings set <code className="rounded bg-muted px-1 font-mono text-xs">command</code> = <code className="rounded bg-muted px-1 font-mono text-xs">node</code>, <code className="rounded bg-muted px-1 font-mono text-xs">args</code> = <code className="rounded bg-muted px-1 font-mono text-xs">["/absolute/path/to/amb/packages/mcp-server/dist/index.js"]</code>, <code className="rounded bg-muted px-1 font-mono text-xs">env.MESSAGE_BUS_URL</code> = <code className="rounded bg-muted px-1 font-mono text-xs">http://localhost:3333</code>.
                 </li>
                 <li>
-                  Перезапустите Cursor или переподключите MCP. Готово: в чате можно создавать треды, отправлять сообщения, смотреть inbox через инструменты Message Bus.
+                  Restart Cursor or reconnect MCP. Done: you can create threads, send messages, and view inbox via Message Bus tools in chat.
                 </li>
               </ol>
               <p className="text-xs text-muted-foreground">
-                Если в новом проекте свой список агентов (свой <code className="rounded bg-muted px-1 font-mono text-xs">.cursor/agents/registry.json</code>) и вы хотите видеть их в AMB — зарегистрируйте их через <code className="rounded bg-muted px-1 font-mono text-xs">POST /api/agents</code> или скопируйте и запустите скрипт <code className="rounded bg-muted px-1 font-mono text-xs">scripts/seed-agents.ts</code>, подставив свой registry.
+                If the new project has its own agent list (its own <code className="rounded bg-muted px-1 font-mono text-xs">.cursor/agents/registry.json</code>) and you want them in AMB — register them via <code className="rounded bg-muted px-1 font-mono text-xs">POST /api/agents</code> or copy and run <code className="rounded bg-muted px-1 font-mono text-xs">scripts/seed-agents.ts</code> with your registry.
               </p>
             </div>
 
             <p className="text-sm text-muted-foreground">
-              Один запущенный экземпляр Message Bus может обслуживать несколько проектов.
-              Все они подключаются к одному URL (например, <code className="rounded bg-muted px-1 font-mono text-xs">http://localhost:3333</code>) и используют общих агентов, треды и сообщения.
+              One running Message Bus instance can serve multiple projects.
+              They all connect to the same URL (e.g. <code className="rounded bg-muted px-1 font-mono text-xs">http://localhost:3333</code>) and share agents, threads and messages.
             </p>
 
             <div className="space-y-3">
-              <h3 className="text-sm font-semibold">Способ 1: HTTP API</h3>
+              <h3 className="text-sm font-semibold">Option 1: HTTP API</h3>
               <p className="text-sm text-muted-foreground">
-                Убедитесь, что Message Bus запущен (<code className="rounded bg-muted px-1 font-mono text-xs">pnpm dev</code> или Docker). Из своего приложения вызывайте эндпоинты:
+                Ensure Message Bus is running (<code className="rounded bg-muted px-1 font-mono text-xs">pnpm dev</code> or Docker). Call endpoints from your app:
               </p>
               <pre className="text-xs bg-muted rounded-md p-3 overflow-x-auto">
 {`GET  http://localhost:3333/api/agents
@@ -167,9 +167,9 @@ GET  http://localhost:3333/api/messages/inbox?agentId=...`}
             </div>
 
             <div className="space-y-3">
-              <h3 className="text-sm font-semibold">Способ 2: TypeScript SDK</h3>
+              <h3 className="text-sm font-semibold">Option 2: TypeScript SDK</h3>
               <p className="text-sm text-muted-foreground">
-                Скопируйте папку <code className="rounded bg-muted px-1 font-mono text-xs">lib/sdk</code> в свой проект и создавайте клиент:
+                Copy the <code className="rounded bg-muted px-1 font-mono text-xs">lib/sdk</code> folder into your project and create a client:
               </p>
               <pre className="text-xs bg-muted rounded-md p-3 overflow-x-auto">
 {`import { createClient } from "./lib/message-bus-sdk";
@@ -180,20 +180,20 @@ const agent = await client.registerAgent({ name: "my-service", role: "worker" })
             </div>
 
             <div className="space-y-3">
-              <h3 className="text-sm font-semibold">Способ 3: MCP (Cursor, Claude Desktop и др.)</h3>
+              <h3 className="text-sm font-semibold">Option 3: MCP (Cursor, Claude Desktop, etc.)</h3>
               <p className="text-sm text-muted-foreground">
-                В настройках MCP вашего редактора/клиента укажите путь к <code className="rounded bg-muted px-1 font-mono text-xs">packages/mcp-server/dist/index.js</code> и переменную <code className="rounded bg-muted px-1 font-mono text-xs">MESSAGE_BUS_URL</code>. Тогда AI-агенты в этом проекте смогут вызывать инструменты Message Bus (создание тредов, отправка сообщений, inbox, ack).
+                In your editor/client MCP settings, set the path to <code className="rounded bg-muted px-1 font-mono text-xs">packages/mcp-server/dist/index.js</code> and the <code className="rounded bg-muted px-1 font-mono text-xs">MESSAGE_BUS_URL</code> variable. Then AI agents in this project can use Message Bus tools (create threads, send messages, inbox, ack).
               </p>
             </div>
 
             <div className="space-y-2 rounded-md border border-border bg-muted/30 p-4">
-              <h3 className="text-sm font-semibold">Несколько проектов</h3>
+              <h3 className="text-sm font-semibold">Multiple projects</h3>
               <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
                 <li>
-                  <strong className="text-foreground">Один экземпляр на все проекты</strong> — все репозитории указывают на один и тот же URL (localhost:3333). Агенты и треды общие. Удобно для локальной разработки и одной команды.
+                  <strong className="text-foreground">One instance for all projects</strong> — all repos point to the same URL (localhost:3333). Agents and threads are shared. Handy for local dev and a single team.
                 </li>
                 <li>
-                  <strong className="text-foreground">Отдельный экземпляр на проект</strong> — запустите несколько копий Message Bus на разных портах (например, 3333, 3334) и/или с разными базами данных. Каждый проект подключается к своему URL. Подходит, если нужна изоляция данных между проектами.
+                  <strong className="text-foreground">Separate instance per project</strong> — run multiple Message Bus copies on different ports (e.g. 3333, 3334) and/or databases. Each project connects to its own URL. Use when you need data isolation between projects.
                 </li>
               </ul>
             </div>
@@ -204,10 +204,10 @@ const agent = await client.registerAgent({ name: "my-service", role: "worker" })
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <KeyboardIcon className="size-5" />
-              Горячие клавиши
+              Keyboard shortcuts
             </CardTitle>
             <CardDescription>
-              Работают, когда фокус не в поле ввода. В полях ввода (поиск, сообщение) горячие клавиши отключены.
+              Work when focus is not in an input. Shortcuts are disabled in inputs (search, message).
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -231,10 +231,10 @@ const agent = await client.registerAgent({ name: "my-service", role: "worker" })
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Link2Icon className="size-5" />
-              Ссылки
+              Links
             </CardTitle>
             <CardDescription>
-              Документация и API
+              Documentation and API
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -243,7 +243,7 @@ const agent = await client.registerAgent({ name: "my-service", role: "worker" })
                 <Button variant="outline" className="w-full justify-start gap-2" asChild>
                   <Link href="/help/use-cases">
                     <BookOpenIcon className="size-4" />
-                    Сценарии использования AMB
+                    AMB use cases
                   </Link>
                 </Button>
               </li>
@@ -251,7 +251,7 @@ const agent = await client.registerAgent({ name: "my-service", role: "worker" })
                 <Button variant="outline" className="w-full justify-start gap-2" asChild>
                   <Link href="/api-docs" target="_blank" rel="noopener noreferrer">
                     <BookOpenIcon className="size-4" />
-                    Документация API (Swagger)
+                    API docs (Swagger)
                   </Link>
                 </Button>
               </li>

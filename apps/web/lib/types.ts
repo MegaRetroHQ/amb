@@ -30,7 +30,7 @@ export type Message = {
   createdAt: string;
 };
 
-export type IssueState = "BACKLOG" | "TODO" | "IN_PROGRESS" | "DONE" | "CANCELLED";
+export type IssueState = "BACKLOG" | "TODO" | "IN_PROGRESS" | "DONE";
 export type IssuePriority = "NONE" | "LOW" | "MEDIUM" | "HIGH" | "URGENT";
 
 export type IssueAssignee = {

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import {
   ArrowLeftIcon,
   BookOpenIcon,
@@ -16,6 +16,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { getTranslations } from "next-intl/server";
 
 export const metadata: Metadata = {
   title: "Help — Agent Message Bus",
@@ -23,18 +24,20 @@ export const metadata: Metadata = {
 };
 
 const shortcuts = [
-  { keys: "⌘K / Ctrl+K", description: "Command palette" },
-  { keys: "?", description: "Show palette (when not in input)" },
-  { keys: "1", description: "Messages tab" },
-  { keys: "2", description: "Inbox tab" },
-  { keys: "3", description: "Errors tab (DLQ)" },
-  { keys: "N", description: "New thread" },
-  { keys: "R", description: "Refresh page" },
-  { keys: "/", description: "Focus search" },
-  { keys: "Enter", description: "Send message (in message input)" },
+  { keys: "⌘K / Ctrl+K", descriptionKey: "shortcutCommandPalette" },
+  { keys: "?", descriptionKey: "shortcutShowPalette" },
+  { keys: "1", descriptionKey: "shortcutTabMessages" },
+  { keys: "2", descriptionKey: "shortcutTabInbox" },
+  { keys: "3", descriptionKey: "shortcutTabErrors" },
+  { keys: "N", descriptionKey: "shortcutNewThread" },
+  { keys: "R", descriptionKey: "shortcutRefresh" },
+  { keys: "/", descriptionKey: "shortcutFocusSearch" },
+  { keys: "Enter", descriptionKey: "shortcutSendMessage" },
 ];
 
-export default function HelpPage() {
+export default async function HelpPage() {
+  const t = await getTranslations("Help");
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">
@@ -42,20 +45,20 @@ export default function HelpPage() {
           <Button variant="ghost" size="sm" asChild className="gap-2">
             <Link href="/">
               <ArrowLeftIcon className="size-4" />
-              To Dashboard
+              {t("toDashboard")}
             </Link>
           </Button>
-          <h1 className="text-lg font-semibold tracking-tight">Help</h1>
+          <h1 className="text-lg font-semibold tracking-tight">{t("title")}</h1>
           <div className="w-20" />
         </div>
       </header>
 
-      <main className="max-w-2xl mx-auto px-6 py-8 space-y-8">
+      <main className="max-w-3xl mx-auto px-6 py-8 space-y-8">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Info className="size-5" />
-              About
+              {t("about")}
             </CardTitle>
             <CardDescription>
               Agent Message Bus — local message bus for AI agents
@@ -68,33 +71,15 @@ export default function HelpPage() {
             </p>
 
             <div className="space-y-2">
-              <h3 className="text-sm font-semibold">Key concepts</h3>
+              <h3 className="text-sm font-semibold">{t("keyConcepts")}</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 {[
-                  {
-                    term: "Agent",
-                    def: "System participant with a name and role (po, dev, qa, architect…).",
-                  },
-                  {
-                    term: "Thread",
-                    def: "Named container for a conversation. One thread — one task.",
-                  },
-                  {
-                    term: "Message",
-                    def: "JSON payload from one agent to another within a thread.",
-                  },
-                  {
-                    term: "Inbox",
-                    def: "Agent's incoming message queue. Polling every 2–5 sec.",
-                  },
-                  {
-                    term: "ACK",
-                    def: "Message processing confirmation. Without ACK — retry.",
-                  },
-                  {
-                    term: "DLQ",
-                    def: "Dead Letter Queue — messages that exhausted delivery attempts.",
-                  },
+                  { term: "Agent", def: "System participant with a name and role (po, dev, qa, architect…)." },
+                  { term: "Thread", def: "Named container for a conversation. One thread — one task." },
+                  { term: "Message", def: "JSON payload from one agent to another within a thread." },
+                  { term: "Inbox", def: "Agent's incoming message queue. Polling every 2–5 sec." },
+                  { term: "ACK", def: "Message processing confirmation. Without ACK — retry." },
+                  { term: "DLQ", def: "Dead Letter Queue — messages that exhausted delivery attempts." },
                 ].map(({ term, def }) => (
                   <li key={term} className="flex gap-2">
                     <span className="font-mono text-foreground shrink-0">{term}</span>
@@ -105,14 +90,13 @@ export default function HelpPage() {
             </div>
 
             <div className="space-y-2">
-              <h3 className="text-sm font-semibold">Message lifecycle</h3>
+              <h3 className="text-sm font-semibold">{t("messageLifecycle")}</h3>
               <div className="font-mono text-xs text-muted-foreground bg-muted rounded-md px-4 py-3">
                 pending → delivered → ack
                 <br />
                 pending → failed → dlq
               </div>
             </div>
-
           </CardContent>
         </Card>
 
@@ -120,7 +104,7 @@ export default function HelpPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Plug className="size-5" />
-              Connecting a new project
+              {t("connectingProject")}
             </CardTitle>
             <CardDescription>
               How to connect another repository to Message Bus
@@ -204,7 +188,7 @@ const agent = await client.registerAgent({ name: "my-service", role: "worker" })
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <KeyboardIcon className="size-5" />
-              Keyboard shortcuts
+              {t("keyboardShortcuts")}
             </CardTitle>
             <CardDescription>
               Work when focus is not in an input. Shortcuts are disabled in inputs (search, message).
@@ -212,12 +196,12 @@ const agent = await client.registerAgent({ name: "my-service", role: "worker" })
           </CardHeader>
           <CardContent>
             <ul className="space-y-3">
-              {shortcuts.map(({ keys, description }) => (
+              {shortcuts.map(({ keys, descriptionKey }) => (
                 <li
                   key={keys}
                   className="flex items-center justify-between gap-4 py-2 border-b border-border/50 last:border-0"
                 >
-                  <span className="text-muted-foreground">{description}</span>
+                  <span className="text-muted-foreground">{t(descriptionKey)}</span>
                   <kbd className="rounded border bg-muted px-2 py-1 font-mono text-sm">
                     {keys}
                   </kbd>
@@ -231,7 +215,7 @@ const agent = await client.registerAgent({ name: "my-service", role: "worker" })
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Link2Icon className="size-5" />
-              Links
+              {t("links")}
             </CardTitle>
             <CardDescription>
               Documentation and API
@@ -243,16 +227,16 @@ const agent = await client.registerAgent({ name: "my-service", role: "worker" })
                 <Button variant="outline" className="w-full justify-start gap-2" asChild>
                   <Link href="/help/use-cases">
                     <BookOpenIcon className="size-4" />
-                    AMB use cases
+                    {t("useCases")}
                   </Link>
                 </Button>
               </li>
               <li>
                 <Button variant="outline" className="w-full justify-start gap-2" asChild>
-                  <Link href="/api-docs" target="_blank" rel="noopener noreferrer">
+                  <a href="/api-docs" target="_blank" rel="noopener noreferrer">
                     <BookOpenIcon className="size-4" />
-                    API docs (Swagger)
-                  </Link>
+                    {t("apiDocs")}
+                  </a>
                 </Button>
               </li>
             </ul>

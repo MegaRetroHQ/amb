@@ -102,6 +102,18 @@
         "onboarding",
         "release-notes"
       ]
+    },
+    {
+      "id": "open-source",
+      "name": "Open Source & Community",
+      "role": "open-source",
+      "systemPromptFile": ".cursor/agents/open-source.md",
+      "defaultThreads": [
+        "open-source-readiness",
+        "contributing-and-coc",
+        "community-and-promotion",
+        "release-and-changelog"
+      ]
     }
   ],
   "defaults": {

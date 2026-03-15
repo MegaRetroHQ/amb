@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useEffect, useMemo, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import { ArrowLeftIcon, FileTextIcon, PencilIcon, PlusIcon, TrashIcon } from "lucide-react";

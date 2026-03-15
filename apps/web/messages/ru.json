@@ -1,0 +1,56 @@
+{
+  "Common": {
+    "loading": "Загрузка...",
+    "retry": "Повторить",
+    "cancel": "Отмена",
+    "save": "Сохранить",
+    "delete": "Удалить",
+    "create": "Создать",
+    "edit": "Изменить",
+    "close": "Закрыть",
+    "search": "Поиск",
+    "toDashboard": "На главную",
+    "backToHelp": "К разделу «Помощь»"
+  },
+  "Dashboard": {
+    "title": "Agent Message Bus",
+    "subtitle": "Панель управления сообщениями",
+    "apiDocs": "Документация API",
+    "help": "Помощь",
+    "commands": "Команды",
+    "sseConnected": "SSE подключён",
+    "reconnecting": "Переподключение...",
+    "realtime": "В реальном времени",
+    "lightTheme": "Светлая тема",
+    "darkTheme": "Тёмная тема",
+    "messages": "Сообщения",
+    "inbox": "Входящие",
+    "errors": "Ошибки"
+  },
+  "Tasks": {
+    "loading": "Загрузка...",
+    "selectProject": "Выберите проект в панели управления",
+    "toDashboard": "На главную"
+  },
+  "Help": {
+    "title": "Помощь",
+    "toDashboard": "На главную",
+    "about": "О проекте",
+    "keyConcepts": "Ключевые концепции",
+    "messageLifecycle": "Жизненный цикл сообщения",
+    "connectingProject": "Подключение нового проекта",
+    "keyboardShortcuts": "Горячие клавиши",
+    "links": "Ссылки",
+    "useCases": "Сценарии использования AMB",
+    "apiDocs": "Документация API (Swagger)",
+    "shortcutCommandPalette": "Командная палитра",
+    "shortcutShowPalette": "Показать палитру (вне поля ввода)",
+    "shortcutTabMessages": "Вкладка «Сообщения»",
+    "shortcutTabInbox": "Вкладка «Входящие»",
+    "shortcutTabErrors": "Вкладка «Ошибки» (DLQ)",
+    "shortcutNewThread": "Новый тред",
+    "shortcutRefresh": "Обновить страницу",
+    "shortcutFocusSearch": "Фокус в поиск",
+    "shortcutSendMessage": "Отправить сообщение (в поле ввода)"
+  }
+}

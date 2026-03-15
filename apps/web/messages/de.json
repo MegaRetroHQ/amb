@@ -1,0 +1,56 @@
+{
+  "Common": {
+    "loading": "Laden...",
+    "retry": "Wiederholen",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "create": "Erstellen",
+    "edit": "Bearbeiten",
+    "close": "Schließen",
+    "search": "Suchen",
+    "toDashboard": "Zum Dashboard",
+    "backToHelp": "Zurück zur Hilfe"
+  },
+  "Dashboard": {
+    "title": "Agent Message Bus",
+    "subtitle": "Nachrichten-Dashboard",
+    "apiDocs": "API-Dokumentation",
+    "help": "Hilfe",
+    "commands": "Befehle",
+    "sseConnected": "SSE verbunden",
+    "reconnecting": "Verbinde neu...",
+    "realtime": "Echtzeit",
+    "lightTheme": "Hell",
+    "darkTheme": "Dunkel",
+    "messages": "Nachrichten",
+    "inbox": "Eingang",
+    "errors": "Fehler"
+  },
+  "Tasks": {
+    "loading": "Laden...",
+    "selectProject": "Wählen Sie ein Projekt im Dashboard",
+    "toDashboard": "Zum Dashboard"
+  },
+  "Help": {
+    "title": "Hilfe",
+    "toDashboard": "Zum Dashboard",
+    "about": "Über",
+    "keyConcepts": "Grundbegriffe",
+    "messageLifecycle": "Nachrichtenlebenszyklus",
+    "connectingProject": "Neues Projekt verbinden",
+    "keyboardShortcuts": "Tastenkürzel",
+    "links": "Links",
+    "useCases": "AMB-Anwendungsfälle",
+    "apiDocs": "API-Dokumentation (Swagger)",
+    "shortcutCommandPalette": "Befehlspalette",
+    "shortcutShowPalette": "Palette anzeigen (außerhalb des Eingabefelds)",
+    "shortcutTabMessages": "Nachrichten-Tab",
+    "shortcutTabInbox": "Eingang-Tab",
+    "shortcutTabErrors": "Fehler-Tab (DLQ)",
+    "shortcutNewThread": "Neuer Thread",
+    "shortcutRefresh": "Seite aktualisieren",
+    "shortcutFocusSearch": "Fokus auf Suche",
+    "shortcutSendMessage": "Nachricht senden (im Eingabefeld)"
+  }
+}

@@ -9,6 +9,7 @@ import { ThreadViewer } from "./thread-viewer"
 import { InboxViewer } from "./inbox-viewer"
 import { DlqViewer } from "./dlq-viewer"
 import { ProjectSwitcher } from "./project-switcher"
+import { LocaleSwitcher } from "./locale-switcher"
 import { CommandPalette, useCommandPalette } from "./command-palette"
 import { useKeyboardShortcuts } from "@/lib/hooks/use-keyboard-shortcuts"
 import { useSSE } from "@/lib/hooks/use-sse"
@@ -17,15 +18,16 @@ import {
   InboxIcon,
   AlertTriangleIcon,
   CommandIcon,
-  ActivityIcon,
+  Bus as BusIcon,
   SunIcon,
   MoonIcon,
   GripVerticalIcon,
   BookOpenIcon,
   HelpCircleIcon,
 } from "lucide-react"
-import Link from "next/link"
+import { Link } from "@/i18n/navigation"
 import { useTheme } from "@/components/theme-provider"
+import { useTranslations } from "next-intl"
 
 type TabValue = "messages" | "inbox" | "dlq"
 
@@ -98,7 +100,8 @@ export function Dashboard() {
   const { inboxCounts, dlqCount, connected } = useSSE()
   
   // Theme
-  const { resolvedTheme, theme, setTheme } = useTheme()
+  const { resolvedTheme, setTheme } = useTheme()
+  const t = useTranslations("Dashboard")
   
   const toggleTheme = useCallback(() => {
     // Переключаем на явную тему (не "system")
@@ -130,14 +133,14 @@ export function Dashboard() {
         <div className="px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-primary/10">
-              <ActivityIcon className="size-5 text-primary" />
+              <BusIcon className="size-5 text-primary" />
             </div>
             <div>
               <h1 className="text-lg font-semibold tracking-tight">
-                Agent Message Bus
+                {t("title")}
               </h1>
               <p className="text-xs text-muted-foreground">
-                Message management dashboard
+                {t("subtitle")}
               </p>
             </div>
           </div>
@@ -149,26 +152,29 @@ export function Dashboard() {
             <div className="flex items-center gap-4 mr-4 text-xs text-muted-foreground">
               <span className="flex items-center gap-1.5">
                 <span className={`w-2 h-2 rounded-full ${connected ? "bg-green-500 animate-pulse" : "bg-yellow-500"}`} />
-                {connected ? "SSE connected" : "Reconnecting..."}
+                {connected ? t("sseConnected") : t("reconnecting")}
               </span>
-              {connected && <span>Real-time</span>}
+              {connected && <span>{t("realtime")}</span>}
             </div>
 
             {/* Documentation */}
             <Button variant="outline" size="sm" asChild className="gap-2 text-muted-foreground">
-              <Link href="/api-docs" target="_blank" rel="noopener noreferrer">
+              <a href="/api-docs" target="_blank" rel="noopener noreferrer">
                 <BookOpenIcon className="size-4" />
-                <span className="hidden sm:inline">API docs</span>
-              </Link>
+                <span className="hidden sm:inline">{t("apiDocs")}</span>
+              </a>
             </Button>
 
             {/* Help */}
             <Button variant="outline" size="sm" asChild className="gap-2 text-muted-foreground">
               <Link href="/help">
                 <HelpCircleIcon className="size-4" />
-                <span className="hidden sm:inline">Help</span>
+                <span className="hidden sm:inline">{t("help")}</span>
               </Link>
             </Button>
+
+            {/* Locale */}
+            <LocaleSwitcher />
 
             {/* Theme toggle */}
             <Button
@@ -176,7 +182,7 @@ export function Dashboard() {
               size="icon"
               onClick={toggleTheme}
               className="size-9"
-              title={resolvedTheme === "dark" ? "Light theme" : "Dark theme"}
+              title={resolvedTheme === "dark" ? t("lightTheme") : t("darkTheme")}
             >
               {resolvedTheme === "dark" ? (
                 <SunIcon className="size-4" />
@@ -193,7 +199,7 @@ export function Dashboard() {
               className="gap-2 text-muted-foreground"
             >
               <CommandIcon className="size-4" />
-              <span className="hidden sm:inline">Commands</span>
+              <span className="hidden sm:inline">{t("commands")}</span>
               <kbd className="hidden sm:inline-flex ml-1 h-5 items-center gap-0.5 rounded border bg-muted px-1.5 font-mono text-[10px]">
                 <span className="text-xs">⌘</span>K
               </kbd>
@@ -254,14 +260,14 @@ export function Dashboard() {
                   className="relative gap-1.5 data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-b-none border-b-2 border-transparent data-[state=active]:border-primary"
                 >
                   <MessageSquareIcon className="size-4" />
-                  Messages
+                  {t("messages")}
                 </TabsTrigger>
                 <TabsTrigger
                   value="inbox"
                   className="relative gap-1.5 data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-b-none border-b-2 border-transparent data-[state=active]:border-primary"
                 >
                   <InboxIcon className="size-4" />
-                  Inbox
+                  {t("inbox")}
                   {inboxCount > 0 && (
                     <span className="ml-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-blue-500 px-1.5 text-[10px] font-medium text-white">
                       {inboxCount > 99 ? "99+" : inboxCount}
@@ -273,7 +279,7 @@ export function Dashboard() {
                   className="relative gap-1.5 data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-b-none border-b-2 border-transparent data-[state=active]:border-primary"
                 >
                   <AlertTriangleIcon className="size-4" />
-                  Errors
+                  {t("errors")}
                   {dlqCount > 0 && (
                     <span className="ml-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-destructive px-1.5 text-[10px] font-medium text-white">
                       {dlqCount > 99 ? "99+" : dlqCount}

@@ -1,0 +1,56 @@
+{
+  "Common": {
+    "loading": "Loading...",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "create": "Create",
+    "edit": "Edit",
+    "close": "Close",
+    "search": "Search",
+    "toDashboard": "To Dashboard",
+    "backToHelp": "Back to Help"
+  },
+  "Dashboard": {
+    "title": "Agent Message Bus",
+    "subtitle": "Message management dashboard",
+    "apiDocs": "API docs",
+    "help": "Help",
+    "commands": "Commands",
+    "sseConnected": "SSE connected",
+    "reconnecting": "Reconnecting...",
+    "realtime": "Real-time",
+    "lightTheme": "Light theme",
+    "darkTheme": "Dark theme",
+    "messages": "Messages",
+    "inbox": "Inbox",
+    "errors": "Errors"
+  },
+  "Tasks": {
+    "loading": "Loading...",
+    "selectProject": "Select a project in the Dashboard",
+    "toDashboard": "To Dashboard"
+  },
+  "Help": {
+    "title": "Help",
+    "toDashboard": "To Dashboard",
+    "about": "About",
+    "keyConcepts": "Key concepts",
+    "messageLifecycle": "Message lifecycle",
+    "connectingProject": "Connecting a new project",
+    "keyboardShortcuts": "Keyboard shortcuts",
+    "links": "Links",
+    "useCases": "AMB use cases",
+    "apiDocs": "API docs (Swagger)",
+    "shortcutCommandPalette": "Command palette",
+    "shortcutShowPalette": "Show palette (when not in input)",
+    "shortcutTabMessages": "Messages tab",
+    "shortcutTabInbox": "Inbox tab",
+    "shortcutTabErrors": "Errors tab (DLQ)",
+    "shortcutNewThread": "New thread",
+    "shortcutRefresh": "Refresh page",
+    "shortcutFocusSearch": "Focus search",
+    "shortcutSendMessage": "Send message (in message input)"
+  }
+}

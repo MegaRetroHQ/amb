@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import {
   ArrowLeftIcon,
   BookOpenIcon,
@@ -17,6 +17,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { getTranslations } from "next-intl/server";
 
 export const metadata: Metadata = {
   title: "Use cases — Help | Agent Message Bus",
@@ -65,11 +66,9 @@ const summaryTable = [
 function Table({
   headers,
   rows,
-  className = "",
 }: {
   headers: string[];
   rows: Record<string, string>[];
-  className?: string;
 }) {
   return (
     <div className="overflow-x-auto rounded-md border border-border">
@@ -99,7 +98,10 @@ function Table({
   );
 }
 
-export default function UseCasesPage() {
+export default async function UseCasesPage() {
+  const t = await getTranslations("Help");
+  const tCommon = await getTranslations("Common");
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">
@@ -107,10 +109,10 @@ export default function UseCasesPage() {
           <Button variant="ghost" size="sm" asChild className="gap-2">
             <Link href="/help">
               <ArrowLeftIcon className="size-4" />
-              Back to Help
+              {tCommon("backToHelp")}
             </Link>
           </Button>
-          <h1 className="text-lg font-semibold tracking-tight">AMB use cases</h1>
+          <h1 className="text-lg font-semibold tracking-tight">{t("useCases")}</h1>
           <div className="w-28" />
         </div>
       </header>
@@ -195,7 +197,7 @@ export default function UseCasesPage() {
             </div>
             <div>
               <h4 className="font-medium text-foreground mb-1">Task from Cursor (MCP)</h4>
-              <p>In chat: “Create a thread and send a task to the dev agent”. AI calls create_thread → list_agents → send_message.</p>
+              <p>In chat: "Create a thread and send a task to the dev agent". AI calls create_thread → list_agents → send_message.</p>
             </div>
             <div>
               <h4 className="font-medium text-foreground mb-1">Broadcast</h4>
@@ -248,10 +250,10 @@ export default function UseCasesPage() {
             <ul className="space-y-2">
               <li>
                 <Button variant="outline" size="sm" className="justify-start gap-2" asChild>
-                  <Link href="/api-docs" target="_blank" rel="noopener noreferrer">
+                  <a href="/api-docs" target="_blank" rel="noopener noreferrer">
                     <BookOpenIcon className="size-4" />
-                    API docs (Swagger)
-                  </Link>
+                    {t("apiDocs")}
+                  </a>
                 </Button>
               </li>
               <li>

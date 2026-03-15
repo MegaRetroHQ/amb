@@ -22,7 +22,24 @@
     "markAsRead": "Отметить прочитанным",
     "refresh": "Обновить",
     "language": "Язык",
-    "failedToCreate": "Не удалось создать проект"
+    "failedToCreate": "Не удалось создать проект",
+    "apiErrors": {
+      "unauthorized": "Требуется авторизация. Выполните вход.",
+      "forbidden": "Недостаточно прав для этого действия.",
+      "serviceUnavailable": "API временно недоступен.",
+      "invalidJson": "Некорректный JSON в запросе.",
+      "invalidRequest": "Некорректные данные запроса.",
+      "invalidParams": "Некорректные параметры запроса.",
+      "invalidProjectId": "Project ID должен быть валидным UUID.",
+      "projectNotFound": "Проект не найден.",
+      "authFailed": "Ошибка авторизации.",
+      "invalidAuthResponse": "Некорректный ответ авторизации от API.",
+      "notFound": "Ресурс не найден.",
+      "conflict": "Конфликт состояния ресурса.",
+      "internalError": "Непредвиденная ошибка сервера.",
+      "httpError": "Запрос завершился ошибкой.",
+      "unknown": "Что-то пошло не так. Повторите попытку."
+    }
   },
   "Dashboard": {
     "title": "Agent Message Bus",

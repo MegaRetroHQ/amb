@@ -22,7 +22,24 @@
     "markAsRead": "Mark as read",
     "refresh": "Refresh",
     "language": "Language",
-    "failedToCreate": "Failed to create project"
+    "failedToCreate": "Failed to create project",
+    "apiErrors": {
+      "unauthorized": "Authentication required. Please sign in.",
+      "forbidden": "Access denied for this action.",
+      "serviceUnavailable": "API service is unavailable.",
+      "invalidJson": "Invalid JSON payload.",
+      "invalidRequest": "Invalid request data.",
+      "invalidParams": "Invalid request parameters.",
+      "invalidProjectId": "Project ID must be a valid UUID.",
+      "projectNotFound": "Project not found.",
+      "authFailed": "Authentication failed.",
+      "invalidAuthResponse": "Invalid auth response from API.",
+      "notFound": "Resource not found.",
+      "conflict": "Conflict: resource state has changed.",
+      "internalError": "Unexpected server error.",
+      "httpError": "Request failed.",
+      "unknown": "Something went wrong. Please try again."
+    }
   },
   "Dashboard": {
     "title": "Agent Message Bus",

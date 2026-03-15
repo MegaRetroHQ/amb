@@ -8,6 +8,7 @@ import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { getLocalizedApiErrorFromCode } from "@/lib/api/error-i18n";
 
 function sanitizeNextPath(nextValue: string | null, locale: string): string {
   if (!nextValue || !nextValue.startsWith(`/${locale}`)) {
@@ -23,6 +24,7 @@ function sanitizeNextPath(nextValue: string | null, locale: string): string {
 
 export function LoginForm() {
   const t = useTranslations("Auth");
+  const tCommon = useTranslations("Common");
   const locale = useLocale();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -50,12 +52,12 @@ export function LoginForm() {
       });
       const json = await response.json().catch(() => null);
       if (!response.ok) {
-        throw new Error(json?.error?.message ?? t("loginFailed"));
+        throw new Error(getLocalizedApiErrorFromCode(json?.error?.code, tCommon));
       }
       router.replace(nextPath);
       router.refresh();
     } catch (submitError) {
-      setError(submitError instanceof Error ? submitError.message : t("loginFailed"));
+      setError(submitError instanceof Error ? submitError.message : tCommon("apiErrors.authFailed"));
     } finally {
       setLoading(false);
     }

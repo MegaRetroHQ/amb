@@ -18,6 +18,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { getLocalizedApiErrorMessage } from "@/lib/api/error-i18n";
 
 type Props = {
   projectId: string;
@@ -58,7 +59,7 @@ export function TokensModule({ projectId, projectName }: Props) {
       setName("");
       setExpiresIn("2592000");
     } catch (submitError) {
-      setCreateError(submitError instanceof Error ? submitError.message : t("createFailed"));
+      setCreateError(getLocalizedApiErrorMessage(submitError, tCommon));
     } finally {
       setSubmitting(false);
     }

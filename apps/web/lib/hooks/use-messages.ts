@@ -1,13 +1,16 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useTranslations } from "next-intl";
 import type { Message } from "@/lib/types";
 import { useSSE } from "./use-sse";
 import { useProjectId } from "@/lib/context/project-context";
 import { withProjectId } from "@/lib/api/build-url";
-import { fetchApiData, isAuthError } from "@/lib/api/http";
+import { fetchApiData } from "@/lib/api/http";
+import { getLocalizedApiErrorMessage } from "@/lib/api/error-i18n";
 
 export function useThreadMessages(threadId: string | null) {
+  const tCommon = useTranslations("Common");
   const projectId = useProjectId();
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
@@ -24,17 +27,11 @@ export function useThreadMessages(threadId: string | null) {
       setMessages(data);
       setError(null);
     } catch (err) {
-      setError(
-        isAuthError(err)
-          ? "Authentication required. Please log in."
-          : err instanceof Error
-            ? err.message
-            : "Failed to fetch messages"
-      );
+      setError(getLocalizedApiErrorMessage(err, tCommon));
     } finally {
       setLoading(false);
     }
-  }, [threadId, projectId]);
+  }, [threadId, projectId, tCommon]);
 
   const sendMessage = useCallback(async (params: {
     fromAgentId: string;
@@ -116,6 +113,7 @@ export function useInbox(agentId: string | null, pollInterval = 3000) {
 }
 
 export function useDlq() {
+  const tCommon = useTranslations("Common");
   const projectId = useProjectId();
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
@@ -127,17 +125,11 @@ export function useDlq() {
       setMessages(data);
       setError(null);
     } catch (err) {
-      setError(
-        isAuthError(err)
-          ? "Authentication required. Please log in."
-          : err instanceof Error
-            ? err.message
-            : "Failed to fetch DLQ"
-      );
+      setError(getLocalizedApiErrorMessage(err, tCommon));
     } finally {
       setLoading(false);
     }
-  }, [projectId]);
+  }, [projectId, tCommon]);
 
   const retryMessage = useCallback(async (messageId: string) => {
     // Optimistic update

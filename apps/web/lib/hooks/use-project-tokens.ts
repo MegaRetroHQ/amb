@@ -1,8 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 import { fetchApiData } from "@/lib/api/http";
+import { getLocalizedApiErrorMessage } from "@/lib/api/error-i18n";
 
 export type ProjectToken = {
   id: string;
@@ -29,6 +31,7 @@ export type CreatedProjectToken = {
 };
 
 export function useProjectTokens(projectId: string) {
+  const tCommon = useTranslations("Common");
   const [tokens, setTokens] = useState<ProjectToken[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -40,11 +43,11 @@ export function useProjectTokens(projectId: string) {
       setTokens(data);
       setError(null);
     } catch (fetchError) {
-      setError(fetchError instanceof Error ? fetchError.message : "Failed to fetch tokens");
+      setError(getLocalizedApiErrorMessage(fetchError, tCommon));
     } finally {
       setLoading(false);
     }
-  }, [projectId]);
+  }, [projectId, tCommon]);
 
   const createToken = useCallback(
     async (input: { name: string; expiresIn?: number }) => {

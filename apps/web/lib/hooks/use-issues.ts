@@ -1,9 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 import type { Issue, IssuePriority, IssueState } from "@/lib/types";
-import { fetchApiData, isAuthError } from "@/lib/api/http";
+import { fetchApiData } from "@/lib/api/http";
+import { getLocalizedApiErrorMessage } from "@/lib/api/error-i18n";
 
 export type IssueFilters = {
   state?: IssueState | "ALL";
@@ -59,6 +61,7 @@ function toApiDate(value?: string | null): string | null {
 }
 
 export function useIssues(projectId: string, filters: IssueFilters) {
+  const tCommon = useTranslations("Common");
   const [issues, setIssues] = useState<Issue[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -72,17 +75,11 @@ export function useIssues(projectId: string, filters: IssueFilters) {
       setIssues(data);
       setError(null);
     } catch (fetchError) {
-      setError(
-        isAuthError(fetchError)
-          ? "Authentication required. Please log in."
-          : fetchError instanceof Error
-            ? fetchError.message
-            : "Failed to fetch issues"
-      );
+      setError(getLocalizedApiErrorMessage(fetchError, tCommon));
     } finally {
       setLoading(false);
     }
-  }, [filters, projectId]);
+  }, [filters, projectId, tCommon]);
 
   const createIssue = useCallback(
     async (input: IssueInput) => {

@@ -35,6 +35,7 @@ import {
 import { Link } from "@/i18n/navigation";
 
 import { useProjectContext } from "@/lib/context/project-context";
+import { getLocalizedApiErrorFromCode } from "@/lib/api/error-i18n";
 
 type Tenant = {
   id: string;
@@ -103,7 +104,7 @@ export function ProjectSwitcher() {
       });
       const json = await res.json().catch(() => null);
       if (!res.ok) {
-        setCreateError(json?.error?.message || tCommon("failedToCreate"));
+        setCreateError(getLocalizedApiErrorFromCode(json?.error?.code, tCommon));
         return;
       }
 
@@ -148,7 +149,7 @@ export function ProjectSwitcher() {
       });
       const json = await res.json().catch(() => null);
       if (!res.ok) {
-        setEditError(json?.error?.message || tCommon("tryAgain"));
+        setEditError(getLocalizedApiErrorFromCode(json?.error?.code, tCommon));
         return;
       }
       await reloadProjects();

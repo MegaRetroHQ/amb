@@ -1,9 +1,6 @@
-import { z } from "zod";
-
 import { jsonError } from "@/lib/api/errors";
 import { getProjectById } from "@/lib/services/projects";
-
-const projectIdSchema = z.string().uuid();
+import { projectIdSchema } from "@amb-app/shared";
 
 type ProjectParamResult =
   | { projectId: string; error: null }

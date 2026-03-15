@@ -1,17 +1,13 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
 
 import { jsonError, handleApiError } from "@/lib/api/errors";
 import { resolveProjectId } from "@/lib/api/project-context";
 import { getThreadById, updateThreadStatus, deleteThread } from "@/lib/services/threads";
+import { updateThreadSchema } from "@amb-app/shared";
 
 type RouteParams = {
   params: Promise<{ id: string }>;
 };
-
-const updateThreadSchema = z.object({
-  status: z.enum(["open", "closed", "archived"]),
-});
 
 export async function GET(request: Request, { params }: RouteParams) {
   try {

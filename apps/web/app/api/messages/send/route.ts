@@ -1,18 +1,10 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
 
 import { jsonError, handleApiError } from "@/lib/api/errors";
 import { resolveProjectId } from "@/lib/api/project-context";
 import { sendMessage } from "@/lib/services/messages";
 import { Prisma } from "../../../../prisma/generated/client";
-
-const sendMessageSchema = z.object({
-  threadId: z.string().uuid(),
-  fromAgentId: z.string().uuid(),
-  toAgentId: z.string().uuid().optional().nullable(),
-  payload: z.unknown(),
-  parentId: z.string().uuid().optional().nullable(),
-});
+import { sendMessageSchema } from "@amb-app/shared";
 
 export async function POST(request: Request) {
   try {

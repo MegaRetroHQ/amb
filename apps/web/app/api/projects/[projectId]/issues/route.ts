@@ -1,34 +1,16 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
 
 import { jsonError, handleApiError } from "@/lib/api/errors";
 import { resolveProjectIdParam } from "@/lib/api/project-params";
 import { createIssue, listIssues } from "@/lib/services/issues";
-import { IssuePriority, IssueState } from "../../../../../prisma/generated/client";
+import {
+  createIssueSchema,
+  listIssuesQuerySchema,
+} from "@amb-app/shared";
 
 type RouteParams = {
   params: Promise<{ projectId: string }>;
 };
-
-const issueStateSchema = z.nativeEnum(IssueState);
-const issuePrioritySchema = z.nativeEnum(IssuePriority);
-
-const createIssueSchema = z.object({
-  title: z.string().trim().min(1).max(255),
-  description: z.string().max(5000).optional().nullable(),
-  state: issueStateSchema.optional(),
-  priority: issuePrioritySchema.optional(),
-  assigneeId: z.string().uuid().optional().nullable(),
-  dueDate: z.coerce.date().optional().nullable(),
-});
-
-const listIssuesQuerySchema = z.object({
-  state: issueStateSchema.optional(),
-  priority: issuePrioritySchema.optional(),
-  assignee: z.string().uuid().optional(),
-  dueFrom: z.coerce.date().optional(),
-  dueTo: z.coerce.date().optional(),
-});
 
 export async function GET(request: Request, { params }: RouteParams) {
   try {

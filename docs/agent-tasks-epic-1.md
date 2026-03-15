@@ -11,26 +11,20 @@
 
 ## Dev Agent
 
-### ✅ Текущая задача (в работе): E1-S3 — packages/shared
+### ✅ E1-S3 — packages/shared (завершено)
 
-**Статус:** 🚧 Assigned  
-**Дедлайн:** по завершении обновить [backlog.md](./backlog.md) и [feature-workflow-epic-1.md](./feature-workflow-epic-1.md).
-
-**Сделать:**
-1. Создать `packages/shared/` (структура из [sprint-1-2-action-plan.md](./sprint-1-2-action-plan.md)).
-2. Перенести из `apps/web/lib/`:
-   - `lib/types.ts` → `packages/shared/src/types.ts`
-   - Ошибки: `lib/api/errors.ts`, `lib/services/errors.ts` → `packages/shared/src/errors.ts`
-3. Создать `packages/shared/src/schemas/` и вынести Zod-схемы валидации из API routes (`apps/web/app/api/**/route.ts`).
-4. Создать `packages/shared/src/constants.ts` (константы).
-5. Настроить `package.json` и `tsconfig.json` в `packages/shared`, добавить пакет в `pnpm-workspace.yaml` при необходимости.
-6. Убедиться: сборка и импорты из shared работают (обратная совместимость: пока можно оставить реэкспорты в `apps/web/lib/` или переключить импорты на `@amb-app/shared` по решению).
-
-**AC:** общие типы/ошибки/схемы (Zod)/константы в shared; пакет используется без зависимостей от core/db.
+**Статус:** ✅ Done  
+**Итог:** пакет создан, типы/ошибки/схемы/константы перенесены, apps/web подключён, реэкспорты сохранены, правило no-import-extensions добавлено.
 
 ---
 
-### Очередь (после E1-S3)
+### Текущая задача: E1-S1 — packages/core
+
+**Статус:** 📋 Ready to Start (после E1-S3)
+
+**Сделать:** см. [sprint-1-2-action-plan.md](./sprint-1-2-action-plan.md) — создать `packages/core/`, вынести доменную логику из `lib/services/`, интерфейс хранилища, in-memory, unit-тесты.
+
+**Очередь (после E1-S1)**
 
 | Story   | Задача | Зависимость   |
 |--------|--------|----------------|

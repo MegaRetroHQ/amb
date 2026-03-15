@@ -1,30 +1,13 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
 
 import { jsonError, handleApiError } from "@/lib/api/errors";
 import { resolveProjectIdParam } from "@/lib/api/project-params";
 import { deleteIssue, getIssueById, updateIssue } from "@/lib/services/issues";
-import { IssuePriority, IssueState } from "../../../../../../prisma/generated/client";
+import { updateIssueSchema } from "@amb-app/shared";
 
 type RouteParams = {
   params: Promise<{ projectId: string; id: string }>;
 };
-
-const issueStateSchema = z.nativeEnum(IssueState);
-const issuePrioritySchema = z.nativeEnum(IssuePriority);
-
-const updateIssueSchema = z
-  .object({
-    title: z.string().trim().min(1).max(255).optional(),
-    description: z.string().max(5000).optional().nullable(),
-    state: issueStateSchema.optional(),
-    priority: issuePrioritySchema.optional(),
-    assigneeId: z.string().uuid().optional().nullable(),
-    dueDate: z.coerce.date().optional().nullable(),
-  })
-  .refine((data) => Object.keys(data).length > 0, {
-    message: "At least one field must be provided",
-  });
 
 export async function GET(_request: Request, { params }: RouteParams) {
   try {

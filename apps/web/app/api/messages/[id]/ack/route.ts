@@ -1,13 +1,9 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
 
 import { jsonError, handleApiError } from "@/lib/api/errors";
 import { resolveProjectId } from "@/lib/api/project-context";
 import { ackMessage } from "@/lib/services/messages";
-
-const paramsSchema = z.object({
-  id: z.string().uuid(),
-});
+import { messageIdParamsSchema } from "@amb-app/shared";
 
 type RouteContext = {
   params: Promise<{ id: string }>;
@@ -21,7 +17,7 @@ export async function POST(request: Request, context: RouteContext) {
     }
 
     const params = await context.params;
-    const parsed = paramsSchema.safeParse(params);
+    const parsed = messageIdParamsSchema.safeParse(params);
     if (!parsed.success) {
       return jsonError(400, "invalid_params", "Invalid message id", parsed.error.flatten());
     }

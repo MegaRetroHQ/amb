@@ -1,12 +1,8 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
 
 import { jsonError, handleApiError } from "@/lib/api/errors";
 import { createProject, ensureDefaultProject, listProjects } from "@/lib/services/projects";
-
-const createProjectSchema = z.object({
-  name: z.string().min(1).max(80),
-});
+import { createProjectSchema } from "@amb-app/shared";
 
 export async function GET() {
   try {

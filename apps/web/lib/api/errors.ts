@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 
-import { ConflictError, NotFoundError } from "@/lib/services/errors";
+import { ConflictError, NotFoundError } from "@amb-app/shared";
 
 type ErrorBody = {
   error: {

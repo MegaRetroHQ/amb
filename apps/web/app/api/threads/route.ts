@@ -1,14 +1,9 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
 
 import { jsonError, handleApiError } from "@/lib/api/errors";
 import { resolveProjectId } from "@/lib/api/project-context";
 import { createThread, listThreads } from "@/lib/services/threads";
-
-const createThreadSchema = z.object({
-  title: z.string().min(1),
-  status: z.enum(["open", "closed"]).optional().default("open"),
-});
+import { createThreadSchema } from "@amb-app/shared";
 
 export async function GET(request: Request) {
   try {

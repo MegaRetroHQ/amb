@@ -1,9 +1,6 @@
-import { z } from "zod";
-
 import { jsonError } from "@/lib/api/errors";
 import { ensureDefaultProject, getProjectById } from "@/lib/services/projects";
-
-const projectIdSchema = z.string().uuid();
+import { projectIdSchema } from "@amb-app/shared";
 
 function getProjectIdFromRequest(request: Request): string | null {
   const url = new URL(request.url);

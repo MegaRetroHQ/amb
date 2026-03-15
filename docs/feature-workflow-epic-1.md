@@ -4,7 +4,7 @@
 **Открыт:** 2026-03-15  
 **Оркестратор:** orchestrator  
 **Статус:** 🚧 In Progress  
-**Последняя проверка:** 2026-03-15  
+**Последняя проверка inbox:** 2026-03-15 (1 входящее обработано)  
 
 **Message Bus (MCP):** тред создан, задачи разосланы агентам.  
 - **Thread ID:** `1c0afd9c-cdad-4f50-bcd6-080232702c3e`  
@@ -23,7 +23,7 @@
 
 | Шаг | Story | Package         | Агент | Статус         |
 | --- | ----- | --------------- | ----- | -------------- |
-| 1   | E1-S3 | packages/shared | Dev   | 🚧 In Progress |
+| 1   | E1-S3 | packages/shared | Dev   | ✅ Done        |
 | 2   | E1-S1 | packages/core   | Dev   | 📋 Planned     |
 | 3   | E1-S2 | packages/db     | Dev   | 📋 Planned     |
 | 4   | E1-S4 | packages/sdk    | Dev   | 📋 Planned     |
@@ -45,7 +45,7 @@
 
 | Агент     | Задача        | Story   | Статус     | Документ |
 |-----------|---------------|--------|------------|----------|
-| **Dev**   | packages/shared | E1-S3  | 🚧 Assigned | [agent-tasks-epic-1.md](./agent-tasks-epic-1.md) |
+| **Dev**   | packages/shared | E1-S3  | ✅ Done     | [agent-tasks-epic-1.md](./agent-tasks-epic-1.md) |
 | Dev       | packages/core | E1-S1  | 📋 Queued   | после E1-S3 |
 | Dev       | packages/db   | E1-S2  | 📋 Queued   | после E1-S3 |
 | Dev       | packages/sdk  | E1-S4  | 📋 Queued   | после E1-S3 |
@@ -60,9 +60,9 @@
 
 ## Диспетчеризация
 
-**Сейчас:** Dev — выполнить **E1-S3 (packages/shared)** по [agent-tasks-epic-1.md](./agent-tasks-epic-1.md) и [sprint-1-2-action-plan.md](./sprint-1-2-action-plan.md).
+**Сейчас:** Dev — выполнить **E1-S1 (packages/core)** по [agent-tasks-epic-1.md](./agent-tasks-epic-1.md) и [sprint-1-2-action-plan.md](./sprint-1-2-action-plan.md).
 
-**После E1-S3:** Dev — E1-S1 → E1-S2 → E1-S4. Architect — по запросу (интерфейсы, RLS). QA — проверки после завершения stories.
+**После E1-S3 (done):** Dev — E1-S1 → E1-S2 → E1-S4. Architect — по запросу (интерфейсы, RLS). QA — проверки после завершения stories.
 
 ---
 

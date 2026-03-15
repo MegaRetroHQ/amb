@@ -1,16 +1,10 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
 
 import { jsonError, handleApiError } from "@/lib/api/errors";
 import { resolveProjectId } from "@/lib/api/project-context";
 import { createAgent, listAgents } from "@/lib/services/agents";
 import { Prisma } from "../../../prisma/generated/client";
-
-const createAgentSchema = z.object({
-  name: z.string().min(1),
-  role: z.string().min(1),
-  capabilities: z.unknown().optional().nullable(),
-});
+import { createAgentSchema } from "@amb-app/shared";
 
 export async function GET(request: Request) {
   try {

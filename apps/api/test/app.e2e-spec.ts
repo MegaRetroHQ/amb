@@ -605,6 +605,7 @@ describe("API (e2e)", () => {
         .set("Authorization", `Bearer ${userToken}`)
         .send({ name: "admin-issued", expiresIn: 3600 })
         .expect(201);
+      const projectToken = createRes.body.data?.accessToken as string;
       const tokenId = createRes.body.data?.claims?.jti as string;
       expect(tokenId).toBeDefined();
 
@@ -623,6 +624,11 @@ describe("API (e2e)", () => {
         .set("Authorization", `Bearer ${userToken}`)
         .expect(201);
       expect(revokeRes.body.data?.revokedAt).toBeTruthy();
+
+      await request(app.getHttpServer())
+        .get("/api/threads")
+        .set("Authorization", `Bearer ${projectToken}`)
+        .expect(401);
 
       await request(app.getHttpServer())
         .delete(`/api/admin/projects/${projectId}/tokens/${tokenId}`)

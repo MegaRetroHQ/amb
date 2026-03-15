@@ -9,6 +9,8 @@ import { Reflector } from "@nestjs/core";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import type { AuthContext, RequestWithAuth } from "./auth-context";
 import { IS_PUBLIC_KEY } from "./public.decorator";
+import { PrismaService } from "../prisma/prisma.service";
+import { hashProjectToken } from "../auth/project-token-hash";
 
 type JwtHeader = {
   alg?: string;
@@ -48,9 +50,12 @@ function decodeBase64Url(input: string): string {
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  constructor(private readonly reflector: Reflector) {}
+  constructor(
+    private readonly reflector: Reflector,
+    private readonly prisma: PrismaService
+  ) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -72,6 +77,9 @@ export class JwtAuthGuard implements CanActivate {
     }
 
     const auth = this.verifyToken(token);
+    if (auth.subject === "project") {
+      await this.assertActiveProjectToken(token, auth);
+    }
     request.auth = auth;
     return true;
   }
@@ -181,5 +189,51 @@ export class JwtAuthGuard implements CanActivate {
       issuedAt: payload.iat,
       expiresAt: payload.exp,
     };
+  }
+
+  private async assertActiveProjectToken(token: string, auth: AuthContext): Promise<void> {
+    if (!auth.projectId) {
+      throw new UnauthorizedException("JWT claim 'projectId' is required for project token");
+    }
+
+    const tokenHash = hashProjectToken(token);
+    const tokenRecord = await this.prisma.withProjectContext(auth.projectId, async (tx, context) => {
+      return (tx as any).projectToken.findFirst({
+        where: {
+          tokenHash,
+          projectId: context.projectId,
+          tenantId: context.tenantId,
+        },
+        select: {
+          id: true,
+          revokedAt: true,
+          expiresAt: true,
+        },
+      });
+    });
+
+    if (!tokenRecord) {
+      throw new UnauthorizedException("Project token is not recognized");
+    }
+
+    if (tokenRecord.revokedAt) {
+      throw new UnauthorizedException("Project token is revoked");
+    }
+
+    if (tokenRecord.expiresAt && tokenRecord.expiresAt.getTime() <= Date.now()) {
+      throw new UnauthorizedException("Project token is expired");
+    }
+
+    await this.prisma.withProjectContext(auth.projectId, async (tx, context) => {
+      await (tx as any).projectToken.updateMany({
+        where: {
+          tokenHash,
+          projectId: context.projectId,
+          tenantId: context.tenantId,
+          revokedAt: null,
+        },
+        data: { lastUsedAt: new Date() },
+      });
+    });
   }
 }

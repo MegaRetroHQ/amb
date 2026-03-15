@@ -4,6 +4,7 @@ import { createHmac, randomUUID } from "node:crypto";
 import { verifyPassword } from "./password";
 import type { AuthContext } from "../common/auth-context";
 import { NotFoundError } from "@amb-app/shared";
+import { hashProjectToken } from "./project-token-hash";
 
 const USER_TOKEN_TTL_SECONDS = 60 * 60;
 const PROJECT_TOKEN_TTL_SECONDS = 60 * 60 * 24 * 30;
@@ -24,10 +25,6 @@ function signHs256(payload: Record<string, unknown>, secret: string): string {
     createHmac("sha256", secret).update(`${encodedHeader}.${encodedPayload}`).digest()
   );
   return `${encodedHeader}.${encodedPayload}.${signature}`;
-}
-
-function hashToken(token: string): string {
-  return createHmac("sha256", "project-token-hash-v1").update(token).digest("hex");
 }
 
 @Injectable()
@@ -105,7 +102,7 @@ export class AuthService {
       exp: now + ttl,
     };
     const accessToken = signHs256(payload, secret);
-    const tokenHash = hashToken(accessToken);
+    const tokenHash = hashProjectToken(accessToken);
 
     await this.prisma.withProjectContext(authUser.projectId, async (tx, context) => {
       await (tx as any).projectToken.create({

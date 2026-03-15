@@ -36,7 +36,14 @@ createClient({ baseUrl, token }), Authorization Bearer + x-project-id, MessageBu
 2. Добавлен `apps/web/scripts/seed-docker.ts` (login -> token -> project -> seed agents/threads).
 3. Проверка запуска: `docker compose up -d --build` с портами `API_PORT=4334 WEB_PORT=4333`; `api/web` healthy, `seed` завершается с кодом `0`.
 
-### Текущая задача: E5-S4 — Migration guide
+### ✅ E5-S4 — Migration guide (Done)
+
+Сделано:
+1. Добавлен документ `docs/migration-guide-v1-vnext.md`.
+2. Описаны breaking changes v1 -> vNext.
+3. Добавлены SDK/API/Docker migration steps + checklist.
+
+### Текущая задача: E5-S5 — Примеры интеграций
 
 **Статус:** In progress
 
@@ -48,4 +55,4 @@ createClient({ baseUrl, token }), Authorization Bearer + x-project-id, MessageBu
 
 ## QA
 
-**Queued:** проверка docker compose и migration guide (после E5-S4).
+**Queued:** проверка integration examples (после E5-S5).

@@ -9,7 +9,7 @@
 
 - **Thread ID:** `c7a52a0e-fa39-4f05-9109-3fd740c74125`  
 - **Статус треда:** open  
-- E5-S1…E5-S3 Done. E5-S4 in progress | Architect (on_demand) | QA (queued)
+- E5-S1…E5-S4 Done. E5-S5 in progress | Architect (on_demand) | QA (queued)
 
 ---
 
@@ -37,8 +37,8 @@
 | 1   | E5-S1 | Обновить SDK с JWT поддержкой     | ✅ Done        |
 | 2   | E5-S2 | Документация по интеграции        | ✅ Done        |
 | 3   | E5-S3 | Docker Compose для локальной разработки | ✅ Done        |
-| 4   | E5-S4 | Migration guide                  | 🚧 In Progress |
-| 5   | E5-S5 | Примеры интеграций                | 📋 Queued      |
+| 4   | E5-S4 | Migration guide                  | ✅ Done        |
+| 5   | E5-S5 | Примеры интеграций                | 🚧 In Progress |
 
 
 ---
@@ -55,7 +55,7 @@
 | Агент     | Задача                     | Story | Статус   |
 | --------- | -------------------------- | ----- | -------- |
 | **Dev**   | Документация по интеграции | E5-S2 | ✅ Done |
-| Dev       | E5-S4…E5-S5                | E5-S4…E5-S5 | In progress |
+| Dev       | E5-S5                      | E5-S5       | In progress |
 | Architect | По запросу (документация, DX) | —   | On demand |
 | QA        | Проверки после stories     | —     | Queued   |
 

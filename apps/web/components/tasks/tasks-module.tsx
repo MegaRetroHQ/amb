@@ -375,7 +375,7 @@ export function TasksModule({ projectId, projectName }: TasksModuleProps) {
 
         {error && <p className="mb-4 text-sm text-destructive">{error}</p>}
 
-        {loading ? <p className="text-sm text-muted-foreground">Loading issues...</p> : null}
+        {loading ? <p className="text-sm text-muted-foreground">{t("loadingIssues")}</p> : null}
 
         {!loading && viewMode === "list" ? (
           <Card className="overflow-x-auto">

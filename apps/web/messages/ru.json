@@ -154,7 +154,14 @@
     "sendEnter": "Отправить (Enter)",
     "selectAgentSidebar": "Выберите агента в боковой панели для отправки сообщений",
     "unknownRole": "Неизвестная роль",
-    "broadcast": "рассылка"
+    "broadcast": "рассылка",
+    "messageStatus": "Статус сообщения: {status}",
+    "status": {
+      "pending": "В ожидании",
+      "delivered": "Доставлено",
+      "ack": "Подтверждено",
+      "dlq": "Ошибка"
+    }
   },
   "DlqViewer": {
     "errorQueue": "Очередь ошибок (DLQ)",
@@ -211,7 +218,14 @@
     "inboxEmpty": "Входящие пусты",
     "newMessagesHere": "Сообщения для {name} появятся здесь",
     "acknowledge": "Подтвердить",
-    "unknownRole": "Неизвестная роль"
+    "unknownRole": "Неизвестная роль",
+    "autoRefresh": "Автообновление каждые {seconds} сек.",
+    "status": {
+      "pending": "В ожидании",
+      "delivered": "Доставлено",
+      "ack": "Подтверждено",
+      "dlq": "Ошибка"
+    }
   },
   "Tasks": {
     "loading": "Загрузка...",
@@ -251,6 +265,7 @@
     "failedToCreateIssue": "Не удалось создать задачу",
     "failedToUpdateIssue": "Не удалось обновить задачу",
     "failedToDeleteIssue": "Не удалось удалить задачу",
+    "loadingIssues": "Загрузка задач...",
     "issueTitlePlaceholder": "Название задачи",
     "dueDatePlaceholder": "Срок"
   },

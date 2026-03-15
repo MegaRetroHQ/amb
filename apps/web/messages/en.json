@@ -154,7 +154,14 @@
     "sendEnter": "Send (Enter)",
     "selectAgentSidebar": "Select an agent in the sidebar to send messages",
     "unknownRole": "Unknown role",
-    "broadcast": "broadcast"
+    "broadcast": "broadcast",
+    "messageStatus": "Message status: {status}",
+    "status": {
+      "pending": "Pending",
+      "delivered": "Delivered",
+      "ack": "Acknowledged",
+      "dlq": "Failed"
+    }
   },
   "DlqViewer": {
     "errorQueue": "Error queue (DLQ)",
@@ -211,7 +218,14 @@
     "inboxEmpty": "Inbox is empty",
     "newMessagesHere": "New messages addressed to {name} will appear here",
     "acknowledge": "Acknowledge",
-    "unknownRole": "Unknown role"
+    "unknownRole": "Unknown role",
+    "autoRefresh": "Auto-refreshing every {seconds} seconds",
+    "status": {
+      "pending": "Pending",
+      "delivered": "Delivered",
+      "ack": "Acknowledged",
+      "dlq": "Failed"
+    }
   },
   "Tasks": {
     "loading": "Loading...",
@@ -251,6 +265,7 @@
     "failedToCreateIssue": "Failed to create issue",
     "failedToUpdateIssue": "Failed to update issue",
     "failedToDeleteIssue": "Failed to delete issue",
+    "loadingIssues": "Loading issues...",
     "issueTitlePlaceholder": "Issue title",
     "dueDatePlaceholder": "Due date"
   },

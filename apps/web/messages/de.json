@@ -154,7 +154,14 @@
     "sendEnter": "Senden (Enter)",
     "selectAgentSidebar": "Wählen Sie einen Agenten in der Seitenleiste",
     "unknownRole": "Unbekannte Rolle",
-    "broadcast": "Broadcast"
+    "broadcast": "Broadcast",
+    "messageStatus": "Nachrichtenstatus: {status}",
+    "status": {
+      "pending": "Ausstehend",
+      "delivered": "Zugestellt",
+      "ack": "Bestätigt",
+      "dlq": "Fehlgeschlagen"
+    }
   },
   "DlqViewer": {
     "errorQueue": "Fehlerwarteschlange (DLQ)",
@@ -211,7 +218,14 @@
     "inboxEmpty": "Eingang ist leer",
     "newMessagesHere": "Neue Nachrichten für {name} erscheinen hier",
     "acknowledge": "Bestätigen",
-    "unknownRole": "Unbekannte Rolle"
+    "unknownRole": "Unbekannte Rolle",
+    "autoRefresh": "Automatische Aktualisierung alle {seconds} Sekunden",
+    "status": {
+      "pending": "Ausstehend",
+      "delivered": "Zugestellt",
+      "ack": "Bestätigt",
+      "dlq": "Fehlgeschlagen"
+    }
   },
   "Tasks": {
     "loading": "Laden...",
@@ -251,6 +265,7 @@
     "failedToCreateIssue": "Aufgabe konnte nicht erstellt werden",
     "failedToUpdateIssue": "Aufgabe konnte nicht aktualisiert werden",
     "failedToDeleteIssue": "Aufgabe konnte nicht gelöscht werden",
+    "loadingIssues": "Aufgaben werden geladen...",
     "issueTitlePlaceholder": "Aufgabentitel",
     "dueDatePlaceholder": "Fälligkeitsdatum"
   },

@@ -6,6 +6,17 @@
 
 ![Dashboard](docs/screen.png)
 
+## Диаграмма: что такое AMB
+
+Откройте [Excalidraw-схему AMB](docs/amb-overview.excalidraw), чтобы за 1 минуту понять, для чего нужен продукт, как он работает и какую ценность даёт разработчику.
+
+Landing-style версия для репозитория:
+- [Excalidraw (editable)](docs/amb-overview-landing.excalidraw)
+- [SVG](docs/amb-overview-landing.svg)
+- [PNG](docs/amb-overview-landing.png)
+
+![AMB overview](docs/amb-overview-landing.png)
+
 ## Зачем это нужно
 
 Несколько ИИ-агентов (PO, Architect, Dev, QA в Cursor, Codex, Claude Code или свои воркеры) должны передавать друг другу задачи и контекст. Без общей шины это ad-hoc скрипты, потеря сообщений, сложная отладка. AMB даёт треды (темы задач), inbox на каждого агента, подтверждение доставки (ACK), повторы и DLQ. Подключение: REST API, TypeScript SDK или MCP в Cursor, Codex, Claude Code и других клиентах — агенты в чате или воркеры могут создавать треды, слать сообщения, смотреть inbox и DLQ. **Для кого:** разработчики и команды, которые используют несколько ИИ-агентов в разных средах и хотят координировать их через единый поток сообщений локально, без облака.

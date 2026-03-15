@@ -2,7 +2,7 @@
 
 **Версия:** 1.0  
 **Дата:** 2026-01-28  
-**Последняя проверка статуса:** 2026-03-15 (Orchestrator). Epic 1–3 завершены. E3-S1…E3-S6 — Done (nest-engineer).  
+**Последняя проверка статуса:** 2026-03-15 (Orchestrator). Epic 1–3 завершены. Epic 4: E4-S1…E4-S3 — Done; E4-S4 — в работе (react-next-engineer).  
 **Автор:** Product Owner Agent  
 **Статус:** Актуально
 
@@ -16,7 +16,7 @@
 | [E1: Архитектурная миграция](#epic-1-архитектурная-миграция)           | P0        | ✅ Done        | Sprint 1-2 |
 | [E2: Multi-tenant инфраструктура](#epic-2-multi-tenant-инфраструктура) | P0        | ✅ Done        | Sprint 2-3 |
 | [E3: JWT авторизация](#epic-3-jwt-авторизация)                         | P0        | ✅ Done        | Sprint 3-4 |
-| [E4: Dashboard как продукт](#epic-4-dashboard-как-продукт)             | P0        | 📋 Planned     | Sprint 4-5 |
+| [E4: Dashboard как продукт](#epic-4-dashboard-как-продукт)             | P0        | 🚧 In Progress | Sprint 4-5 |
 | [E5: Developer Experience](#epic-5-developer-experience)               | P1        | 📋 Planned     | Sprint 5-6 |
 | [E6: Операционная готовность](#epic-6-операционная-готовность)         | P1        | 📋 Planned     | Sprint 6-7 |
 | [E7: Локализация (i18n)](#epic-7-локализация-i18n)                     | P1        | 📋 Planned     | Sprint 6-7 |
@@ -111,10 +111,10 @@
 
 | ID    | Story                                  | Приоритет | Статус     | Acceptance Criteria                                                                          |
 | ----- | -------------------------------------- | --------- | ---------- | -------------------------------------------------------------------------------------------- |
-| E4-S1 | Создать `apps/web` (Next.js Dashboard) | P0        | 📋 Planned      | • Next.js приложение • Структура компонентов сохранена • Использует HTTP клиент к `apps/api` |
-| E4-S2 | HTTP клиент к `apps/api`               | P0        | 📋 Planned      | • Типизированный клиент • Обработка ошибок • JWT token management                            |
-| E4-S3 | Удалить прямой доступ к БД             | P0        | 📋 Planned      | • Prisma удален из `apps/web` • Все запросы через HTTP • Тесты проходят                      |
-| E4-S4 | User authentication flow               | P0        | 📋 Planned      | • Login страница • JWT token storage (httpOnly cookies) • Refresh flow                       |
+| E4-S1 | Создать `apps/web` (Next.js Dashboard) | P0        | ✅ Done    | • Next.js Dashboard • Структура сохранена • HTTP клиент к apps/api (getApiClient, @amb-app/sdk) |
+| E4-S2 | HTTP клиент к `apps/api`               | P0        | ✅ Done    | • auth.ts JWT/cookie • login/logout/session routes • client token+projectId • http.ts ApiHttpError • typecheck pass |
+| E4-S3 | Удалить прямой доступ к БД             | P0        | ✅ Done    | • Prisma/@amb-app/db удалены из apps/web • scripts/DB-слой убраны • build/typecheck pass     |
+| E4-S4 | User authentication flow               | P0        | 🚧 In Progress | • Login страница • JWT storage (httpOnly) • Refresh flow (в работе)                       |
 | E4-S5 | Tenant/Project management UI           | P0        | 📋 Planned      | • Список tenant'ов и проектов • Создание/редактирование • Переключение контекста             |
 | E4-S6 | Token management UI                    | P0        | 📋 Planned      | • Список project tokens • Создание токенов • Revocation токенов • Копирование токенов        |
 

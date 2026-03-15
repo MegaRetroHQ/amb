@@ -8,7 +8,7 @@
 **Message Bus (MCP):** тред создан; задачи разосланы **Backend** (nest-engineer). Все E3-S1…E3-S6 — Done.  
 
 - **Thread ID:** `398ec109-2932-4dca-bc85-e91718a50272`  
-- **Статус треда:** open  
+- **Статус треда:** closed (2026-03-15)  
 - Backend E3-S1…E3-S6 Done. Architect (on_demand) | QA (queued)
 
 ---

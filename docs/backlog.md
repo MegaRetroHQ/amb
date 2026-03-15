@@ -2,7 +2,7 @@
 
 **Версия:** 1.0  
 **Дата:** 2026-01-28  
-**Последняя проверка статуса:** 2026-03-16 (Orchestrator). Epic 1–4 завершены. Epic 5: E5-S1 — Done (react-next-engineer), E5-S2…E5-S5 — planned.  
+**Последняя проверка статуса:** 2026-03-16 (Orchestrator). Инбокс пуст. Epic 1–4 завершены; Epic 5: E5-S1, E5-S2 — Done, E5-S3 — в работе (react-next-engineer).  
 **Автор:** Product Owner Agent  
 **Статус:** Актуально
 
@@ -17,7 +17,7 @@
 | [E2: Multi-tenant инфраструктура](#epic-2-multi-tenant-инфраструктура) | P0        | ✅ Done        | Sprint 2-3 |
 | [E3: JWT авторизация](#epic-3-jwt-авторизация)                         | P0        | ✅ Done        | Sprint 3-4 |
 | [E4: Dashboard как продукт](#epic-4-dashboard-как-продукт)             | P0        | ✅ Done        | Sprint 4-5 |
-| [E5: Developer Experience](#epic-5-developer-experience)               | P1        | 📋 Planned     | Sprint 5-6 |
+| [E5: Developer Experience](#epic-5-developer-experience)               | P1        | 🚧 In Progress | Sprint 5-6 |
 | [E6: Операционная готовность](#epic-6-операционная-готовность)         | P1        | 📋 Planned     | Sprint 6-7 |
 | [E7: Локализация (i18n)](#epic-7-локализация-i18n)                     | P1        | 📋 Planned     | Sprint 6-7 |
 
@@ -138,8 +138,8 @@
 | ID    | Story                                   | Приоритет | Статус     | Acceptance Criteria                                                                        |
 | ----- | --------------------------------------- | --------- | ---------- | ------------------------------------------------------------------------------------------ |
 | E5-S1 | Обновить SDK с JWT поддержкой           | P1        | ✅ Done    | • `createClient({ baseUrl, token })` • Authorization Bearer + x-project-id • MessageBusError: isUnauthorized/isForbidden/isAuthError |
-| E5-S2 | Документация по интеграции              | P1        | 📋 Planned      | • Quick start guide • API reference • Примеры кода                                         |
-| E5-S3 | Docker Compose для локальной разработки | P1        | 📋 Planned      | • `docker compose up` запускает все • DB + API + Web • Seed данные                         |
+| E5-S2 | Документация по интеграции              | P1        | ✅ Done    | • Quick start: docs/integration-guide.md • API reference: docs/api.md (+ auth headers) • Примеры кода: README + docs/getting-started.md |
+| E5-S3 | Docker Compose для локальной разработки | P1        | 🚧 In Progress | • `docker compose up` запускает все • DB + API + Web • Seed данные                         |
 | E5-S4 | Migration guide                         | P1        | 📋 Planned      | • Guide для v1 → vNext • SDK migration steps • Breaking changes список                     |
 | E5-S5 | Примеры интеграций                      | P1        | 📋 Planned      | • Примеры для разных языков • Best practices • Common patterns                             |
 

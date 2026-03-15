@@ -8,7 +8,7 @@
 **Message Bus (MCP):** тред создан; задачи разосланы **Backend** (nest-engineer) и **Frontend** (react-next-engineer).  
 
 - **Thread ID:** `66ddc5d9-baa6-4040-ae1e-a51d19988e25`  
-- **Статус треда:** closed (2026-03-15)  
+- **Статус треда:** open  
 - Backend E2-S1: `bc11f422-…` | Frontend (queued): `991a49b8-…`
 
 ---

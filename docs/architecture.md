@@ -823,6 +823,15 @@ services:
 | ADR-002 | Thread-based Messaging Model | Accepted |
 | ADR-003 | ACK/Retry/DLQ Pattern | Accepted |
 | ADR-004 | MCP Integration via stdio | Accepted |
+| ADR-005 | Выделение backend в Nest.js | Accepted |
+| ADR-006 | Multi-Tenant (Tenant → Projects), изоляция по проекту | Accepted |
+| ADR-007 | JWT Auth с project-scoped токенами | Accepted |
+| ADR-008 | PostgreSQL RLS для изоляции по тенанту/проекту | Accepted |
+| ADR-009 | Инфраструктура хостинга (Kubernetes + Podman) | Accepted |
+| ADR-010 | Аутентификация пользователей (таблица users) | Accepted |
+| ADR-011 | RBAC (tenant-admin, project-admin, reader) | Accepted |
+| ADR-012 | Механика выдачи project-токенов | Accepted |
+| ADR-013 | Архитектура фоновых воркеров | Accepted |
 
 ### 12.2 Ссылки на ADR
 
@@ -830,6 +839,47 @@ services:
 - [ADR-002: Thread-based Messaging](./adr/ADR-002-thread-messaging.md)
 - [ADR-003: ACK/Retry/DLQ Pattern](./adr/ADR-003-ack-retry-dlq.md)
 - [ADR-004: MCP Integration](./adr/ADR-004-mcp-integration.md)
+- [ADR-005: Nest.js Backend](./adr/ADR-005-nestjs-backend.md)
+- [ADR-006: Multi-Tenant Model](./adr/ADR-006-multi-tenant-model.md)
+- [ADR-007: JWT and Project Tokens](./adr/ADR-007-jwt-and-project-tokens.md)
+- [ADR-008: PostgreSQL RLS](./adr/ADR-008-postgres-rls.md)
+- [ADR-009: Hosting and Infrastructure](./adr/ADR-009-hosting-and-infrastructure.md)
+- [ADR-010: User Authentication](./adr/ADR-010-user-authentication.md)
+- [ADR-011: RBAC Model](./adr/ADR-011-rbac-model.md)
+- [ADR-012: Project Token Issuance](./adr/ADR-012-project-token-issuance.md)
+- [ADR-013: Workers Architecture](./adr/ADR-013-workers-architecture.md)
+
+### 12.3 Уточнения архитектора (Epic 1–5)
+
+Ниже — зафиксированные контракты и указатели для разработки по эпам.
+
+#### Интерфейс хранилища (Epic 1, packages/core)
+
+Единый контракт персистентности — **`MessageBusStorage`** (`packages/core/src/storage/interface.ts`). Все операции принимают `projectId`; реализация (Prisma в `packages/db` или in-memory для тестов) обеспечивает изоляцию по проекту.
+
+- **Agents:** `listAgents`, `createAgent`, `searchAgents`, `getAgentById`
+- **Threads:** `listThreads`, `createThread`, `getThreadById`, `listThreadMessages`, `updateThreadStatus`, `deleteThread`
+- **Messages:** `createMessage`, `getMessageById`, `updateMessageStatus`, `findMessages`, `getInboxAndMarkDelivered`, `updateManyMessages`, `updateManyMessagesToStatus`, `deleteManyMessages`
+
+Типы входов: `CreateAgentInput`, `CreateThreadInput`, `SendMessageInput` — в том же файле. Расширять интерфейс только с учётом обратной совместимости существующих реализаций.
+
+#### Контракт RLS helpers (Epic 1, packages/db)
+
+В `packages/db/src/rls.ts` экспортируются две функции для установки контекста **в рамках одной SQL-транзакции** (`SET LOCAL` через `set_config(..., true)`):
+
+- **`setTenantContext(tx, tenantId)`** — устанавливает `app.tenant_id`
+- **`setProjectContext(tx, projectId)`** — устанавливает `app.project_id`
+
+Вызывать в начале транзакции до любых чтений/записей; политики RLS (ADR-008) опираются на эти переменные. Не использовать вне транзакции Prisma.
+
+#### Epic 2–5 (указатели)
+
+| Эпик | Контекст | Документы |
+|------|----------|-----------|
+| E2 | Tenant/Project, RLS, контекст в запросах | ADR-006, ADR-008 |
+| E3 | JWT/claims, users, RBAC | ADR-010, ADR-011 |
+| E4 | Dashboard, auth flow, UI | feature-workflow-epic-4, ADR-010/011 |
+| E5 | Структура документации, DX | docs/ в репозитории, ADR-013 при workers |
 
 ---
 
@@ -848,36 +898,26 @@ services:
 | MCP SDK | @modelcontextprotocol/sdk | 1.x |
 | Package Manager | pnpm | 8+ |
 
-### B. Структура проекта
+### B. Структура проекта (актуальная: монорепо после Epic 1)
 
 ```
-mcp-message-bus/
-├── app/
-│   ├── api/              # REST API routes
-│   │   ├── agents/
-│   │   ├── threads/
-│   │   ├── messages/
-│   │   └── dlq/
-│   ├── page.tsx          # Dashboard
-│   └── layout.tsx
-├── components/
-│   ├── dashboard/        # Dashboard components
-│   └── ui/               # shadcn components
-├── lib/
-│   ├── sdk/              # TypeScript SDK
-│   ├── services/         # Business logic
-│   ├── hooks/            # React hooks
-│   └── prisma.ts         # Prisma client
-├── mcp-server/           # MCP server
-├── prisma/
-│   ├── schema.prisma     # Database schema
-│   └── migrations/
-├── scripts/              # Automation
-│   ├── retry-worker.ts
-│   ├── orchestrator.ts
-│   └── cleanup.ts
+amb-app/
+├── apps/
+│   ├── api/              # Nest.js backend (ADR-005), порт 3334
+│   │   ├── src/          # Модули agents, threads, messages, dlq, projects, issues
+│   │   └── test/
+│   └── web/              # Next.js Dashboard, MCP server, скрипты
+│       ├── app/          # API routes (legacy/скрипты), page, layout
+│       ├── components/   # dashboard, ui
+│       ├── mcp-server/   # MCP (stdio → HTTP к apps/api)
+│       └── scripts/     # retry-worker, orchestrator, cleanup
+├── packages/
+│   ├── core/             # MessageBusStorage, сервисы agents/threads/messages, in-memory
+│   ├── db/               # Prisma schema, migrations, client, RLS helpers
+│   ├── shared/           # Типы, ошибки, схемы, константы
+│   └── sdk/              # TypeScript SDK (createClient, API)
 └── docs/
-    ├── architecture.md   # This document
+    ├── architecture.md   # Этот документ
     └── adr/              # Architecture Decision Records
 ```
 
@@ -888,3 +928,4 @@ mcp-message-bus/
 | Версия | Дата | Автор | Изменения |
 |--------|------|-------|-----------|
 | 1.0 | 27.01.2026 | Architect Agent | Первоначальная версия |
+| 1.1 | 15.03.2026 | Architect Agent | ADR-005..013 в раздел 12; раздел 12.3 — уточнения по storage, RLS, эпам 2–5; структура проекта — монорепо |

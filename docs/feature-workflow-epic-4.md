@@ -8,7 +8,7 @@
 **Message Bus (MCP):** тред создан; задачи разосланы **Frontend** (react-next-engineer).  
 
 - **Thread ID:** `fb0290b6-57a7-45ea-89c2-7d7af8bae5f8`  
-- **Статус треда:** open  
+- **Статус треда:** closed  
 - Frontend E4-S1…E4-S6 Done. Architect (on_demand) | QA (queued)
 
 ---

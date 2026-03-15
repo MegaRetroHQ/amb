@@ -202,4 +202,124 @@ describe("API (e2e)", () => {
       expect(Array.isArray(res.body.data)).toBe(true);
     });
   });
+
+  describe("project isolation (E2-S4)", () => {
+    let projectAId: string;
+    let projectBId: string;
+    let agentAId: string;
+    let threadAId: string;
+    let messageAId: string;
+    let issueAId: string;
+
+    beforeAll(async () => {
+      const suffix = Date.now().toString(36);
+
+      const [projectARes, projectBRes] = await Promise.all([
+        request(app.getHttpServer())
+          .post("/api/projects")
+          .send({ name: `E2E Isolation A ${suffix}` })
+          .expect(201),
+        request(app.getHttpServer())
+          .post("/api/projects")
+          .send({ name: `E2E Isolation B ${suffix}` })
+          .expect(201),
+      ]);
+
+      projectAId = projectARes.body.data.id;
+      projectBId = projectBRes.body.data.id;
+
+      const agentRes = await request(app.getHttpServer())
+        .post("/api/agents")
+        .set("x-project-id", projectAId)
+        .send({ name: `iso-agent-${suffix}`, role: "iso-role" })
+        .expect(201);
+      agentAId = agentRes.body.data.id;
+
+      const threadRes = await request(app.getHttpServer())
+        .post("/api/threads")
+        .set("x-project-id", projectAId)
+        .send({ title: `iso-thread-${suffix}` })
+        .expect(201);
+      threadAId = threadRes.body.data.id;
+
+      const messageRes = await request(app.getHttpServer())
+        .post("/api/messages/send")
+        .set("x-project-id", projectAId)
+        .send({
+          threadId: threadAId,
+          fromAgentId: agentAId,
+          toAgentId: agentAId,
+          payload: { type: "isolation-test" },
+        })
+        .expect(201);
+      messageAId = messageRes.body.data.id;
+
+      const issueRes = await request(app.getHttpServer())
+        .post(`/api/projects/${projectAId}/issues`)
+        .send({ title: `iso-issue-${suffix}` })
+        .expect(201);
+      issueAId = issueRes.body.data.id;
+    });
+
+    it("does not leak agents across projects", async () => {
+      const res = await request(app.getHttpServer())
+        .get("/api/agents")
+        .set("x-project-id", projectBId)
+        .expect(200);
+
+      const ids = (res.body.data as Array<{ id: string }>).map((a) => a.id);
+      expect(ids).not.toContain(agentAId);
+    });
+
+    it("returns 404 for thread from another project", async () => {
+      await request(app.getHttpServer())
+        .get(`/api/threads/${threadAId}`)
+        .set("x-project-id", projectBId)
+        .expect(404);
+    });
+
+    it("rejects sending message to thread from another project", async () => {
+      await request(app.getHttpServer())
+        .post("/api/messages/send")
+        .set("x-project-id", projectBId)
+        .send({
+          threadId: threadAId,
+          fromAgentId: agentAId,
+          payload: { type: "cross-project" },
+        })
+        .expect(404);
+    });
+
+    it("returns empty inbox for agent from another project", async () => {
+      const res = await request(app.getHttpServer())
+        .get("/api/messages/inbox")
+        .set("x-project-id", projectBId)
+        .query({ agentId: agentAId })
+        .expect(200);
+
+      expect(Array.isArray(res.body.data)).toBe(true);
+      expect(res.body.data).toHaveLength(0);
+    });
+
+    it("returns 404 on ack from another project", async () => {
+      await request(app.getHttpServer())
+        .post(`/api/messages/${messageAId}/ack`)
+        .set("x-project-id", projectBId)
+        .expect(404);
+    });
+
+    it("does not expose issues across projects", async () => {
+      await request(app.getHttpServer())
+        .get(`/api/projects/${projectBId}/issues/${issueAId}`)
+        .expect(404);
+    });
+
+    it("rejects mismatched projectId between query and header", async () => {
+      await request(app.getHttpServer())
+        .get("/api/threads")
+        .set("x-project-id", projectAId)
+        .query({ projectId: projectBId })
+        .expect(400);
+    });
+  });
 });

@@ -1,9 +1,10 @@
 /**
- * RLS (Row-Level Security) helpers — заглушки для готовности к RLS в PostgreSQL.
- * В будущем: установка app.tenant_id / app.project_id в транзакциях, проверки политик.
+ * RLS (Row-Level Security) helpers.
+ * Используются внутри одной SQL-транзакции (SET LOCAL через set_config(..., true)).
  */
-/** Установить контекст tenant для текущей транзакции (заглушка). */
-export declare function setTenantContext(_tx: unknown, _tenantId: string): Promise<void>;
-/** Установить контекст project для текущей транзакции (заглушка). */
-export declare function setProjectContext(_tx: unknown, _projectId: string): Promise<void>;
+import type { Prisma } from "./generated/client";
+/** Установить tenant-контекст для текущей транзакции. */
+export declare function setTenantContext(tx: Prisma.TransactionClient, tenantId: string): Promise<void>;
+/** Установить project-контекст для текущей транзакции. */
+export declare function setProjectContext(tx: Prisma.TransactionClient, projectId: string): Promise<void>;
 //# sourceMappingURL=rls.d.ts.map

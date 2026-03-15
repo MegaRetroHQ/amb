@@ -1,9 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { NotFoundError } from "@amb-app/shared";
-
-const DEFAULT_PROJECT_ID = "00000000-0000-0000-0000-000000000001";
-const DEFAULT_SLUG = "default";
+import {
+  DEFAULT_PROJECT_ID,
+  DEFAULT_PROJECT_SLUG,
+  DEFAULT_TENANT_ID,
+  DEFAULT_TENANT_SLUG,
+} from "../common/tenant-project.constants";
 
 function toSlug(name: string): string {
   return name
@@ -19,13 +22,24 @@ export class ProjectsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async ensureDefault() {
+    await this.prisma.tenant.upsert({
+      where: { slug: DEFAULT_TENANT_SLUG },
+      update: {},
+      create: {
+        id: DEFAULT_TENANT_ID,
+        name: "Default Tenant",
+        slug: DEFAULT_TENANT_SLUG,
+      },
+    });
+
     return this.prisma.project.upsert({
-      where: { slug: DEFAULT_SLUG },
+      where: { slug: DEFAULT_PROJECT_SLUG },
       update: {},
       create: {
         id: DEFAULT_PROJECT_ID,
+        tenantId: DEFAULT_TENANT_ID,
         name: "Default Project",
-        slug: DEFAULT_SLUG,
+        slug: DEFAULT_PROJECT_SLUG,
       },
     });
   }
@@ -37,6 +51,16 @@ export class ProjectsService {
   }
 
   async create(name: string) {
+    await this.prisma.tenant.upsert({
+      where: { slug: DEFAULT_TENANT_SLUG },
+      update: {},
+      create: {
+        id: DEFAULT_TENANT_ID,
+        name: "Default Tenant",
+        slug: DEFAULT_TENANT_SLUG,
+      },
+    });
+
     const base = toSlug(name) || "project";
     let candidate = base;
     let counter = 1;
@@ -50,7 +74,11 @@ export class ProjectsService {
       candidate = `${base}-${counter}`;
     }
     return this.prisma.project.create({
-      data: { name: name.trim(), slug: candidate },
+      data: {
+        tenantId: DEFAULT_TENANT_ID,
+        name: name.trim(),
+        slug: candidate,
+      },
     });
   }
 

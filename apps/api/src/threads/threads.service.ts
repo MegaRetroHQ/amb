@@ -10,12 +10,14 @@ export class ThreadsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async list(projectId: string): Promise<ThreadWithMessages[]> {
-    return this.prisma.thread.findMany({
-      where: { projectId },
-      include: {
-        messages: { orderBy: { createdAt: "asc" }, take: 1 },
-      },
-      orderBy: { createdAt: "desc" },
+    return this.prisma.withProjectContext(projectId, async (tx, context) => {
+      return tx.thread.findMany({
+        where: { projectId: context.projectId },
+        include: {
+          messages: { orderBy: { createdAt: "asc" }, take: 1 },
+        },
+        orderBy: { createdAt: "desc" },
+      });
     });
   }
 
@@ -23,31 +25,43 @@ export class ThreadsService {
     projectId: string,
     data: { title: string; status?: "open" | "closed" }
   ): Promise<Thread> {
-    return this.prisma.thread.create({
-      data: {
-        projectId,
-        title: data.title,
-        status: data.status ?? "open",
-      },
+    return this.prisma.withProjectContext(projectId, async (tx, context) => {
+      return tx.thread.create({
+        data: {
+          tenantId: context.tenantId,
+          projectId: context.projectId,
+          title: data.title,
+          status: data.status ?? "open",
+        },
+      });
     });
   }
 
   async getById(projectId: string, threadId: string): Promise<Thread> {
-    const thread = await this.prisma.thread.findFirst({
-      where: { id: threadId, projectId },
+    return this.prisma.withProjectContext(projectId, async (tx, context) => {
+      const thread = await tx.thread.findFirst({
+        where: { id: threadId, projectId: context.projectId },
+      });
+      if (!thread) throw new NotFoundError("Thread");
+      return thread;
     });
-    if (!thread) throw new NotFoundError("Thread");
-    return thread;
   }
 
   async listMessages(
     projectId: string,
     threadId: string
   ): Promise<Message[]> {
-    await this.getById(projectId, threadId);
-    return this.prisma.message.findMany({
-      where: { threadId, projectId },
-      orderBy: { createdAt: "asc" },
+    return this.prisma.withProjectContext(projectId, async (tx, context) => {
+      const thread = await tx.thread.findFirst({
+        where: { id: threadId, projectId: context.projectId },
+        select: { id: true },
+      });
+      if (!thread) throw new NotFoundError("Thread");
+
+      return tx.message.findMany({
+        where: { threadId, projectId: context.projectId },
+        orderBy: { createdAt: "asc" },
+      });
     });
   }
 
@@ -56,20 +70,34 @@ export class ThreadsService {
     threadId: string,
     status: "open" | "closed" | "archived"
   ): Promise<Thread> {
-    await this.getById(projectId, threadId);
-    return this.prisma.thread.update({
-      where: { id: threadId },
-      data: { status },
+    return this.prisma.withProjectContext(projectId, async (tx, context) => {
+      const thread = await tx.thread.findFirst({
+        where: { id: threadId, projectId: context.projectId },
+        select: { id: true },
+      });
+      if (!thread) throw new NotFoundError("Thread");
+
+      return tx.thread.update({
+        where: { id: threadId },
+        data: { status },
+      });
     });
   }
 
   async delete(projectId: string, threadId: string): Promise<void> {
-    await this.getById(projectId, threadId);
-    await this.prisma.message.deleteMany({
-      where: { threadId, projectId },
-    });
-    await this.prisma.thread.delete({
-      where: { id: threadId },
+    await this.prisma.withProjectContext(projectId, async (tx, context) => {
+      const thread = await tx.thread.findFirst({
+        where: { id: threadId, projectId: context.projectId },
+        select: { id: true },
+      });
+      if (!thread) throw new NotFoundError("Thread");
+
+      await tx.message.deleteMany({
+        where: { threadId, projectId: context.projectId },
+      });
+      await tx.thread.delete({
+        where: { id: threadId },
+      });
     });
   }
 }

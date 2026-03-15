@@ -7,9 +7,11 @@ export class AgentsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async list(projectId: string): Promise<Agent[]> {
-    return this.prisma.agent.findMany({
-      where: { projectId },
-      orderBy: { createdAt: "desc" },
+    return this.prisma.withProjectContext(projectId, async (tx, context) => {
+      return tx.agent.findMany({
+        where: { projectId: context.projectId },
+        orderBy: { createdAt: "desc" },
+      });
     });
   }
 
@@ -17,27 +19,32 @@ export class AgentsService {
     projectId: string,
     data: { name: string; role: string; capabilities?: unknown }
   ): Promise<Agent> {
-    return this.prisma.agent.create({
-      data: {
-        projectId,
-        name: data.name,
-        role: data.role,
-        capabilities: (data.capabilities ?? undefined) as Prisma.InputJsonValue | undefined,
-      },
+    return this.prisma.withProjectContext(projectId, async (tx, context) => {
+      return tx.agent.create({
+        data: {
+          tenantId: context.tenantId,
+          projectId: context.projectId,
+          name: data.name,
+          role: data.role,
+          capabilities: (data.capabilities ?? undefined) as Prisma.InputJsonValue | undefined,
+        },
+      });
     });
   }
 
   async search(projectId: string, query: string): Promise<Agent[]> {
     if (!query) return this.list(projectId);
-    return this.prisma.agent.findMany({
-      where: {
-        projectId,
-        OR: [
-          { name: { contains: query, mode: "insensitive" } },
-          { role: { contains: query, mode: "insensitive" } },
-        ],
-      },
-      orderBy: { name: "asc" },
+    return this.prisma.withProjectContext(projectId, async (tx, context) => {
+      return tx.agent.findMany({
+        where: {
+          projectId: context.projectId,
+          OR: [
+            { name: { contains: query, mode: "insensitive" } },
+            { role: { contains: query, mode: "insensitive" } },
+          ],
+        },
+        orderBy: { name: "asc" },
+      });
     });
   }
 }

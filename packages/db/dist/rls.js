@@ -1,16 +1,12 @@
 "use strict";
-/**
- * RLS (Row-Level Security) helpers — заглушки для готовности к RLS в PostgreSQL.
- * В будущем: установка app.tenant_id / app.project_id в транзакциях, проверки политик.
- */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.setTenantContext = setTenantContext;
 exports.setProjectContext = setProjectContext;
-/** Установить контекст tenant для текущей транзакции (заглушка). */
-async function setTenantContext(_tx, _tenantId) {
-    // TODO: SET LOCAL app.tenant_id = ...
+/** Установить tenant-контекст для текущей транзакции. */
+async function setTenantContext(tx, tenantId) {
+    await tx.$executeRawUnsafe("SELECT set_config('app.tenant_id', $1, true)", tenantId);
 }
-/** Установить контекст project для текущей транзакции (заглушка). */
-async function setProjectContext(_tx, _projectId) {
-    // TODO: SET LOCAL app.project_id = ...
+/** Установить project-контекст для текущей транзакции. */
+async function setProjectContext(tx, projectId) {
+    await tx.$executeRawUnsafe("SELECT set_config('app.project_id', $1, true)", projectId);
 }

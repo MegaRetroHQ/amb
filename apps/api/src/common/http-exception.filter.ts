@@ -4,6 +4,7 @@ import {
   ArgumentsHost,
   HttpStatus,
   Logger,
+  HttpException,
 } from "@nestjs/common";
 import { Response } from "express";
 import { NotFoundError, ConflictError } from "@amb-app/shared";
@@ -45,10 +46,24 @@ export class AllExceptionsFilter implements ExceptionFilter {
       code = "invalid_request";
       message = "Invalid request body";
       details = exception.flatten();
-    } else if (typeof (exception as { statusCode?: number }).statusCode === "number") {
-      const ex = exception as { statusCode: number; message?: string };
-      status = ex.statusCode;
-      message = ex.message ?? message;
+    } else if (exception instanceof HttpException) {
+      status = exception.getStatus();
+      const payload = exception.getResponse();
+      code = "http_error";
+      if (typeof payload === "string") {
+        message = payload;
+      } else if (typeof payload === "object" && payload !== null) {
+        const maybeMessage = (payload as { message?: unknown }).message;
+        if (Array.isArray(maybeMessage)) {
+          message = maybeMessage.join(", ");
+        } else if (typeof maybeMessage === "string") {
+          message = maybeMessage;
+        } else {
+          message = exception.message;
+        }
+      } else {
+        message = exception.message;
+      }
     }
 
     if (status === HttpStatus.INTERNAL_SERVER_ERROR) {

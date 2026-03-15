@@ -81,6 +81,7 @@ services:
       API_URL: http://api:3334
       AMB_SEED_EMAIL: admin@local.test
       AMB_SEED_PASSWORD: ChangeMe123!
+      AMB_SEED_THREADS: "false"
       CI: "true"
     command: >
       sh -lc "corepack enable &&

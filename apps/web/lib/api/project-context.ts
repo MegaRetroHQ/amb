@@ -13,6 +13,17 @@ type ProjectContextResult =
   | { projectId: string; error: null }
   | { projectId: null; error: Response };
 
+function pickPreferredProjectId(
+  projects: Array<{ id: string; slug?: string; name: string }>
+): string | null {
+  const preferred =
+    projects.find((project) => project.slug === "default") ??
+    projects.find((project) => project.name.trim().toLowerCase() === "default project") ??
+    projects[0];
+
+  return preferred?.id ?? null;
+}
+
 export async function resolveProjectId(
   request: Request,
   token?: string
@@ -22,25 +33,31 @@ export async function resolveProjectId(
 
   if (!rawProjectId) {
     const projects = await client.listProjects();
-    const first = projects[0];
-    if (!first) {
+    const projectId = pickPreferredProjectId(projects);
+    if (!projectId) {
       return {
         projectId: null,
         error: jsonError(404, "project_not_found", "No projects found"),
       };
     }
-    return { projectId: first.id, error: null };
-  }
-
-  const parsed = projectIdSchema.safeParse(rawProjectId);
-  if (!parsed.success) {
-    return {
-      projectId: null,
-      error: jsonError(400, "invalid_project_id", "projectId must be a valid UUID"),
-    };
+    return { projectId, error: null };
   }
 
   const projects = await client.listProjects();
+  const parsed = projectIdSchema.safeParse(rawProjectId);
+  if (!parsed.success) {
+    // Backward compatibility: ignore legacy non-UUID values (e.g. "default")
+    // and gracefully fallback to preferred project.
+    const projectId = pickPreferredProjectId(projects);
+    if (!projectId) {
+      return {
+        projectId: null,
+        error: jsonError(404, "project_not_found", "No projects found"),
+      };
+    }
+    return { projectId, error: null };
+  }
+
   const project = projects.find((p) => p.id === parsed.data);
   if (!project) {
     return {

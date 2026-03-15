@@ -15,4 +15,6 @@ export type RequestWithAuth = {
   params?: { projectId?: string };
   auth?: AuthContext;
   projectId?: string;
+  traceId?: string;
+  spanId?: string;
 };

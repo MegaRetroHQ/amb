@@ -743,4 +743,30 @@ describe("API (e2e)", () => {
       ).toBe(true);
     });
   });
+
+  describe("tracing correlation (E6-S3)", () => {
+    it("returns generated x-request-id and traceparent headers", async () => {
+      const res = await request(app.getHttpServer())
+        .get("/api/projects")
+        .expect(200);
+
+      const requestId = res.headers["x-request-id"] as string | undefined;
+      const traceparent = res.headers["traceparent"] as string | undefined;
+      expect(typeof requestId).toBe("string");
+      expect(requestId && requestId.length > 0).toBe(true);
+      expect(typeof traceparent).toBe("string");
+      expect(traceparent).toMatch(/^00-[a-f0-9]{32}-[a-f0-9]{16}-01$/);
+    });
+
+    it("keeps incoming x-request-id for correlation", async () => {
+      const customRequestId = "0123456789abcdef0123456789abcdef";
+      const res = await request(app.getHttpServer())
+        .get("/api/projects")
+        .set("x-request-id", customRequestId)
+        .expect(200);
+
+      expect(res.headers["x-request-id"]).toBe(customRequestId);
+      expect(res.headers["traceparent"]).toMatch(/^00-[a-f0-9]{32}-[a-f0-9]{16}-01$/);
+    });
+  });
 });

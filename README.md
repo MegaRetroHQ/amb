@@ -161,7 +161,7 @@ for await (const messages of client.pollInbox(agent.id)) {
 1. Собрать MCP-сервер:
 
 ```bash
-cd mcp-server && pnpm install && pnpm build
+pnpm install && pnpm mcp:build
 ```
 
 2. Добавить в настройки Cursor:
@@ -171,7 +171,7 @@ cd mcp-server && pnpm install && pnpm build
   "mcpServers": {
     "message-bus": {
       "command": "node",
-      "args": ["<путь>/mcp-server/dist/index.js"],
+      "args": ["<путь>/packages/mcp-server/dist/index.js"],
       "env": {
         "MESSAGE_BUS_URL": "http://localhost:3333",
         "MESSAGE_BUS_PROJECT_ID": "<PROJECT_ID>"
@@ -263,7 +263,7 @@ const agent = await client.registerAgent({ name: "my-service", role: "worker" })
      "mcpServers": {
        "message-bus": {
          "command": "node",
-         "args": ["/path/to/amb/mcp-server/dist/index.js"],
+         "args": ["/path/to/amb/packages/mcp-server/dist/index.js"],
          "cwd": "/path/to/amb",
        "env": {
          "MESSAGE_BUS_URL": "http://localhost:3333",
@@ -294,7 +294,7 @@ lib/
   sdk/            # TypeScript SDK
   services/       # Бизнес-логика
   hooks/          # React hooks
-mcp-server/       # MCP-сервер и npm-пакет @bizmedia/amb-mcp (CLI: amb-mcp seed agents)
+packages/mcp-server/       # MCP-сервер и npm-пакет @openaisdk/amb-mcp (CLI: amb-mcp seed agents)
 scripts/          # Скрипты
 examples/         # Примеры использования SDK
 prisma/

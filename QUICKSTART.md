@@ -32,7 +32,7 @@
      "mcpServers": {
        "message-bus": {
          "command": "node",
-         "args": ["<абсолютный-путь>/amb/mcp-server/dist/index.js"],
+         "args": ["<абсолютный-путь>/amb/packages/mcp-server/dist/index.js"],
          "env": {
           "MESSAGE_BUS_URL": "http://localhost:3333",
           "MESSAGE_BUS_PROJECT_ID": "<PROJECT_ID>"
@@ -217,7 +217,7 @@ pnpm mcp:build
   "mcpServers": {
     "message-bus": {
       "command": "node",
-      "args": ["<абсолютный-путь>/mcp-server/dist/index.js"],
+      "args": ["<абсолютный-путь>/packages/mcp-server/dist/index.js"],
       "env": {
         "MESSAGE_BUS_URL": "http://localhost:3333",
         "MESSAGE_BUS_PROJECT_ID": "<PROJECT_ID>"

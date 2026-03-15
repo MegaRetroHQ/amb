@@ -137,7 +137,7 @@ export default function HelpPage() {
                   <strong className="text-foreground">Запустите AMB.</strong> В этом репозитории: <code className="rounded bg-muted px-1 font-mono text-xs">pnpm dev</code> (и отдельно — PostgreSQL, миграции, при необходимости <code className="rounded bg-muted px-1 font-mono text-xs">pnpm seed:agents</code>). Либо поднимите AMB через Docker.
                 </li>
                 <li>
-                  <strong className="text-foreground">В новом проекте</strong> (корень репо или корень Turborepo) добавьте MCP-сервер Message Bus: в настройках Cursor → MCP укажите <code className="rounded bg-muted px-1 font-mono text-xs">command</code> = <code className="rounded bg-muted px-1 font-mono text-xs">node</code>, <code className="rounded bg-muted px-1 font-mono text-xs">args</code> = <code className="rounded bg-muted px-1 font-mono text-xs">["/абсолютный/путь/к/mcp-message-bus/mcp-server/dist/index.js"]</code>, <code className="rounded bg-muted px-1 font-mono text-xs">env.MESSAGE_BUS_URL</code> = <code className="rounded bg-muted px-1 font-mono text-xs">http://localhost:3333</code>.
+                  <strong className="text-foreground">В новом проекте</strong> (корень репо или корень Turborepo) добавьте MCP-сервер Message Bus: в настройках Cursor → MCP укажите <code className="rounded bg-muted px-1 font-mono text-xs">command</code> = <code className="rounded bg-muted px-1 font-mono text-xs">node</code>, <code className="rounded bg-muted px-1 font-mono text-xs">args</code> = <code className="rounded bg-muted px-1 font-mono text-xs">["/абсолютный/путь/к/amb/packages/packages/mcp-server/dist/index.js"]</code>, <code className="rounded bg-muted px-1 font-mono text-xs">env.MESSAGE_BUS_URL</code> = <code className="rounded bg-muted px-1 font-mono text-xs">http://localhost:3333</code>.
                 </li>
                 <li>
                   Перезапустите Cursor или переподключите MCP. Готово: в чате можно создавать треды, отправлять сообщения, смотреть inbox через инструменты Message Bus.
@@ -182,7 +182,7 @@ const agent = await client.registerAgent({ name: "my-service", role: "worker" })
             <div className="space-y-3">
               <h3 className="text-sm font-semibold">Способ 3: MCP (Cursor, Claude Desktop и др.)</h3>
               <p className="text-sm text-muted-foreground">
-                В настройках MCP вашего редактора/клиента укажите путь к <code className="rounded bg-muted px-1 font-mono text-xs">mcp-server/dist/index.js</code> и переменную <code className="rounded bg-muted px-1 font-mono text-xs">MESSAGE_BUS_URL</code>. Тогда AI-агенты в этом проекте смогут вызывать инструменты Message Bus (создание тредов, отправка сообщений, inbox, ack).
+                В настройках MCP вашего редактора/клиента укажите путь к <code className="rounded bg-muted px-1 font-mono text-xs">packages/mcp-server/dist/index.js</code> и переменную <code className="rounded bg-muted px-1 font-mono text-xs">MESSAGE_BUS_URL</code>. Тогда AI-агенты в этом проекте смогут вызывать инструменты Message Bus (создание тредов, отправка сообщений, inbox, ack).
               </p>
             </div>
 

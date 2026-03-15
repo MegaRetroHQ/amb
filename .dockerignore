@@ -25,7 +25,7 @@ CODE_OF_CONDUCT.md
 *.md
 docs
 examples
-mcp-server
+packages
 
 # Tests and misc
 coverage

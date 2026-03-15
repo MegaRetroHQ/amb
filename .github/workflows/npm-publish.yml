@@ -32,20 +32,18 @@ jobs:
           version: latest
 
       - name: Install dependencies
-        working-directory: mcp-server
         run: pnpm install --frozen-lockfile
 
       - name: Build
-        working-directory: mcp-server
-        run: pnpm build
+        run: pnpm turbo run build --filter=@openaisdk/amb-mcp
 
       - name: Bump version (manual dispatch only)
         if: github.event.inputs.version != ''
-        working-directory: mcp-server
+        working-directory: packages/mcp-server
         run: npm version ${{ github.event.inputs.version }} --no-git-tag-version
 
       - name: Publish to npm
-        working-directory: mcp-server
+        working-directory: packages/mcp-server
         run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -126,6 +126,38 @@ When acting as an agent:
 
 ---
 
+## Agent Routing (Mandatory)
+
+Before answering **any** user request, Cursor must:
+
+1. Determine which agent from `.cursor/agents` is the best primary match.
+2. Select exactly one primary agent.
+3. Respond in the role and constraints of that selected agent.
+
+Primary routing map:
+
+* `po` — scope, requirements, prioritization, backlog
+* `architect` — architecture decisions, ADRs, boundaries
+* `dev` — general implementation and bug fixing
+* `nest-engineer` — backend, Nest.js, API/services
+* `react-next-engineer` — frontend, React/Next.js, UI
+* `qa` — test scenarios, regression, quality validation
+* `devops` — CI/CD, infra, scripts, environment
+* `sdk` — SDK and integration contracts
+* `ux` — UX flows, interaction design, usability
+* `tech-writer` — documentation, runbooks, release notes
+* `open-source` — OSS readiness and community tasks
+
+Fallback:
+
+* If the request is ambiguous or cross-functional, use `orchestrator` as primary and route follow-up tasks to specialized agents.
+
+Response prefix requirement:
+
+* Start each answer with: `[Agent Router] primary=<agent-id>`
+
+---
+
 ## Non-Goals
 
 * No auth

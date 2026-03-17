@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Patch, Post } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from "@nestjs/common";
 import { ProjectsService } from "./projects.service";
 import { createProjectSchema, projectIdSchema, updateProjectSchema } from "@amb-app/shared";
 
@@ -29,5 +37,13 @@ export class ProjectsController {
     if (!parsed.success) throw parsed.error;
     const data = await this.projects.update(parsedId.data, parsed.data.name);
     return { data };
+  }
+
+  @Delete(":id")
+  async delete(@Param("id") id: string) {
+    const parsedId = projectIdSchema.safeParse(id);
+    if (!parsedId.success) throw parsedId.error;
+    await this.projects.delete(parsedId.data);
+    return { data: { success: true } };
   }
 }

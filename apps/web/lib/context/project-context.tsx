@@ -25,6 +25,7 @@ type ProjectContextValue = {
   loading: boolean;
   selectedProject: Project | null;
   loadProjects: () => Promise<void>;
+  deleteProject: (id: string) => Promise<void>;
 };
 
 const ProjectContext = createContext<ProjectContextValue | null>(null);
@@ -58,6 +59,27 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const deleteProject = useCallback(
+    async (id: string) => {
+      const res = await fetch(`/api/projects/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (!res.ok) {
+        const json = await res.json().catch(() => null);
+        throw new Error((json?.error?.message as string) ?? "Failed to delete project");
+      }
+      if (projectId === id) {
+        setProjectIdState(null);
+        if (typeof window !== "undefined") {
+          window.localStorage.removeItem(STORAGE_KEY);
+        }
+      }
+      await reloadProjects();
+    },
+    [projectId, reloadProjects]
+  );
+
   useEffect(() => {
     if (loading || projects.length === 0) return;
 
@@ -89,6 +111,7 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
     loading,
     selectedProject,
     loadProjects: reloadProjects,
+    deleteProject,
   };
 
   return (

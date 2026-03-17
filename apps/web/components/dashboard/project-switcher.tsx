@@ -31,6 +31,8 @@ import {
   Building2Icon,
   PencilIcon,
   KeyRoundIcon,
+  Loader2Icon,
+  Trash2Icon,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 
@@ -47,7 +49,7 @@ type Tenant = {
 export function ProjectSwitcher() {
   const t = useTranslations("ProjectSwitcher");
   const tCommon = useTranslations("Common");
-  const { setProjectId, projects, loading, selectedProject, loadProjects: reloadProjects } = useProjectContext();
+  const { setProjectId, projects, loading, selectedProject, loadProjects: reloadProjects, deleteProject } = useProjectContext();
   const [newProjectName, setNewProjectName] = useState("");
   const [creating, setCreating] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -61,6 +63,10 @@ export function ProjectSwitcher() {
   const [editProjectName, setEditProjectName] = useState("");
   const [editing, setEditing] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
+  const [projectToDelete, setProjectToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [deleteProjectDialogOpen, setDeleteProjectDialogOpen] = useState(false);
+  const [deletingProject, setDeletingProject] = useState(false);
+  const [deleteProjectError, setDeleteProjectError] = useState<string | null>(null);
 
   const loadTenants = async () => {
     setTenantsLoading(true);
@@ -156,6 +162,22 @@ export function ProjectSwitcher() {
       cancelEditProject();
     } finally {
       setEditing(false);
+    }
+  };
+
+  const handleDeleteProject = async () => {
+    if (!projectToDelete) return;
+    setDeletingProject(true);
+    setDeleteProjectError(null);
+    try {
+      await deleteProject(projectToDelete.id);
+      setDeleteProjectDialogOpen(false);
+      setProjectToDelete(null);
+      setManageOpen(false);
+    } catch (err) {
+      setDeleteProjectError(err instanceof Error ? err.message : tCommon("error"));
+    } finally {
+      setDeletingProject(false);
     }
   };
 
@@ -274,13 +296,13 @@ export function ProjectSwitcher() {
       )}
 
       <Dialog open={manageOpen} onOpenChange={setManageOpen}>
-        <DialogContent className="sm:max-w-[680px]">
+        <DialogContent className="sm:max-w-[840px]">
           <DialogHeader>
             <DialogTitle>{t("manageTitle")}</DialogTitle>
             <DialogDescription>{t("manageDesc")}</DialogDescription>
           </DialogHeader>
 
-          <div className="grid gap-4 md:grid-cols-[220px_1fr]">
+          <div className="grid gap-4 md:grid-cols-[260px_1fr]">
             <div className="space-y-2">
               <p className="text-xs font-medium text-muted-foreground">{t("tenants")}</p>
               <div className="rounded-md border p-2 space-y-1 max-h-[280px] overflow-y-auto">
@@ -353,6 +375,18 @@ export function ProjectSwitcher() {
                           >
                             <PencilIcon className="size-4" />
                           </Button>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="text-destructive hover:text-destructive"
+                            onClick={() => {
+                              setProjectToDelete({ id: project.id, name: project.name });
+                              setDeleteProjectDialogOpen(true);
+                            }}
+                            title={t("deleteProject")}
+                          >
+                            <Trash2Icon className="size-4" />
+                          </Button>
                         </div>
                       </div>
                     )}
@@ -365,6 +399,34 @@ export function ProjectSwitcher() {
               </div>
             </div>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={deleteProjectDialogOpen}
+        onOpenChange={(open) => {
+          setDeleteProjectDialogOpen(open);
+          if (!open) setDeleteProjectError(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("deleteProjectTitle")}</DialogTitle>
+            <DialogDescription>
+              {t("deleteProjectConfirm", { name: projectToDelete?.name ?? "" })}
+            </DialogDescription>
+          </DialogHeader>
+          {deleteProjectError && (
+            <p className="text-sm text-destructive">{deleteProjectError}</p>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteProjectDialogOpen(false)} disabled={deletingProject}>
+              {tCommon("cancel")}
+            </Button>
+            <Button variant="destructive" onClick={handleDeleteProject} disabled={deletingProject}>
+              {deletingProject ? <Loader2Icon className="size-4 animate-spin" /> : tCommon("delete")}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

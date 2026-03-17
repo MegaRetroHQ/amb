@@ -13,6 +13,7 @@ import type {
   Issue,
   ApiResponse,
   CreateAgentInput,
+  UpdateAgentInput,
   CreateThreadInput,
   SendMessageInput,
   MessageBusConfig,
@@ -108,6 +109,25 @@ export class MessageBusClient {
 
   async listAgents(): Promise<Agent[]> {
     const res = await this.fetch<ApiResponse<Agent[]>>("/api/agents");
+    return res.data;
+  }
+
+  async getAgent(agentId: string): Promise<Agent> {
+    const res = await this.fetch<ApiResponse<Agent>>(`/api/agents/${agentId}`);
+    return res.data;
+  }
+
+  async deleteAgent(agentId: string): Promise<void> {
+    await this.fetch<ApiResponse<{ success: true }>>(`/api/agents/${agentId}`, {
+      method: "DELETE",
+    });
+  }
+
+  async updateAgent(agentId: string, input: UpdateAgentInput): Promise<Agent> {
+    const res = await this.fetch<ApiResponse<Agent>>(`/api/agents/${agentId}`, {
+      method: "PATCH",
+      body: JSON.stringify(input),
+    });
     return res.data;
   }
 
@@ -305,6 +325,12 @@ export class MessageBusClient {
       body: JSON.stringify(input),
     });
     return res.data;
+  }
+
+  async deleteProject(projectId: string): Promise<void> {
+    await this.fetch<ApiResponse<{ success: true }>>(`/api/projects/${projectId}`, {
+      method: "DELETE",
+    });
   }
 
   async listTenants(): Promise<Tenant[]> {

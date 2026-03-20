@@ -1,7 +1,7 @@
 {
   "name": "amb-app",
   "packageManager": "pnpm@10.19.0",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "private": true,
   "license": "MIT",
   "repository": {
@@ -38,6 +38,7 @@
     "docker:compose:publish": "podman build -t docker.io/openaisdk/amb:latest . && podman push docker.io/openaisdk/amb:latest",
     "deploy:amb": "podman pull docker.io/openaisdk/amb:latest && podman compose up -d",
     "deploy:local": "podman compose up -d --build",
+    "deploy:local:down": "podman compose down -v",
     "deploy:prod": "./scripts/deploy/production-deploy.sh",
     "deploy:k8s:migrate": "kubectl apply -f deploy/k8s/api-migrate-job.yaml",
     "deploy:k8s:api": "kubectl apply -f deploy/k8s/api-deployment.yaml -f deploy/k8s/api-service.yaml",

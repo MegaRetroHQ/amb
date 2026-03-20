@@ -58,6 +58,50 @@ const statusConfig = {
   },
 };
 
+type MessageSegment =
+  | { type: "text"; content: string }
+  | { type: "code"; content: string; language: string | null };
+
+function parseMessageSegments(text: string): MessageSegment[] {
+  const segments: MessageSegment[] = [];
+  const codeFenceRegex = /```(\w+)?\n?([\s\S]*?)```/g;
+  let lastIndex = 0;
+  let match: RegExpExecArray | null = null;
+
+  while ((match = codeFenceRegex.exec(text)) !== null) {
+    const matchStart = match.index;
+    const matchEnd = codeFenceRegex.lastIndex;
+
+    if (matchStart > lastIndex) {
+      const plainText = text.slice(lastIndex, matchStart);
+      if (plainText.trim()) {
+        segments.push({ type: "text", content: plainText.trim() });
+      }
+    }
+
+    const language = match[1] ?? null;
+    const code = (match[2] ?? "").trim();
+    if (code) {
+      segments.push({ type: "code", content: code, language });
+    }
+
+    lastIndex = matchEnd;
+  }
+
+  if (lastIndex < text.length) {
+    const tailText = text.slice(lastIndex);
+    if (tailText.trim()) {
+      segments.push({ type: "text", content: tailText.trim() });
+    }
+  }
+
+  if (segments.length === 0 && text.trim()) {
+    segments.push({ type: "text", content: text.trim() });
+  }
+
+  return segments;
+}
+
 // Group messages by date
 function groupMessagesByDate(messages: Message[]) {
   const groups: { date: string; messages: Message[] }[] = [];
@@ -282,7 +326,7 @@ export function ThreadViewer({ threadId, currentAgentId }: Props) {
                 {/* Date divider */}
                 <div className="flex items-center gap-3 mb-4">
                   <div className="h-px flex-1 bg-border" />
-                  <span className="text-xs text-muted-foreground font-medium px-2">
+                  <span className="thread-date-divider px-2">
                     {group.date}
                   </span>
                   <div className="h-px flex-1 bg-border" />
@@ -302,11 +346,12 @@ export function ThreadViewer({ threadId, currentAgentId }: Props) {
                     const statusLabel = statusLabels[statusKey] ?? statusLabels.pending;
                     const StatusIcon = status.icon;
                     const isBroadcast = !msg.toAgentId;
+                    const textSegments = payload?.text ? parseMessageSegments(payload.text) : [];
 
                     return (
                       <div
                         key={msg.id}
-                        className="group rounded-lg border bg-background p-4 transition-all hover:shadow-sm"
+                        className={`thread-message-card group ${isOwn ? "thread-message-card--own" : ""}`}
                       >
                         {/* Header */}
                         <div className="flex items-start justify-between gap-3 mb-3">
@@ -344,7 +389,7 @@ export function ThreadViewer({ threadId, currentAgentId }: Props) {
                         </div>
 
                         {/* Content */}
-                        <div className="rounded-md bg-muted/50 p-3 mb-3">
+                        <div className="thread-message-content mb-3">
                           {/* Payload type indicator */}
                           {payload?.type && payload.type !== "text" && (
                             <div className="text-[11px] font-medium uppercase tracking-wider mb-2 text-muted-foreground">
@@ -352,9 +397,24 @@ export function ThreadViewer({ threadId, currentAgentId }: Props) {
                             </div>
                           )}
                           {payload?.text ? (
-                            <p className="text-sm whitespace-pre-wrap break-words">
-                              {payload.text}
-                            </p>
+                            <div className="space-y-2.5">
+                              {textSegments.map((segment, idx) =>
+                                segment.type === "code" ? (
+                                  <div key={`${msg.id}-code-${idx}`} className="space-y-1.5">
+                                    {segment.language ? (
+                                      <span className="thread-code-language">{segment.language}</span>
+                                    ) : null}
+                                    <pre className="thread-code-block">
+                                      <code>{segment.content}</code>
+                                    </pre>
+                                  </div>
+                                ) : (
+                                  <p key={`${msg.id}-text-${idx}`} className="thread-message-text">
+                                    {segment.content}
+                                  </p>
+                                )
+                              )}
+                            </div>
                           ) : (
                             <div className="text-sm">
                               <JsonViewer data={msg.payload} />

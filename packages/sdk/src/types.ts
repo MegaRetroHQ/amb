@@ -103,6 +103,11 @@ export interface CreateAgentInput {
   capabilities?: unknown;
 }
 
+export interface UpdateAgentInput {
+  name?: string;
+  role?: string;
+}
+
 export interface CreateThreadInput {
   title: string;
   status?: "open" | "closed";

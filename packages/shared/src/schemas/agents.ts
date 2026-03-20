@@ -5,3 +5,8 @@ export const createAgentSchema = z.object({
   role: z.string().min(1),
   capabilities: z.unknown().optional().nullable(),
 });
+
+export const updateAgentSchema = z.object({
+  name: z.string().min(1).optional(),
+  role: z.string().min(1).optional(),
+});

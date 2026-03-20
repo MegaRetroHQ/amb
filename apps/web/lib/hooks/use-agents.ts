@@ -34,5 +34,37 @@ export function useAgents() {
     fetchAgents();
   }, [fetchAgents]);
 
-  return { agents, loading, error, refetch: fetchAgents };
+  const deleteAgent = useCallback(
+    async (agentId: string) => {
+      const res = await fetch(withProjectId(projectId, `/api/agents/${agentId}`), {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (!res.ok) {
+        const json = await res.json().catch(() => null);
+        throw new Error((json?.error?.message as string) ?? "Failed to delete agent");
+      }
+      await fetchAgents();
+    },
+    [projectId, fetchAgents]
+  );
+
+  const updateAgent = useCallback(
+    async (agentId: string, data: { name?: string; role?: string }) => {
+      const res = await fetch(withProjectId(projectId, `/api/agents/${agentId}`), {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const json = await res.json().catch(() => null);
+        throw new Error((json?.error?.message as string) ?? "Failed to update agent");
+      }
+      await fetchAgents();
+    },
+    [projectId, fetchAgents]
+  );
+
+  return { agents, loading, error, refetch: fetchAgents, deleteAgent, updateAgent };
 }

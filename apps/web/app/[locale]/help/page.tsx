@@ -170,6 +170,76 @@ const agent = await client.registerAgent({ name: "my-service", role: "worker" })
               </p>
             </div>
 
+            <div className="space-y-3 rounded-md border border-border bg-muted/20 p-4">
+              <h3 className="text-sm font-semibold">{t("singleProjectSetupTitle")}</h3>
+              <p className="text-sm text-muted-foreground">{t("singleProjectSetupDesc")}</p>
+              <ol className="text-sm text-muted-foreground space-y-2 list-decimal list-inside">
+                <li>{t("singleProjectSetupStep1")}</li>
+                <li>{t("singleProjectSetupStep2")}</li>
+                <li>{t("singleProjectSetupStep3")}</li>
+              </ol>
+
+              <div className="space-y-2">
+                <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Cursor</h4>
+                <p className="text-sm text-muted-foreground">{t("singleProjectSetupCursor")}</p>
+                <pre className="text-xs bg-muted rounded-md p-3 overflow-x-auto">
+{`{
+  "mcpServers": {
+    "message-bus": {
+      "command": "node",
+      "args": ["/absolute/path/to/amb/packages/mcp-server/dist/index.js"],
+      "env": {
+        "MESSAGE_BUS_URL": "http://localhost:3333",
+        "MESSAGE_BUS_PROJECT_ID": "<projectId>",
+        "MESSAGE_BUS_TOKEN": "<projectToken>"
+      }
+    }
+  }
+}`}
+                </pre>
+              </div>
+
+              <div className="space-y-2">
+                <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Codex</h4>
+                <p className="text-sm text-muted-foreground">{t("singleProjectSetupCodex")}</p>
+                <pre className="text-xs bg-muted rounded-md p-3 overflow-x-auto">
+{`{
+  "mcpServers": {
+    "message-bus": {
+      "command": "node",
+      "args": ["/absolute/path/to/amb/packages/mcp-server/dist/index.js"],
+      "env": {
+        "MESSAGE_BUS_URL": "http://localhost:3333",
+        "MESSAGE_BUS_PROJECT_ID": "<projectId>",
+        "MESSAGE_BUS_TOKEN": "<projectToken>"
+      }
+    }
+  }
+}`}
+                </pre>
+              </div>
+
+              <div className="space-y-2">
+                <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Claude Desktop</h4>
+                <p className="text-sm text-muted-foreground">{t("singleProjectSetupClaude")}</p>
+                <pre className="text-xs bg-muted rounded-md p-3 overflow-x-auto">
+{`{
+  "mcpServers": {
+    "message-bus": {
+      "command": "node",
+      "args": ["/absolute/path/to/amb/packages/mcp-server/dist/index.js"],
+      "env": {
+        "MESSAGE_BUS_URL": "http://localhost:3333",
+        "MESSAGE_BUS_PROJECT_ID": "<projectId>",
+        "MESSAGE_BUS_TOKEN": "<projectToken>"
+      }
+    }
+  }
+}`}
+                </pre>
+              </div>
+            </div>
+
             <div className="space-y-2 rounded-md border border-border bg-muted/30 p-4">
               <h3 className="text-sm font-semibold">Multiple projects</h3>
               <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
@@ -223,6 +293,14 @@ const agent = await client.registerAgent({ name: "my-service", role: "worker" })
           </CardHeader>
           <CardContent>
             <ul className="space-y-3">
+              <li>
+                <Button variant="outline" className="w-full justify-start gap-2" asChild>
+                  <a href="http://localhost:3333/ru/help" target="_blank" rel="noopener noreferrer">
+                    <Link2Icon className="size-4" />
+                    {t("localHelpRu")}
+                  </a>
+                </Button>
+              </li>
               <li>
                 <Button variant="outline" className="w-full justify-start gap-2" asChild>
                   <Link href="/help/use-cases">

@@ -8,4 +8,4 @@ cwd = "/Users/anatolijtukov/Developer/amb-app"
 
 [mcp_servers.message-bus.env]
 MESSAGE_BUS_URL = "http://localhost:3333"
-MESSAGE_BUS_PROJECT_ID = "f63a9a8d-a31b-4898-9fc2-d80cfc409717"
+MESSAGE_BUS_PROJECT_ID = "22222222-2222-4222-8222-222222222222"

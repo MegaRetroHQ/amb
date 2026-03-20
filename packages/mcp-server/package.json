@@ -12,6 +12,7 @@
   ],
   "scripts": {
     "build": "tsc",
+    "prepare": "pnpm run build",
     "start": "node dist/index.js",
     "dev": "tsx index.ts",
     "seed:agents": "tsx cli.ts seed agents"

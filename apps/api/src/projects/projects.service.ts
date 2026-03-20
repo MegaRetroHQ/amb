@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { NotFoundError } from "@amb-app/shared";
 import {
@@ -22,7 +22,7 @@ export class ProjectsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async ensureDefault() {
-    await this.prisma.tenant.upsert({
+    const tenant = await this.prisma.tenant.upsert({
       where: { slug: DEFAULT_TENANT_SLUG },
       update: {},
       create: {
@@ -37,7 +37,7 @@ export class ProjectsService {
       update: {},
       create: {
         id: DEFAULT_PROJECT_ID,
-        tenantId: DEFAULT_TENANT_ID,
+        tenantId: tenant.id,
         name: "Default Project",
         slug: DEFAULT_PROJECT_SLUG,
       },
@@ -51,7 +51,7 @@ export class ProjectsService {
   }
 
   async create(name: string) {
-    await this.prisma.tenant.upsert({
+    const tenant = await this.prisma.tenant.upsert({
       where: { slug: DEFAULT_TENANT_SLUG },
       update: {},
       create: {
@@ -75,7 +75,7 @@ export class ProjectsService {
     }
     return this.prisma.project.create({
       data: {
-        tenantId: DEFAULT_TENANT_ID,
+        tenantId: tenant.id,
         name: name.trim(),
         slug: candidate,
       },
@@ -97,6 +97,23 @@ export class ProjectsService {
       data: {
         name: name.trim(),
       },
+    });
+  }
+
+  async delete(id: string): Promise<void> {
+    if (id === DEFAULT_PROJECT_ID) {
+      throw new BadRequestException("Cannot delete the default project");
+    }
+    await this.getById(id);
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.projectTokenAudit.deleteMany({ where: { projectId: id } });
+      await tx.projectToken.deleteMany({ where: { projectId: id } });
+      await tx.message.deleteMany({ where: { projectId: id } });
+      await tx.thread.deleteMany({ where: { projectId: id } });
+      await tx.agent.deleteMany({ where: { projectId: id } });
+      await tx.issue.deleteMany({ where: { projectId: id } });
+      await tx.project.delete({ where: { id } });
     });
   }
 }

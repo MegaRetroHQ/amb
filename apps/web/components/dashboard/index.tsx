@@ -9,7 +9,6 @@ import { ThreadViewer } from "./thread-viewer"
 import { InboxViewer } from "./inbox-viewer"
 import { DlqViewer } from "./dlq-viewer"
 import { ProjectSwitcher } from "./project-switcher"
-import { LocaleSwitcher } from "./locale-switcher"
 import { CommandPalette, useCommandPalette } from "./command-palette"
 import { useKeyboardShortcuts } from "@/lib/hooks/use-keyboard-shortcuts"
 import { useSSE } from "@/lib/hooks/use-sse"
@@ -25,8 +24,25 @@ import {
   BookOpenIcon,
   HelpCircleIcon,
   LogOutIcon,
+  MoreVerticalIcon,
 } from "lucide-react"
-import { Link } from "@/i18n/navigation"
+import { Link, useRouter, usePathname } from "@/i18n/navigation"
+import { routing } from "@/i18n/routing"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+} from "@/components/ui/dropdown-menu"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { useTheme } from "@/components/theme-provider"
 import { useLocale, useTranslations } from "next-intl"
 
@@ -103,7 +119,10 @@ export function Dashboard() {
   // Theme
   const { resolvedTheme, setTheme } = useTheme()
   const t = useTranslations("Dashboard")
+  const tCommon = useTranslations("Common")
   const locale = useLocale()
+  const router = useRouter()
+  const pathname = usePathname()
   
   const toggleTheme = useCallback(() => {
     // Переключаем на явную тему (не "system")
@@ -117,6 +136,15 @@ export function Dashboard() {
   const handleRefresh = useCallback(() => {
     window.location.reload()
   }, [])
+
+  const setLocale = useCallback(
+    (newLocale: string) => {
+      document.cookie = `NEXT_LOCALE=${newLocale}; Path=/; Max-Age=31536000; SameSite=Lax`
+      window.localStorage.setItem("amb:locale", newLocale)
+      router.replace(pathname, { locale: newLocale })
+    },
+    [router, pathname]
+  )
 
   const redirectToLogin = useCallback(() => {
     const nextPath = `${window.location.pathname}${window.location.search}`
@@ -173,11 +201,11 @@ export function Dashboard() {
 
   return (
     <div className="h-screen flex flex-col bg-background">
-      {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="px-6 py-4 flex items-center justify-between">
+      {/* Header — billing-style: fixed height, elevation shadow */}
+      <header className="flex h-16 shrink-0 items-center border-b bg-card shadow-elevation sticky top-0 z-10">
+        <div className="flex w-full items-center justify-between px-4">
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-primary/10">
+            <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10">
               <BusIcon className="size-5 text-primary" />
             </div>
             <div>
@@ -193,35 +221,39 @@ export function Dashboard() {
           <div className="flex items-center gap-2">
             <ProjectSwitcher />
 
-            {/* Status indicators */}
-            <div className="flex items-center gap-4 mr-4 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1.5">
-                <span className={`w-2 h-2 rounded-full ${connected ? "bg-green-500 animate-pulse" : "bg-yellow-500"}`} />
+            {/* SSE status — compact, tooltip only */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span
+                  className="flex size-8 items-center justify-center rounded-md border-0 bg-transparent"
+                  aria-label={connected ? t("sseConnected") : t("reconnecting")}
+                >
+                  <span
+                    className={`block size-2 rounded-full ${connected ? "bg-green-500 animate-pulse" : "bg-yellow-500"}`}
+                  />
+                </span>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
                 {connected ? t("sseConnected") : t("reconnecting")}
-              </span>
-              {connected && <span>{t("realtime")}</span>}
-            </div>
+                {connected && ` — ${t("realtime")}`}
+              </TooltipContent>
+            </Tooltip>
 
-            {/* Documentation */}
-            <Button variant="outline" size="sm" asChild className="gap-2 text-muted-foreground">
-              <a href="/api-docs" target="_blank" rel="noopener noreferrer">
-                <BookOpenIcon className="size-4" />
-                <span className="hidden sm:inline">{t("apiDocs")}</span>
-              </a>
+            {/* Command palette — primary action */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCommandOpen(true)}
+              className="gap-2 text-muted-foreground"
+            >
+              <CommandIcon className="size-4" />
+              <span className="hidden sm:inline">{t("commands")}</span>
+              <kbd className="hidden sm:inline-flex ml-1 h-5 items-center gap-0.5 rounded border bg-muted px-1.5 font-mono text-[10px]">
+                <span className="text-xs">⌘</span>K
+              </kbd>
             </Button>
 
-            {/* Help */}
-            <Button variant="outline" size="sm" asChild className="gap-2 text-muted-foreground">
-              <Link href="/help">
-                <HelpCircleIcon className="size-4" />
-                <span className="hidden sm:inline">{t("help")}</span>
-              </Link>
-            </Button>
-
-            {/* Locale */}
-            <LocaleSwitcher />
-
-            {/* Theme toggle */}
+            {/* Theme toggle — in panel */}
             <Button
               variant="ghost"
               size="icon"
@@ -236,38 +268,59 @@ export function Dashboard() {
               )}
             </Button>
 
-            {/* Command palette button */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCommandOpen(true)}
-              className="gap-2 text-muted-foreground"
-            >
-              <CommandIcon className="size-4" />
-              <span className="hidden sm:inline">{t("commands")}</span>
-              <kbd className="hidden sm:inline-flex ml-1 h-5 items-center gap-0.5 rounded border bg-muted px-1.5 font-mono text-[10px]">
-                <span className="text-xs">⌘</span>K
-              </kbd>
-            </Button>
-
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleLogout}
-              className="gap-2 text-muted-foreground"
-            >
-              <LogOutIcon className="size-4" />
-              <span className="hidden sm:inline">{t("logout")}</span>
-            </Button>
+            {/* More — secondary actions */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="size-9" title={t("more")}>
+                  <MoreVerticalIcon className="size-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="min-w-[10rem]">
+                <DropdownMenuItem asChild>
+                  <a href="/api-docs" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                    <BookOpenIcon className="size-4" />
+                    {t("apiDocs")}
+                  </a>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/help" className="flex items-center gap-2">
+                    <HelpCircleIcon className="size-4" />
+                    {t("help")}
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger className="gap-2">
+                    {tCommon("language")}
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent>
+                    {routing.locales.map((loc) => (
+                      <DropdownMenuItem
+                        key={loc}
+                        onClick={() => setLocale(loc)}
+                        className={locale === loc ? "bg-accent" : ""}
+                      >
+                        {loc === "en" ? "English" : loc === "ru" ? "Русский" : loc === "de" ? "Deutsch" : loc}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout} className="gap-2">
+                  <LogOutIcon className="size-4" />
+                  {t("logout")}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </header>
 
       {/* Main content */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Left sidebar: Agents */}
-        <aside 
-          className="flex-shrink-0 overflow-hidden bg-card/30"
+        {/* Left sidebar: Agents — card-style panel like billing */}
+        <aside
+          className="flex-shrink-0 overflow-hidden border-r border-border bg-card shadow-elevation"
           style={{ width: agentsWidth, minWidth: 200, maxWidth: 500 }}
         >
           <AgentsList
@@ -283,9 +336,9 @@ export function Dashboard() {
           onResize={(delta) => setAgentsWidth(w => Math.max(200, Math.min(500, w + delta)))} 
         />
 
-        {/* Middle sidebar: Threads */}
-        <aside 
-          className="flex-shrink-0 overflow-hidden bg-card/30"
+        {/* Middle sidebar: Threads — card-style panel like billing */}
+        <aside
+          className="flex-shrink-0 overflow-hidden border-r border-border bg-card shadow-elevation"
           style={{ width: threadsWidth, minWidth: 250, maxWidth: 600 }}
         >
           <ThreadsList
@@ -301,12 +354,12 @@ export function Dashboard() {
           onResize={(delta) => setThreadsWidth(w => Math.max(250, Math.min(600, w + delta)))} 
         />
 
-        {/* Main area: Tabs */}
-        <main className="flex-1 overflow-hidden bg-background">
+        {/* Main area: Tabs — billing-style content spacing */}
+        <main className="flex flex-1 flex-col overflow-hidden bg-background">
           <Tabs
             value={activeTab}
             onValueChange={(v) => setActiveTab(v as TabValue)}
-            className="h-full flex flex-col"
+            className="flex h-full flex-col"
           >
             <div className="border-b px-4 pt-2">
               <TabsList className="h-10 bg-transparent p-0 gap-1">
@@ -344,18 +397,18 @@ export function Dashboard() {
               </TabsList>
             </div>
 
-            <TabsContent value="messages" className="flex-1 overflow-hidden m-0 p-4">
+            <TabsContent value="messages" className="m-0 flex-1 overflow-hidden p-4 md:p-6">
               <ThreadViewer
                 threadId={selectedThreadId}
                 currentAgentId={selectedAgentId}
               />
             </TabsContent>
 
-            <TabsContent value="inbox" className="flex-1 overflow-hidden m-0 p-4">
+            <TabsContent value="inbox" className="m-0 flex-1 overflow-hidden p-4 md:p-6">
               <InboxViewer agentId={selectedAgentId} />
             </TabsContent>
 
-            <TabsContent value="dlq" className="flex-1 overflow-hidden m-0 p-4">
+            <TabsContent value="dlq" className="m-0 flex-1 overflow-hidden p-4 md:p-6">
               <DlqViewer />
             </TabsContent>
           </Tabs>

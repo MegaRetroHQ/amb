@@ -14,6 +14,7 @@ type Registry = {
 const API_URL = process.env.API_URL ?? "http://localhost:3334";
 const ADMIN_EMAIL = process.env.AMB_SEED_EMAIL ?? "admin@local.test";
 const ADMIN_PASSWORD = process.env.AMB_SEED_PASSWORD ?? "ChangeMe123!";
+const SEED_THREADS = process.env.AMB_SEED_THREADS === "true";
 const PROJECT_ID_FROM_ENV = process.env.MESSAGE_BUS_PROJECT_ID;
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -58,12 +59,18 @@ async function resolveProjectId(token: string): Promise<string> {
 
   const client = createClient({ baseUrl: API_URL, token });
   const projects = await client.listProjects();
-  const firstProject = projects.find((project) => UUID_PATTERN.test(project.id));
-  if (!firstProject) {
-    const created = await client.createProject({ name: "Default Project" });
-    return created.id;
+  const preferredProject =
+    projects.find((project) => project.slug === "default") ??
+    projects.find((project) => project.name.trim().toLowerCase() === "default project") ??
+    projects.find((project) => UUID_PATTERN.test(project.id));
+
+  if (!preferredProject) {
+    throw new Error(
+      "No projects available. /api/projects should ensure a default project automatically."
+    );
   }
-  return firstProject.id;
+
+  return preferredProject.id;
 }
 
 async function seedAgentsAndThreads(token: string, projectId: string) {
@@ -84,25 +91,27 @@ async function seedAgentsAndThreads(token: string, projectId: string) {
     createdAgents += 1;
   }
 
-  const existingThreads = await client.listThreads();
-  const titleSet = new Set(existingThreads.map((thread) => thread.title));
-  const threadTitles = new Set<string>();
-
-  for (const agent of registry.agents) {
-    for (const threadTitle of agent.defaultThreads ?? []) {
-      threadTitles.add(threadTitle);
-    }
-  }
-
-  for (const title of ["general", "announcements", "incidents", "releases"]) {
-    threadTitles.add(title);
-  }
-
   let createdThreads = 0;
-  for (const title of threadTitles) {
-    if (titleSet.has(title)) continue;
-    await client.createThread({ title, status: "open" });
-    createdThreads += 1;
+  if (SEED_THREADS) {
+    const existingThreads = await client.listThreads();
+    const titleSet = new Set(existingThreads.map((thread) => thread.title));
+    const threadTitles = new Set<string>();
+
+    for (const agent of registry.agents) {
+      for (const threadTitle of agent.defaultThreads ?? []) {
+        threadTitles.add(threadTitle);
+      }
+    }
+
+    for (const title of ["general", "announcements", "incidents", "releases"]) {
+      threadTitles.add(title);
+    }
+
+    for (const title of threadTitles) {
+      if (titleSet.has(title)) continue;
+      await client.createThread({ title, status: "open" });
+      createdThreads += 1;
+    }
   }
 
   console.log(`Seed complete. projectId=${projectId} createdAgents=${createdAgents} createdThreads=${createdThreads}`);

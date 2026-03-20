@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { CopyIcon, CheckIcon, PlusIcon, BanIcon } from "lucide-react";
+import { CopyIcon, CheckIcon, PlusIcon, BanIcon, InfoIcon } from "lucide-react";
 
 import { useProjectTokens } from "@/lib/hooks/use-project-tokens";
 import { Button } from "@/components/ui/button";
@@ -37,7 +37,14 @@ export function TokensModule({ projectId, projectName }: Props) {
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [name, setName] = useState("");
-  const [expiresIn, setExpiresIn] = useState("2592000");
+  const EXPIRY_OPTIONS: { value: number; labelKey: "expiresIn1Hour" | "expiresIn1Day" | "expiresIn7Days" | "expiresIn30Days" | "expiresIn90Days" }[] = [
+  { value: 3600, labelKey: "expiresIn1Hour" },
+  { value: 86400, labelKey: "expiresIn1Day" },
+  { value: 604800, labelKey: "expiresIn7Days" },
+  { value: 2592000, labelKey: "expiresIn30Days" },
+  { value: 7776000, labelKey: "expiresIn90Days" },
+];
+  const [expiresIn, setExpiresIn] = useState(2592000);
   const [submitting, setSubmitting] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
   const [createdToken, setCreatedToken] = useState<string | null>(null);
@@ -50,14 +57,13 @@ export function TokensModule({ projectId, projectName }: Props) {
     setSubmitting(true);
     setCreateError(null);
     try {
-      const parsedExpires = Number(expiresIn);
       const data = await createToken({
         name: name.trim(),
-        expiresIn: Number.isFinite(parsedExpires) && parsedExpires > 0 ? parsedExpires : undefined,
+        expiresIn: expiresIn > 0 ? expiresIn : undefined,
       });
       setCreatedToken(data.accessToken);
       setName("");
-      setExpiresIn("2592000");
+      setExpiresIn(2592000);
     } catch (submitError) {
       setCreateError(getLocalizedApiErrorMessage(submitError, tCommon));
     } finally {
@@ -119,20 +125,31 @@ export function TokensModule({ projectId, projectName }: Props) {
                 value={name}
                 onChange={(event) => setName(event.target.value)}
               />
-              <Input
-                type="number"
-                min={1}
-                placeholder={t("expiresInPlaceholder")}
-                value={expiresIn}
-                onChange={(event) => setExpiresIn(event.target.value)}
-              />
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-foreground">{t("expiresInLabel")}</label>
+                <select
+                  value={expiresIn}
+                  onChange={(e) => setExpiresIn(Number(e.target.value))}
+                  className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  {EXPIRY_OPTIONS.map(({ value, labelKey }) => (
+                    <option key={value} value={value}>
+                      {t(labelKey)}
+                    </option>
+                  ))}
+                </select>
+              </div>
               {createError ? <p className="text-sm text-destructive">{createError}</p> : null}
 
               {createdToken ? (
-                <Card className="p-3 space-y-2">
+                <Card className="p-3 space-y-2 min-w-0">
                   <p className="text-xs text-muted-foreground">{t("tokenCreated")}</p>
-                  <pre className="max-h-28 overflow-auto rounded-md bg-muted p-2 text-xs">{createdToken}</pre>
-                  <Button size="sm" variant="outline" onClick={handleCopyCreatedToken} className="gap-2">
+                  <textarea
+                    readOnly
+                    value={createdToken}
+                    className="min-h-24 w-full rounded-md border bg-muted p-2 text-xs font-mono leading-relaxed break-all whitespace-pre-wrap"
+                  />
+                  <Button size="sm" variant="outline" onClick={handleCopyCreatedToken} className="w-full gap-2">
                     {copiedToken ? <CheckIcon className="size-4 text-green-600" /> : <CopyIcon className="size-4" />}
                     {t("copyToken")}
                   </Button>
@@ -151,6 +168,21 @@ export function TokensModule({ projectId, projectName }: Props) {
           </DialogContent>
         </Dialog>
       </div>
+
+      <Card className="p-4">
+        <div className="flex items-start gap-3">
+          <InfoIcon className="mt-0.5 size-4 text-muted-foreground" />
+          <div className="space-y-2">
+            <p className="text-sm font-medium">{t("usageTitle")}</p>
+            <p className="text-sm text-muted-foreground">{t("usageDescription")}</p>
+            <ul className="list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+              <li>{t("usageStep1")}</li>
+              <li>{t("usageStep2")}</li>
+              <li>{t("usageStep3")}</li>
+            </ul>
+          </div>
+        </div>
+      </Card>
 
       {loading ? <p className="text-sm text-muted-foreground">{tCommon("loading")}</p> : null}
       {error ? <p className="text-sm text-destructive">{error}</p> : null}

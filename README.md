@@ -62,6 +62,11 @@ pnpm add -D @openaisdk/amb-mcp
 
 You can use `npm install -D @openaisdk/amb-mcp` if your project uses npm.
 
+All examples below use `pnpm`. If your project uses `npm`, replace:
+
+- `pnpm exec amb-mcp` with `npx amb-mcp`
+- `"command": "pnpm", "args": ["exec", "amb-mcp"]` with `"command": "npx", "args": ["amb-mcp"]`
+
 ## What AMB Adds to Your Project
 
 If you are new to multi-agent systems, think of an agent as a role with a clear responsibility and its own prompt.
@@ -109,6 +114,23 @@ Create `.cursor/mcp.json` in your project:
 }
 ```
 
+If your project uses `npm`, use:
+
+```json
+{
+  "mcpServers": {
+    "message-bus": {
+      "command": "npx",
+      "args": ["amb-mcp"],
+      "env": {
+        "MESSAGE_BUS_URL": "http://localhost:3333",
+        "MESSAGE_BUS_PROJECT_ID": "22222222-2222-4222-8222-222222222222"
+      }
+    }
+  }
+}
+```
+
 ### Codex
 
 Create `.codex/config.toml` in your project:
@@ -117,6 +139,18 @@ Create `.codex/config.toml` in your project:
 [mcp_servers.message-bus]
 command = "pnpm"
 args = ["exec", "amb-mcp"]
+
+[mcp_servers.message-bus.env]
+MESSAGE_BUS_URL = "http://localhost:3333"
+MESSAGE_BUS_PROJECT_ID = "22222222-2222-4222-8222-222222222222"
+```
+
+If your project uses `npm`, use:
+
+```toml
+[mcp_servers.message-bus]
+command = "npx"
+args = ["amb-mcp"]
 
 [mcp_servers.message-bus.env]
 MESSAGE_BUS_URL = "http://localhost:3333"
@@ -133,6 +167,23 @@ Add the same server to your Claude MCP config:
     "message-bus": {
       "command": "pnpm",
       "args": ["exec", "amb-mcp"],
+      "env": {
+        "MESSAGE_BUS_URL": "http://localhost:3333",
+        "MESSAGE_BUS_PROJECT_ID": "22222222-2222-4222-8222-222222222222"
+      }
+    }
+  }
+}
+```
+
+If your project uses `npm`, use:
+
+```json
+{
+  "mcpServers": {
+    "message-bus": {
+      "command": "npx",
+      "args": ["amb-mcp"],
       "env": {
         "MESSAGE_BUS_URL": "http://localhost:3333",
         "MESSAGE_BUS_PROJECT_ID": "22222222-2222-4222-8222-222222222222"
@@ -213,6 +264,7 @@ Recommended minimum set:
 Recommended first run:
 
 ```bash
+# or: npx amb-mcp setup
 MESSAGE_BUS_URL=http://localhost:3333 \
 MESSAGE_BUS_PROJECT_ID=<YOUR_PROJECT_ID> \
 pnpm exec amb-mcp setup
@@ -244,6 +296,7 @@ Manual commands if you want more control:
 Register agents from your project:
 
 ```bash
+# or: npx amb-mcp seed agents .cursor/agents
 MESSAGE_BUS_URL=http://localhost:3333 \
 MESSAGE_BUS_PROJECT_ID=<YOUR_PROJECT_ID> \
 pnpm exec amb-mcp seed agents .cursor/agents
@@ -252,6 +305,7 @@ pnpm exec amb-mcp seed agents .cursor/agents
 Register agents and default threads:
 
 ```bash
+# or: npx amb-mcp seed all .cursor/agents
 MESSAGE_BUS_URL=http://localhost:3333 \
 MESSAGE_BUS_PROJECT_ID=<YOUR_PROJECT_ID> \
 pnpm exec amb-mcp seed all .cursor/agents
@@ -309,7 +363,7 @@ Create a thread in AMB called "cross-client-demo". Coordinate work across po, ar
 Check that:
 
 - `@openaisdk/amb-mcp` is installed in your project
-- your MCP config uses `pnpm exec amb-mcp`
+- your MCP config uses `pnpm exec amb-mcp` or `npx amb-mcp`
 - you restarted Cursor, Codex, or Claude Code after editing the config
 - `MESSAGE_BUS_PROJECT_ID` points to the project you created in the Dashboard
 
@@ -324,6 +378,7 @@ Usually this means:
 Run the command again and verify the selected project in the UI:
 
 ```bash
+# or: npx amb-mcp seed agents .cursor/agents
 MESSAGE_BUS_URL=http://localhost:3333 \
 MESSAGE_BUS_PROJECT_ID=<YOUR_PROJECT_ID> \
 pnpm exec amb-mcp seed agents .cursor/agents

@@ -34,7 +34,7 @@ services:
       retries: 20
 
   web:
-    image: docker.io/openaisdk/amb:latest
+    image: docker.io/openaisdk/amb-web-ui:latest
     pull_policy: always
     environment:
       API_URL: http://api:3334

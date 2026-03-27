@@ -72,6 +72,8 @@ podman_build_push_single() {
 
 podman_build_push_multi() {
   podman manifest rm "$IMAGE_REF" 2>/dev/null || true
+  # Old single-arch `podman build -t same:tag` keeps the name; manifest create needs it free.
+  podman rmi "$IMAGE_REF" 2>/dev/null || true
   podman manifest create "$IMAGE_REF"
 
   OLD_IFS=$IFS

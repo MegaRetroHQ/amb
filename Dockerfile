@@ -14,10 +14,10 @@ COPY packages ./packages
 COPY scripts ./scripts
 RUN pnpm install --frozen-lockfile
 
-# Builder
+# Builder — full tree from deps only; COPY . . would replace packages/ without workspace node_modules and break e.g. tsc.
 FROM base AS builder
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+COPY --from=deps /app /app
+WORKDIR /app
 RUN pnpm turbo build --filter=amb-web
 
 # Runner
@@ -30,12 +30,6 @@ WORKDIR /app
 COPY --from=builder /app/apps/web/.next/standalone ./
 COPY --from=builder /app/apps/web/.next/static ./.next/static
 COPY --from=builder /app/apps/web/public ./public
-
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
-COPY apps ./apps
-COPY scripts ./scripts
-COPY --from=builder /app/.cursor ./.cursor
-RUN pnpm install --frozen-lockfile
 
 EXPOSE 3333
 

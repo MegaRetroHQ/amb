@@ -1,7 +1,7 @@
 {
   "name": "amb-app",
   "packageManager": "pnpm@10.19.0",
-  "version": "0.2.0",
+  "version": "0.1.3",
   "private": true,
   "license": "MIT",
   "repository": {
@@ -49,9 +49,9 @@
     "agent:worker": "pnpm --filter amb-web run agent:worker",
     "agent:worker:single": "pnpm --filter amb-web run agent:worker:single",
     "po:check-inbox": "pnpm --filter amb-web run po:check-inbox",
-    "docker:compose:publish": "sh -c 'ROOT_DIR=\"$(pwd)\"; export ROOT_DIR; if command -v podman >/dev/null 2>&1; then export CONTAINER_CLI=podman; else export CONTAINER_CLI=docker; fi; sh scripts/release/build-push-image-multiarch.sh docker.io/openaisdk/amb:latest'",
+    "docker:compose:publish": "sh -c 'ROOT_DIR=\"$(pwd)\"; export ROOT_DIR; if command -v podman >/dev/null 2>&1; then export CONTAINER_CLI=podman; else export CONTAINER_CLI=docker; fi; sh scripts/release/build-push-image-multiarch.sh docker.io/openaisdk/amb-web-ui:latest'",
     "release:publish": "sh scripts/release/publish-public-artifacts.sh",
-    "deploy:amb": "bash -c 'export WEB_PORT=4333 API_PORT=4334; podman pull docker.io/openaisdk/amb:latest && podman compose -f docker-compose.web-image.yml up -d'",
+    "deploy:amb": "bash -c 'export WEB_PORT=4333 API_PORT=4334; podman pull docker.io/openaisdk/amb-web-ui:latest && podman compose -f docker-compose.web-image.yml up -d'",
     "deploy:compose:prebuilt": "pnpm run deploy:amb",
     "deploy:compose:build": "pnpm run deploy:local",
     "deploy:dev:db": "podman compose -f docker-compose.dev.yml up -d postgres",

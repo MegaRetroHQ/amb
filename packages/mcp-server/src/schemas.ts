@@ -17,6 +17,16 @@ const PROJECT_ID_PROP = {
   description: "Project UUID (optional if MESSAGE_BUS_PROJECT_ID is set)",
 };
 
+const LIMIT_PROP = {
+  type: "number" as const,
+  description: "Maximum number of items to return (default: 20, max: 100)",
+};
+
+const SUMMARY_PROP = {
+  type: "boolean" as const,
+  description: "Return compact summary objects instead of full API payloads (default: true)",
+};
+
 function str(desc: string) {
   return { type: "string" as const, description: desc };
 }
@@ -39,6 +49,8 @@ function objectSchema(properties: Record<string, unknown>, required: string[]) {
 
 const listTasksQueryProps = {
   projectId: PROJECT_ID_PROP,
+  limit: LIMIT_PROP,
+  summary: SUMMARY_PROP,
   state: enumString(TASK_STATE_ENUM, "Filter by state (Kanban column)"),
   priority: enumString(TASK_PRIORITY_ENUM, "Filter by priority"),
   assignee: str("Filter by assignee agent UUID"),
@@ -73,63 +85,7 @@ export const tools = [
   {
     name: "list_project_members",
     description: "List project members (agents in the selected project)",
-    inputSchema: objectSchema({ projectId: PROJECT_ID_PROP }, []),
-  },
-  {
-    name: "list_issues",
-    description: "List project tasks (legacy name; same as list_tasks)",
-    inputSchema: objectSchema(listTasksQueryProps, []),
-  },
-  {
-    name: "create_issue",
-    description: "Create a project task (legacy name; same as create_task)",
-    inputSchema: objectSchema(createTaskProps, ["title"]),
-  },
-  {
-    name: "get_issue",
-    description: "Get task by UUID or key (legacy name; same as get_task)",
-    inputSchema: objectSchema(
-      {
-        projectId: PROJECT_ID_PROP,
-        issueId: str("Task UUID or human-readable key (e.g. AMB-0001)"),
-      },
-      ["issueId"]
-    ),
-  },
-  {
-    name: "update_issue",
-    description: "Update task fields (legacy name)",
-    inputSchema: objectSchema(
-      {
-        projectId: PROJECT_ID_PROP,
-        issueId: str("Task UUID or key"),
-        ...updateTaskBodyProps,
-      },
-      ["issueId"]
-    ),
-  },
-  {
-    name: "move_issue_state",
-    description: "Move task to another state (legacy name)",
-    inputSchema: objectSchema(
-      {
-        projectId: PROJECT_ID_PROP,
-        issueId: str("Task UUID or key"),
-        state: enumString(TASK_STATE_ENUM, "Target state"),
-      },
-      ["issueId", "state"]
-    ),
-  },
-  {
-    name: "delete_issue",
-    description: "Delete task by UUID or key (legacy name)",
-    inputSchema: objectSchema(
-      {
-        projectId: PROJECT_ID_PROP,
-        issueId: str("Task UUID or key"),
-      },
-      ["issueId"]
-    ),
+    inputSchema: objectSchema({ projectId: PROJECT_ID_PROP, limit: LIMIT_PROP, summary: SUMMARY_PROP }, []),
   },
   {
     name: "list_tasks",
@@ -190,7 +146,7 @@ export const tools = [
   {
     name: "list_agents",
     description: "List all registered agents in the message bus",
-    inputSchema: objectSchema({}, []),
+    inputSchema: objectSchema({ limit: LIMIT_PROP, summary: SUMMARY_PROP }, []),
   },
   {
     name: "register_agent",
@@ -210,7 +166,7 @@ export const tools = [
   {
     name: "list_threads",
     description: "List all threads in the message bus",
-    inputSchema: objectSchema({}, []),
+    inputSchema: objectSchema({ limit: LIMIT_PROP, summary: SUMMARY_PROP }, []),
   },
   {
     name: "create_thread",
@@ -226,7 +182,7 @@ export const tools = [
   {
     name: "get_thread_messages",
     description: "Get all messages in a thread",
-    inputSchema: objectSchema({ threadId: threadIdProp }, ["threadId"]),
+    inputSchema: objectSchema({ threadId: threadIdProp, limit: LIMIT_PROP, summary: SUMMARY_PROP }, ["threadId"]),
   },
   {
     name: "get_thread",
@@ -269,7 +225,7 @@ export const tools = [
   {
     name: "get_inbox",
     description: "Get pending messages for an agent",
-    inputSchema: objectSchema({ agentId: str("Agent UUID") }, ["agentId"]),
+    inputSchema: objectSchema({ agentId: str("Agent UUID"), limit: LIMIT_PROP, summary: SUMMARY_PROP }, ["agentId"]),
   },
   {
     name: "ack_message",
@@ -279,6 +235,6 @@ export const tools = [
   {
     name: "get_dlq",
     description: "Get messages in the dead letter queue",
-    inputSchema: objectSchema({}, []),
+    inputSchema: objectSchema({ limit: LIMIT_PROP, summary: SUMMARY_PROP }, []),
   },
 ];

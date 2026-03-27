@@ -1,6 +1,6 @@
 {
   "name": "amb-web",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "private": true,
   "scripts": {
     "dev": "P=${PORT:-3333}; echo '' && echo \"  API Docs (Swagger): http://localhost:$P/api-docs\" && echo '' && exec next dev -p \"$P\"",

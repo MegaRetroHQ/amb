@@ -1,5 +1,6 @@
 import type { MessageBusClient } from "../client/message-bus-client";
 import type { ToolArgs, ToolHandler } from "../types/tool-args";
+import { shapeMessages } from "./response-shaping";
 
 export function createMessagingToolHandlers(
   client: MessageBusClient
@@ -17,14 +18,19 @@ export function createMessagingToolHandlers(
         }),
       }),
 
-    get_inbox: (args: ToolArgs) =>
-      client.requestJson(`/api/messages/inbox?agentId=${args.agentId}`),
+    get_inbox: async (args: ToolArgs) => {
+      const messages = await client.requestJson(`/api/messages/inbox?agentId=${args.agentId}`);
+      return shapeMessages(messages as Array<Record<string, unknown>>, args);
+    },
 
     ack_message: (args: ToolArgs) =>
       client.requestJson(`/api/messages/${args.messageId}/ack`, {
         method: "POST",
       }),
 
-    get_dlq: () => client.requestJson("/api/dlq"),
+    get_dlq: async (args: ToolArgs) => {
+      const messages = await client.requestJson("/api/dlq");
+      return shapeMessages(messages as Array<Record<string, unknown>>, args);
+    },
   };
 }

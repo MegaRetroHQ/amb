@@ -1,6 +1,7 @@
 import type { ArgResolvers } from "../args/arg-resolvers";
 import type { MessageBusClient } from "../client/message-bus-client";
 import type { ToolArgs, ToolHandler } from "../types/tool-args";
+import { shapeTasks } from "./response-shaping";
 
 function tasksQueryString(args: ToolArgs): string {
   const params = new URLSearchParams();
@@ -34,9 +35,10 @@ export function createTaskToolHandlers(
   const handleListTasks: ToolHandler = async (args) => {
     const projectId = resolveProjectId(args);
     const query = tasksQueryString(args);
-    return client.requestJson(
+    const tasks = await client.requestJson(
       `/api/projects/${projectId}/tasks${query ? `?${query}` : ""}`
     );
+    return shapeTasks(tasks as Array<Record<string, unknown>>, args);
   };
 
   const handleCreateTask: ToolHandler = async (args) => {

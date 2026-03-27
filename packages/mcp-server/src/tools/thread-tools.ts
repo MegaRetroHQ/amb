@@ -1,9 +1,13 @@
 import type { MessageBusClient } from "../client/message-bus-client";
 import type { ToolArgs, ToolHandler } from "../types/tool-args";
+import { shapeMessages, shapeThreads } from "./response-shaping";
 
 export function createThreadToolHandlers(client: MessageBusClient): Record<string, ToolHandler> {
   return {
-    list_threads: () => client.requestJson("/api/threads"),
+    list_threads: async (args) => {
+      const threads = await client.requestJson("/api/threads");
+      return shapeThreads(threads as Array<Record<string, unknown>>, args);
+    },
 
     create_thread: (args: ToolArgs) =>
       client.requestJson("/api/threads", {
@@ -14,8 +18,10 @@ export function createThreadToolHandlers(client: MessageBusClient): Record<strin
         }),
       }),
 
-    get_thread_messages: (args: ToolArgs) =>
-      client.requestJson(`/api/threads/${args.threadId}/messages`),
+    get_thread_messages: async (args: ToolArgs) => {
+      const messages = await client.requestJson(`/api/threads/${args.threadId}/messages`);
+      return shapeMessages(messages as Array<Record<string, unknown>>, args);
+    },
 
     get_thread: (args: ToolArgs) => client.requestJson(`/api/threads/${args.threadId}`),
 

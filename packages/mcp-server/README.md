@@ -34,6 +34,40 @@ MCP server + CLI bridge для Agent Message Bus.
 - `amb-mcp seed all [path]`
 - MCP tools по доменам: `tasks`, `agents`, `threads`, `messaging`.
 
+## Token Efficiency
+
+The MCP tools are optimized to avoid wasting model tokens:
+
+- list and read-heavy tools return compact JSON
+- summary mode is enabled by default for heavy responses
+- `limit` defaults to `20`
+- full payloads are opt-in with `summary=false`
+
+Use compact calls by default:
+
+```json
+{
+  "agentId": "550e8400-e29b-41d4-a716-446655440000",
+  "limit": 10
+}
+```
+
+Ask for full payloads only when you really need them:
+
+```json
+{
+  "threadId": "550e8400-e29b-41d4-a716-446655440000",
+  "limit": 50,
+  "summary": false
+}
+```
+
+Recommended pattern:
+
+- first call `list_*` or `get_inbox` with small `limit`
+- then fetch one specific thread or task in detail
+- use `summary=false` only for targeted inspection
+
 ## Конфигурация
 
 ```json

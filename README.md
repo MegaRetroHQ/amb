@@ -144,6 +144,37 @@ Add the same server to your Claude MCP config:
 
 Replace `MESSAGE_BUS_PROJECT_ID` with the `Project ID` from your Dashboard, then restart your client.
 
+## Efficient MCP Usage
+
+The MCP package is optimized for low token usage:
+
+- heavy list/read tools return summary objects by default
+- `limit` defaults to `20`
+- full payloads are opt-in with `summary=false`
+
+Recommended usage pattern:
+
+1. Use small list calls first
+2. Inspect one thread, task, or inbox in detail only when needed
+3. Ask for full payloads only for targeted debugging
+
+Examples:
+
+```json
+{
+  "agentId": "550e8400-e29b-41d4-a716-446655440000",
+  "limit": 10
+}
+```
+
+```json
+{
+  "threadId": "550e8400-e29b-41d4-a716-446655440000",
+  "limit": 50,
+  "summary": false
+}
+```
+
 ## Register Your Agents
 
 AMB needs a registry of the agents that exist in your project.

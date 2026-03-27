@@ -101,7 +101,7 @@
 
 | Команда | Назначение |
 |---------|------------|
-| `pnpm run docker:compose:publish` | Собрать и запушить `docker.io/openaisdk/amb:latest` как **multi-arch** (`linux/amd64`, `linux/arm64`); при необходимости задать `IMAGE_PLATFORMS` (через запятую). Podman или Docker с Buildx |
+| `pnpm run docker:compose:publish` | Собрать и запушить `docker.io/openaisdk/amb-web-ui:latest` как **multi-arch** (`linux/amd64`, `linux/arm64`); при необходимости задать `IMAGE_PLATFORMS` (через запятую). Podman или Docker с Buildx |
 | `pnpm run release:publish` | Образы web/api/seed + npm `@openaisdk/amb-mcp`; те же платформы (`IMAGE_PLATFORMS`, по умолчанию amd64+arm64) |
 | `pnpm run deploy:local:standalone` | Как `deploy:local`, порты **3333 / 3334** |
 | `pnpm run deploy:local:down` | `compose down -v` |

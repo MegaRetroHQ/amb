@@ -1,4 +1,4 @@
-# Стек как в docker-compose.yml, но apps/web — из образа docker.io/openaisdk/amb:latest
+# Стек как в docker-compose.yml, но apps/web — из образа docker.io/openaisdk/amb-web-ui:latest
 # (без сборки Next в контейнере). apps/api и seed по-прежнему из исходников репозитория.
 # Синхронизируйте с docker-compose.yml при изменении postgres/api/seed.
 # Запуск: docker compose -f docker-compose.web-image.yml up -d
@@ -52,7 +52,7 @@ services:
       retries: 20
 
   web:
-    image: docker.io/openaisdk/amb:latest
+    image: docker.io/openaisdk/amb-web-ui:latest
     pull_policy: always
     container_name: amb-web
     environment:

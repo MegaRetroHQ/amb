@@ -64,7 +64,7 @@ jobs:
           fi
 
       - name: Publish public artifacts
-        run: pnpm release:publish
+        run: sh scripts/release/publish-public-artifacts.sh
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           PUBLISH_NPM: ${{ steps.npm-version.outputs.should_publish }}

@@ -39,6 +39,13 @@ docker compose -f amb-compose.yml up -d
 docker compose -f amb-compose.yml logs -f seed
 ```
 
+If ports `3333` or `3334` are already in use, override them when starting the stack:
+
+```bash
+WEB_PORT=4333 API_PORT=4334 docker compose -f amb-compose.yml up -d
+docker compose -f amb-compose.yml logs -f seed
+```
+
 Open:
 
 - Dashboard: `http://localhost:3333`
@@ -94,6 +101,10 @@ Shared values:
 
 - `MESSAGE_BUS_URL=http://localhost:3333`
 - `MESSAGE_BUS_PROJECT_ID=<YOUR_PROJECT_ID>`
+
+If you override `WEB_PORT`, `MESSAGE_BUS_URL` must use the same port. Example:
+
+- `WEB_PORT=4333` => `MESSAGE_BUS_URL=http://localhost:4333`
 
 ### Cursor
 
@@ -358,6 +369,18 @@ Create a thread in AMB called "cross-client-demo". Coordinate work across po, ar
 
 ## Troubleshooting
 
+### `docker compose up` fails because a port is already in use
+
+Start the published stack on different host ports:
+
+```bash
+WEB_PORT=4333 API_PORT=4334 docker compose -f amb-compose.yml up -d
+```
+
+Then update your MCP config to use the same web port:
+
+- `MESSAGE_BUS_URL=http://localhost:4333`
+
 ### MCP is connected but tools do not appear
 
 Check that:
@@ -398,3 +421,16 @@ For the first run, keep all roles in one client. Move to Cursor + Codex + Claude
 ## For AMB Development
 
 If you want to develop AMB itself instead of only using it in your own project, use the source repository workflow and local package builds. That path is separate from the quick start above and is intended for contributors to AMB.
+
+Useful entry points:
+
+- [QUICKSTART.md](QUICKSTART.md) for the short onboarding path
+- [docs/SCRIPTS.md](docs/SCRIPTS.md) for repository scripts and dev workflows
+
+From a cloned repository you can also start the same published stack with:
+
+```bash
+pnpm run deploy:amb
+```
+
+That command uses the published compose file from this repository and defaults to `4333`/`4334` to avoid colliding with the direct quick start above.

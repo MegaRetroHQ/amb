@@ -1,10 +1,12 @@
 #!/usr/bin/env sh
-# Build and push one image (multi-arch manifest: amd64 + arm64 by default).
-# Usage: build-push-image-multiarch.sh [-f Dockerfile] IMAGE_REF
+# Build and push one image (optionally with extra tags), multi-arch by default.
+# Usage: build-push-image-multiarch.sh [-f Dockerfile] IMAGE_REF [EXTRA_IMAGE_REF...]
 # Env:
 #   CONTAINER_CLI   podman | docker (required)
 #   IMAGE_PLATFORMS comma-separated, default linux/amd64,linux/arm64
 #   ROOT_DIR        repo root (default: cwd)
+#   DOCKER_BUILDX_CACHE true | false, default true
+#   CACHE_REF       registry cache ref for docker buildx (default: same repo + :buildcache)
 
 set -eu
 
@@ -28,7 +30,11 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-IMAGE_REF="${1:?usage: build-push-image-multiarch.sh [-f Dockerfile] IMAGE_REF}"
+IMAGE_REF="${1:?usage: build-push-image-multiarch.sh [-f Dockerfile] IMAGE_REF [EXTRA_IMAGE_REF...]}"
+shift
+EXTRA_IMAGE_REFS="$*"
+DOCKER_BUILDX_CACHE="${DOCKER_BUILDX_CACHE:-true}"
+CACHE_REF="${CACHE_REF:-${IMAGE_REF%:*}:buildcache}"
 
 cd "$ROOT_DIR"
 
@@ -37,6 +43,10 @@ is_multi() {
     *,*) return 0 ;;
     *) return 1 ;;
   esac
+}
+
+inspect_docker_ref() {
+  docker buildx imagetools inspect "$1" >/dev/null
 }
 
 docker_buildx_ensure() {
@@ -54,11 +64,26 @@ docker_buildx_ensure() {
 
 docker_build_push() {
   docker_buildx_ensure
-  if [ -n "$DOCKERFILE" ]; then
-    docker buildx build --platform "$IMAGE_PLATFORMS" --push -f "$DOCKERFILE" -t "$IMAGE_REF" .
-  else
-    docker buildx build --platform "$IMAGE_PLATFORMS" --push -t "$IMAGE_REF" .
+  TAG_ARGS="-t $IMAGE_REF"
+  CACHE_ARGS=""
+  for ref in $EXTRA_IMAGE_REFS; do
+    TAG_ARGS="$TAG_ARGS -t $ref"
+  done
+  if [ "$DOCKER_BUILDX_CACHE" = "true" ]; then
+    CACHE_ARGS="--cache-from type=registry,ref=$CACHE_REF --cache-to type=registry,ref=$CACHE_REF,mode=max"
+    echo "Using Docker buildx registry cache: $CACHE_REF"
   fi
+  if [ -n "$DOCKERFILE" ]; then
+    # shellcheck disable=SC2086
+    docker buildx build --platform "$IMAGE_PLATFORMS" --push -f "$DOCKERFILE" $CACHE_ARGS $TAG_ARGS .
+  else
+    # shellcheck disable=SC2086
+    docker buildx build --platform "$IMAGE_PLATFORMS" --push $CACHE_ARGS $TAG_ARGS .
+  fi
+  inspect_docker_ref "$IMAGE_REF"
+  for ref in $EXTRA_IMAGE_REFS; do
+    inspect_docker_ref "$ref"
+  done
 }
 
 podman_build_push_single() {
@@ -67,7 +92,13 @@ podman_build_push_single() {
   else
     podman build -t "$IMAGE_REF" .
   fi
+  for ref in $EXTRA_IMAGE_REFS; do
+    podman tag "$IMAGE_REF" "$ref"
+  done
   podman push "$IMAGE_REF"
+  for ref in $EXTRA_IMAGE_REFS; do
+    podman push "$ref"
+  done
 }
 
 podman_build_push_multi() {
@@ -89,7 +120,11 @@ podman_build_push_multi() {
   done
   IFS=$OLD_IFS
 
-  podman manifest push "$IMAGE_REF"
+  podman manifest push --all "$IMAGE_REF" "docker://$IMAGE_REF"
+
+  for ref in $EXTRA_IMAGE_REFS; do
+    podman manifest push --all "$IMAGE_REF" "docker://$ref"
+  done
 }
 
 case "$CONTAINER_CLI" in
@@ -102,7 +137,13 @@ case "$CONTAINER_CLI" in
       else
         docker build -t "$IMAGE_REF" .
       fi
+      for ref in $EXTRA_IMAGE_REFS; do
+        docker tag "$IMAGE_REF" "$ref"
+      done
       docker push "$IMAGE_REF"
+      for ref in $EXTRA_IMAGE_REFS; do
+        docker push "$ref"
+      done
     fi
     ;;
   podman)

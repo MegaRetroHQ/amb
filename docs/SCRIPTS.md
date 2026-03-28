@@ -93,7 +93,7 @@
 | Скрипт | Смысл |
 |--------|--------|
 | `pnpm run deploy:local` | **Сборка из репо** (`podman compose up -d --build`), web **4333**, api **4334** |
-| `pnpm run deploy:amb` | **Готовый web** с Hub + compose из репо; **без** локальной сборки UI |
+| `pnpm run deploy:amb` | **Опубликованный stack** из `deploy/compose/amb-compose.yml` (web/api/seed из Hub), по умолчанию web **4333**, api **4334** |
 | `pnpm run deploy:compose:build` | Алиас → `deploy:local` |
 | `pnpm run deploy:compose:prebuilt` | Алиас → `deploy:amb` |
 
@@ -101,8 +101,8 @@
 
 | Команда | Назначение |
 |---------|------------|
-| `pnpm run docker:compose:publish` | Собрать и запушить `docker.io/openaisdk/amb-web-ui:latest` как **multi-arch** (`linux/amd64`, `linux/arm64`); при необходимости задать `IMAGE_PLATFORMS` (через запятую). Podman или Docker с Buildx |
-| `pnpm run release:publish` | Образы web/api/seed + npm `@openaisdk/amb-mcp`; те же платформы (`IMAGE_PLATFORMS`, по умолчанию amd64+arm64) |
+| `pnpm run docker:compose:publish` | Опубликовать только `amb-web-ui` как **multi-arch**. Для multi-arch сначала пробуется `docker buildx` с registry cache, при недоступности идёт fallback на `podman`. По умолчанию пушатся теги `:<version из package.json>` и `:latest`; можно переопределить `IMAGE_TAG`, отключить `latest` через `PUBLISH_LATEST=false` и cache через `DOCKER_BUILDX_CACHE=false` |
+| `pnpm run release:publish` | Опубликовать образы web/api/seed + npm `@openaisdk/amb-mcp`. Для multi-arch сначала пробуется `docker buildx` с registry cache, при недоступности идёт fallback на `podman`. Для Docker по умолчанию пушатся теги `:<version из package.json>` и `:latest`; можно переопределить `IMAGE_TAG`, `NPM_TAG`, `IMAGE_PLATFORMS`, `PUBLISH_LATEST`, `DOCKER_BUILDX_CACHE`, `CACHE_REF`, `CONTAINER_CLI` |
 | `pnpm run deploy:local:standalone` | Как `deploy:local`, порты **3333 / 3334** |
 | `pnpm run deploy:local:down` | `compose down -v` |
 | `pnpm run deploy:prod` | `scripts/deploy/production-deploy.sh` |
@@ -131,10 +131,12 @@
 | Сценарий | Команда | Порты (типично) |
 |----------|---------|-----------------|
 | Сборка UI из репозитория | `pnpm run deploy:local` или `pnpm run deploy:compose:build` | **4333** / **4334** |
-| Готовый web-образ с Hub | `pnpm run deploy:amb` или `pnpm run deploy:compose:prebuilt` | **4333** / **4334** |
+| Опубликованный stack из Hub | `pnpm run deploy:amb` или `pnpm run deploy:compose:prebuilt` | **4333** / **4334** |
 | Как выше, другие порты | `pnpm run deploy:local:standalone` | **3333** / **3334** |
 
-Остановка: `pnpm run deploy:local:down`.
+Остановка локального compose из репозитория: `pnpm run deploy:local:down`.
+
+> **Важно:** direct quick start из `README.md` / `QUICKSTART.md` использует скачанный `amb-compose.yml` и по умолчанию порты **3333 / 3334**. Команда `pnpm run deploy:amb` запускает тот же published stack, но с дефолтными портами **4333 / 4334**, чтобы не конфликтовать с quick start или локальной разработкой.
 
 ### Я хочу только Postgres, приложения на хосте
 

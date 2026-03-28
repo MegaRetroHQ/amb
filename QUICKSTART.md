@@ -19,6 +19,13 @@ docker compose -f amb-compose.yml up -d
 docker compose -f amb-compose.yml logs -f seed
 ```
 
+Если порты `3333` или `3334` заняты, поднимите стек на других host-портах:
+
+```bash
+WEB_PORT=4333 API_PORT=4334 docker compose -f amb-compose.yml up -d
+docker compose -f amb-compose.yml logs -f seed
+```
+
 Открыть:
 
 - Dashboard: `http://localhost:3333`
@@ -53,6 +60,9 @@ npm install -D @openaisdk/amb-mcp
 - `MESSAGE_BUS_URL=http://localhost:3333`
 - `MESSAGE_BUS_PROJECT_ID=<YOUR_PROJECT_ID>`
 
+Если вы переопределили `WEB_PORT`, то `MESSAGE_BUS_URL` должен указывать на тот же порт.
+Пример: `WEB_PORT=4333` => `MESSAGE_BUS_URL=http://localhost:4333`.
+
 ### Cursor
 
 `.cursor/mcp.json`:
@@ -63,6 +73,23 @@ npm install -D @openaisdk/amb-mcp
     "message-bus": {
       "command": "pnpm",
       "args": ["exec", "amb-mcp"],
+      "env": {
+        "MESSAGE_BUS_URL": "http://localhost:3333",
+        "MESSAGE_BUS_PROJECT_ID": "22222222-2222-4222-8222-222222222222"
+      }
+    }
+  }
+}
+```
+
+Если проект использует `npm`, используйте:
+
+```json
+{
+  "mcpServers": {
+    "message-bus": {
+      "command": "npx",
+      "args": ["amb-mcp"],
       "env": {
         "MESSAGE_BUS_URL": "http://localhost:3333",
         "MESSAGE_BUS_PROJECT_ID": "22222222-2222-4222-8222-222222222222"
@@ -86,6 +113,18 @@ MESSAGE_BUS_URL = "http://localhost:3333"
 MESSAGE_BUS_PROJECT_ID = "22222222-2222-4222-8222-222222222222"
 ```
 
+Если проект использует `npm`, используйте:
+
+```toml
+[mcp_servers.message-bus]
+command = "npx"
+args = ["amb-mcp"]
+
+[mcp_servers.message-bus.env]
+MESSAGE_BUS_URL = "http://localhost:3333"
+MESSAGE_BUS_PROJECT_ID = "22222222-2222-4222-8222-222222222222"
+```
+
 ### Claude Code
 
 ```json
@@ -103,6 +142,23 @@ MESSAGE_BUS_PROJECT_ID = "22222222-2222-4222-8222-222222222222"
 }
 ```
 
+Если проект использует `npm`, используйте:
+
+```json
+{
+  "mcpServers": {
+    "message-bus": {
+      "command": "npx",
+      "args": ["amb-mcp"],
+      "env": {
+        "MESSAGE_BUS_URL": "http://localhost:3333",
+        "MESSAGE_BUS_PROJECT_ID": "22222222-2222-4222-8222-222222222222"
+      }
+    }
+  }
+}
+```
+
 Замените `MESSAGE_BUS_PROJECT_ID` на ID проекта из Dashboard и перезапустите клиент.
 
 ## 4. Зарегистрировать агентов
@@ -110,6 +166,7 @@ MESSAGE_BUS_PROJECT_ID = "22222222-2222-4222-8222-222222222222"
 Предпочтительный путь:
 
 ```bash
+# или: npx amb-mcp setup
 MESSAGE_BUS_URL=http://localhost:3333 \
 MESSAGE_BUS_PROJECT_ID=<YOUR_PROJECT_ID> \
 pnpm exec amb-mcp setup
@@ -125,6 +182,7 @@ pnpm exec amb-mcp setup
 Ручной режим, если нужен полный контроль:
 
 ```bash
+# или: npx amb-mcp seed all .cursor/agents
 MESSAGE_BUS_URL=http://localhost:3333 \
 MESSAGE_BUS_PROJECT_ID=<YOUR_PROJECT_ID> \
 pnpm exec amb-mcp seed all .cursor/agents
@@ -157,6 +215,7 @@ Create a thread in AMB called "project-onboarding". Coordinate work across po, a
 
 ## Частые проблемы
 
+- `docker compose up` падает из-за занятых портов: запустите с `WEB_PORT=4333 API_PORT=4334` и используйте тот же порт в `MESSAGE_BUS_URL`.
 - MCP не появился: проверьте, что пакет `@openaisdk/amb-mcp` установлен и клиент перезапущен.
 - Агенты не появились: проверьте `MESSAGE_BUS_PROJECT_ID` и путь `.cursor/agents` или `.agents`.
 - `orchestrator` пишет, а остальные роли молчат: сначала проверьте single-client сценарий, потом переходите к cross-client setup.

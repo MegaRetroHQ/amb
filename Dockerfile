@@ -1,8 +1,10 @@
 # syntax=docker/dockerfile:1
 
+ARG PNPM_VERSION=10.19.0
 FROM node:20-alpine AS base
 
-RUN corepack enable && corepack prepare pnpm@latest --activate
+ARG PNPM_VERSION
+RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 
 WORKDIR /app
 
@@ -24,6 +26,7 @@ RUN pnpm turbo build --filter=amb-web
 FROM base AS runner
 ENV NODE_ENV=production
 ENV PORT=3333
+ENV HOSTNAME=0.0.0.0
 
 WORKDIR /app
 

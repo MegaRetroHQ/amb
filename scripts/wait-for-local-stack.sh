@@ -12,7 +12,8 @@ SLEEP="${WAIT_SLEEP_SEC:-5}"
 echo ""
 echo "Контейнеры запущены, но Dashboard ещё может собираться."
 echo "Ожидаю ответ по ${URL} (до ~$((MAX_ATTEMPTS * SLEEP / 60)) мин, шаг ${SLEEP}s)…"
-echo "Логи в другом терминале: podman compose logs -f web"
+COMPOSE_CMD_DISPLAY="${COMPOSE_CMD_DISPLAY:-podman compose}"
+echo "Логи в другом терминале: ${COMPOSE_CMD_DISPLAY} logs -f web"
 echo ""
 
 for i in $(seq 1 "${MAX_ATTEMPTS}"); do
@@ -27,6 +28,6 @@ done
 
 echo ""
 echo "Таймаут: ${URL} не ответил."
-echo "Проверьте: podman compose ps && podman compose logs --tail=80 web"
+echo "Проверьте: ${COMPOSE_CMD_DISPLAY} ps && ${COMPOSE_CMD_DISPLAY} logs --tail=80 web"
 echo ""
 exit 1

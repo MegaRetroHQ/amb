@@ -17,6 +17,13 @@ docker compose -f amb-compose.yml up -d
 docker compose -f amb-compose.yml logs -f seed
 ```
 
+Если порты `3333` или `3334` заняты, поднимите стек на других host-портах:
+
+```bash
+WEB_PORT=4333 API_PORT=4334 docker compose -f amb-compose.yml up -d
+docker compose -f amb-compose.yml logs -f seed
+```
+
 После запуска:
 
 - Dashboard: `http://localhost:3333`
@@ -57,6 +64,9 @@ npm install -D @openaisdk/amb-mcp
 - `MESSAGE_BUS_URL=http://localhost:3333`
 - `MESSAGE_BUS_PROJECT_ID=<SAME_PROJECT_ID>`
 
+Если вы переопределили `WEB_PORT`, то `MESSAGE_BUS_URL` должен использовать тот же порт.
+Пример: `WEB_PORT=4333` => `MESSAGE_BUS_URL=http://localhost:4333`.
+
 ### Cursor
 
 Файл `.cursor/mcp.json`:
@@ -67,6 +77,23 @@ npm install -D @openaisdk/amb-mcp
     "message-bus": {
       "command": "pnpm",
       "args": ["exec", "amb-mcp"],
+      "env": {
+        "MESSAGE_BUS_URL": "http://localhost:3333",
+        "MESSAGE_BUS_PROJECT_ID": "22222222-2222-4222-8222-222222222222"
+      }
+    }
+  }
+}
+```
+
+Если проект использует `npm`, используйте:
+
+```json
+{
+  "mcpServers": {
+    "message-bus": {
+      "command": "npx",
+      "args": ["amb-mcp"],
       "env": {
         "MESSAGE_BUS_URL": "http://localhost:3333",
         "MESSAGE_BUS_PROJECT_ID": "22222222-2222-4222-8222-222222222222"
@@ -90,6 +117,18 @@ MESSAGE_BUS_URL = "http://localhost:3333"
 MESSAGE_BUS_PROJECT_ID = "22222222-2222-4222-8222-222222222222"
 ```
 
+Если проект использует `npm`, используйте:
+
+```toml
+[mcp_servers.message-bus]
+command = "npx"
+args = ["amb-mcp"]
+
+[mcp_servers.message-bus.env]
+MESSAGE_BUS_URL = "http://localhost:3333"
+MESSAGE_BUS_PROJECT_ID = "22222222-2222-4222-8222-222222222222"
+```
+
 ### Claude Code
 
 Добавьте MCP-сервер в конфиг Claude:
@@ -100,6 +139,23 @@ MESSAGE_BUS_PROJECT_ID = "22222222-2222-4222-8222-222222222222"
     "message-bus": {
       "command": "pnpm",
       "args": ["exec", "amb-mcp"],
+      "env": {
+        "MESSAGE_BUS_URL": "http://localhost:3333",
+        "MESSAGE_BUS_PROJECT_ID": "22222222-2222-4222-8222-222222222222"
+      }
+    }
+  }
+}
+```
+
+Если проект использует `npm`, используйте:
+
+```json
+{
+  "mcpServers": {
+    "message-bus": {
+      "command": "npx",
+      "args": ["amb-mcp"],
       "env": {
         "MESSAGE_BUS_URL": "http://localhost:3333",
         "MESSAGE_BUS_PROJECT_ID": "22222222-2222-4222-8222-222222222222"
@@ -128,6 +184,7 @@ MESSAGE_BUS_PROJECT_ID = "22222222-2222-4222-8222-222222222222"
 Предпочтительный путь:
 
 ```bash
+# или: npx amb-mcp setup
 MESSAGE_BUS_URL=http://localhost:3333 \
 MESSAGE_BUS_PROJECT_ID=<SAME_PROJECT_ID> \
 pnpm exec amb-mcp setup
@@ -140,6 +197,7 @@ pnpm exec amb-mcp setup
 Зарегистрировать агентов:
 
 ```bash
+# или: npx amb-mcp seed agents .cursor/agents
 MESSAGE_BUS_URL=http://localhost:3333 \
 MESSAGE_BUS_PROJECT_ID=<SAME_PROJECT_ID> \
 pnpm exec amb-mcp seed agents .cursor/agents
@@ -148,6 +206,7 @@ pnpm exec amb-mcp seed agents .cursor/agents
 Сразу зарегистрировать агентов и их default threads:
 
 ```bash
+# или: npx amb-mcp seed all .cursor/agents
 MESSAGE_BUS_URL=http://localhost:3333 \
 MESSAGE_BUS_PROJECT_ID=<SAME_PROJECT_ID> \
 pnpm exec amb-mcp seed all .cursor/agents
@@ -194,6 +253,7 @@ Create a thread in AMB called "cross-client-demo". Coordinate work across po, ar
 
 ## Частые проблемы
 
+- `docker compose up` падает из-за занятых портов: запустите с `WEB_PORT=4333 API_PORT=4334` и используйте тот же порт в `MESSAGE_BUS_URL`.
 - MCP не виден в клиенте: проверьте, что установлен `@openaisdk/amb-mcp` и клиент перезапущен.
 - Агенты не появились после `seed`: проверьте `MESSAGE_BUS_PROJECT_ID` и путь до `.cursor/agents`.
 - `orchestrator` создаёт thread, но другие роли не отвечают: убедитесь, что эти роли реально существуют в registry и соответствующие клиенты подключены к тому же проекту.

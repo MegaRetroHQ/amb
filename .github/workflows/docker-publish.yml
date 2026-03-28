@@ -50,6 +50,30 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Check Docker image version
+        id: docker-version
+        shell: bash
+        run: |
+          set -euo pipefail
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          IMAGES=(
+            "docker.io/openaisdk/amb-web-ui:$PACKAGE_VERSION"
+            "docker.io/openaisdk/amb-api:$PACKAGE_VERSION"
+            "docker.io/openaisdk/amb-seed:$PACKAGE_VERSION"
+          )
+
+          for image in "${IMAGES[@]}"; do
+            if ! docker buildx imagetools inspect "$image" >/dev/null 2>&1; then
+              echo "should_publish=true" >> "$GITHUB_OUTPUT"
+              echo "Docker image version $PACKAGE_VERSION is not fully published yet. Publishing is enabled."
+              exit 0
+            fi
+          done
+
+          echo "should_publish=false" >> "$GITHUB_OUTPUT"
+          echo "Docker image version $PACKAGE_VERSION already exists in Docker Hub."
+          echo "If you want to publish new public artifacts, bump the version in package.json first."
+
       - name: Check npm package version
         id: npm-version
         shell: bash
@@ -58,13 +82,21 @@ jobs:
           PACKAGE_VERSION=$(node -p "require('./packages/mcp-server/package.json').version")
           if npm view @openaisdk/amb-mcp@"$PACKAGE_VERSION" version >/dev/null 2>&1; then
             echo "should_publish=false" >> "$GITHUB_OUTPUT"
-            echo "Package version $PACKAGE_VERSION already exists on npm. Skipping npm publish."
+            echo "npm package version $PACKAGE_VERSION already exists."
+            echo "If you want to publish a new npm package, bump the version in package.json first."
           else
             echo "should_publish=true" >> "$GITHUB_OUTPUT"
-            echo "Package version $PACKAGE_VERSION is not on npm yet. Publishing is enabled."
+            echo "npm package version $PACKAGE_VERSION is not published yet. Publishing is enabled."
           fi
 
+      - name: Skip publish because version already exists
+        if: steps.docker-version.outputs.should_publish != 'true' && steps.npm-version.outputs.should_publish != 'true'
+        run: |
+          echo "All public artifact versions already exist."
+          echo "Update the version in package.json before publishing a new release."
+
       - name: Publish public artifacts
+        if: steps.docker-version.outputs.should_publish == 'true' || steps.npm-version.outputs.should_publish == 'true'
         run: sh scripts/release/publish-public-artifacts.sh
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

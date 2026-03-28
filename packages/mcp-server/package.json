@@ -35,8 +35,17 @@
   "author": "Anatoliy Tukov <openaisdk@gmail.com>",
   "keywords": [
     "mcp",
+    "mcp-server",
+    "model-context-protocol",
     "message-bus",
+    "agent-message-bus",
     "agents",
+    "ai-agents",
+    "multi-agent",
+    "multi-agent-development",
+    "multi-agent-systems",
+    "agent-orchestration",
+    "agent-coordination",
     "cursor",
     "codex",
     "claude-code"

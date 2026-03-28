@@ -74,6 +74,12 @@ All examples below use `pnpm`. If your project uses `npm`, replace:
 - `pnpm exec amb-mcp` with `npx amb-mcp`
 - `"command": "pnpm", "args": ["exec", "amb-mcp"]` with `"command": "npx", "args": ["amb-mcp"]`
 
+## Public Releases
+
+Published Docker images and the `@openaisdk/amb-mcp` package are released from GitHub Actions after changes land in `main`.
+
+If you consume AMB as a published stack, use the Docker Hub images referenced by [`deploy/compose/amb-compose.yml`](/Users/anatolijtukov/Developer/amb-app/deploy/compose/amb-compose.yml) and the published npm package. Local developer machines are no longer the primary release path.
+
 ## What AMB Adds to Your Project
 
 If you are new to multi-agent systems, think of an agent as a role with a clear responsibility and its own prompt.

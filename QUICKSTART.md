@@ -219,3 +219,7 @@ Create a thread in AMB called "project-onboarding". Coordinate work across po, a
 - MCP не появился: проверьте, что пакет `@openaisdk/amb-mcp` установлен и клиент перезапущен.
 - Агенты не появились: проверьте `MESSAGE_BUS_PROJECT_ID` и путь `.cursor/agents` или `.agents`.
 - `orchestrator` пишет, а остальные роли молчат: сначала проверьте single-client сценарий, потом переходите к cross-client setup.
+
+## Как обновляются публичные артефакты
+
+Публичные Docker-образы и пакет `@openaisdk/amb-mcp` публикуются из GitHub Actions после merge в `main`. Для использования AMB ориентируйтесь на опубликованный stack и npm-пакет, а не на локальный ручной publish.

@@ -83,8 +83,6 @@
 |---------|------------|
 | `pnpm run mcp:build` | Сборка `@openaisdk/amb-mcp` |
 | `pnpm run mcp:dev` | Режим разработки MCP |
-| `pnpm run mcp:publish` | Сборка + `npm publish` (`packages/mcp-server`) |
-| `pnpm run mcp:version` | `npm version` в `packages/mcp-server` |
 
 ### Я хочу образ, compose, прод или K8s
 
@@ -94,15 +92,11 @@
 |--------|--------|
 | `pnpm run deploy:local` | **Сборка из репо** (`podman compose up -d --build`), web **4333**, api **4334** |
 | `pnpm run deploy:amb` | **Опубликованный stack** из `deploy/compose/amb-compose.yml` (web/api/seed из Hub), по умолчанию web **4333**, api **4334** |
-| `pnpm run deploy:compose:build` | Алиас → `deploy:local` |
-| `pnpm run deploy:compose:prebuilt` | Алиас → `deploy:amb` |
 
 **Остальное:**
 
 | Команда | Назначение |
 |---------|------------|
-| `pnpm run docker:compose:publish` | Опубликовать только `amb-web-ui` как **multi-arch**. Для multi-arch сначала пробуется `docker buildx` с registry cache, при недоступности идёт fallback на `podman`. По умолчанию пушатся теги `:<version из package.json>` и `:latest`; можно переопределить `IMAGE_TAG`, отключить `latest` через `PUBLISH_LATEST=false` и cache через `DOCKER_BUILDX_CACHE=false` |
-| `pnpm run release:publish` | Опубликовать образы web/api/seed + npm `@openaisdk/amb-mcp`. Для multi-arch сначала пробуется `docker buildx` с registry cache, при недоступности идёт fallback на `podman`. Для Docker по умолчанию пушатся теги `:<version из package.json>` и `:latest`; можно переопределить `IMAGE_TAG`, `NPM_TAG`, `IMAGE_PLATFORMS`, `PUBLISH_LATEST`, `DOCKER_BUILDX_CACHE`, `CACHE_REF`, `CONTAINER_CLI` |
 | `pnpm run deploy:local:standalone` | Как `deploy:local`, порты **3333 / 3334** |
 | `pnpm run deploy:local:down` | `compose down -v` |
 | `pnpm run deploy:prod` | `scripts/deploy/production-deploy.sh` |
@@ -130,8 +124,8 @@
 
 | Сценарий | Команда | Порты (типично) |
 |----------|---------|-----------------|
-| Сборка UI из репозитория | `pnpm run deploy:local` или `pnpm run deploy:compose:build` | **4333** / **4334** |
-| Опубликованный stack из Hub | `pnpm run deploy:amb` или `pnpm run deploy:compose:prebuilt` | **4333** / **4334** |
+| Сборка UI из репозитория | `pnpm run deploy:local` | **4333** / **4334** |
+| Опубликованный stack из Hub | `pnpm run deploy:amb` | **4333** / **4334** |
 | Как выше, другие порты | `pnpm run deploy:local:standalone` | **3333** / **3334** |
 
 Остановка локального compose из репозитория: `pnpm run deploy:local:down`.
@@ -174,7 +168,7 @@
 | 🌱 Сиды | `seed:agents`, `seed:threads`, `seed:all` |
 | 📚 Примеры | `example:simple`, `example:inbox`, `example:workflow` |
 | 🤖 Агенты / PO | `agent:worker`, `agent:worker:single`, `orchestrator`, `po:check-inbox` |
-| 🔌 MCP | `mcp:build`, `mcp:dev`, `mcp:publish`, `mcp:version` |
-| 🐳 Docker / деплой | `docker:compose:publish`, `release:publish`, `deploy:amb`, `deploy:compose:prebuilt`, `deploy:local`, `deploy:compose:build`, `deploy:local:standalone`, `deploy:local:down`, `deploy:dev:db`, `deploy:dev:db:down`, `deploy:prod`, `deploy:k8s:migrate`, `deploy:k8s:api` |
+| 🔌 MCP | `mcp:build`, `mcp:dev` |
+| 🐳 Docker / деплой | `deploy:amb`, `deploy:local`, `deploy:local:standalone`, `deploy:local:down`, `deploy:dev:db`, `deploy:dev:db:down`, `deploy:prod`, `deploy:k8s:migrate`, `deploy:k8s:api` |
 
 Полный список имён — в корневом [`package.json`](../package.json).

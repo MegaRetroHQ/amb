@@ -44,6 +44,7 @@ COPY --from=builder /app/packages/db/prisma ./packages/db/prisma
 COPY --from=builder /app/packages/db/dist ./packages/db/dist
 
 COPY --from=builder /app/packages/shared/package.json ./packages/shared/package.json
+COPY --from=builder /app/packages/shared/node_modules ./packages/shared/node_modules
 COPY --from=builder /app/packages/shared/dist ./packages/shared/dist
 
 EXPOSE 3334

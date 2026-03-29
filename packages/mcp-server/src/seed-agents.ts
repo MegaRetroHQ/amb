@@ -4,31 +4,10 @@
  */
 
 import "dotenv/config";
-import { loadOrCreateRegistry, Registry } from "./agent-registry";
-
-const BASE_URL = process.env.MESSAGE_BUS_URL ?? "http://localhost:3333";
-const API_URL = `${BASE_URL}/api/agents`;
-const PROJECT_ID = process.env.MESSAGE_BUS_PROJECT_ID;
-
-type Agent = {
-  id: string;
-  name: string;
-  role: string;
-};
-
-async function getExistingAgents(): Promise<Map<string, Agent>> {
-  try {
-    const res = await fetch(API_URL, {
-      headers: PROJECT_ID ? { "x-project-id": PROJECT_ID } : undefined,
-    });
-    if (!res.ok) return new Map();
-    const json = await res.json();
-    const agents = json.data as Agent[];
-    return new Map(agents.map((a) => [a.role, a]));
-  } catch {
-    return new Map();
-  }
-}
+import { loadOrCreateRegistry } from "./agent-registry";
+import { createFetchMessageBusClient } from "./client/fetch-message-bus-client";
+import { getMessageBusConfig } from "./config/message-bus-config";
+import { syncRegistryAgents } from "./registry-agent-sync";
 
 export async function runSeedAgents(registryPath?: string): Promise<void> {
   const loaded = await loadOrCreateRegistry(registryPath);
@@ -41,41 +20,24 @@ export async function runSeedAgents(registryPath?: string): Promise<void> {
     return;
   }
 
-  const existingAgents = await getExistingAgents();
-  console.log(`📋 Existing agents: ${existingAgents.size}\n`);
+  const config = getMessageBusConfig();
+  const client = createFetchMessageBusClient(config);
 
-  let created = 0;
-  let skipped = 0;
+  const existingBefore = await client.requestJson<Array<{ id: string; role: string }>>("/api/agents");
+  const existingByRole = new Map(existingBefore.map((a) => [a.role, a]));
+  console.log(`📋 Existing agents: ${existingBefore.length}\n`);
 
   for (const agent of registry.agents) {
-    const existing = existingAgents.get(agent.role);
-    if (existing) {
-      console.log(`⏭️  Skip (exists): ${agent.role} → ${existing.id}`);
-      skipped++;
-      continue;
+    const row = existingByRole.get(agent.role);
+    if (row) {
+      console.log(`⏭️  Skip (exists): ${agent.role} → ${row.id}`);
     }
+  }
 
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(PROJECT_ID ? { "x-project-id": PROJECT_ID } : {}),
-      },
-      body: JSON.stringify({
-        name: agent.name,
-        role: agent.role,
-      }),
-    });
+  const { created, skipped, createdRows } = await syncRegistryAgents(client, registry);
 
-    if (!res.ok) {
-      console.error(`❌ Failed to seed agent ${agent.id}`);
-      console.error(await res.text());
-      continue;
-    }
-
-    const json = await res.json();
-    console.log(`✅ Created: ${agent.role} → ${json.data.id}`);
-    created++;
+  for (const row of createdRows) {
+    console.log(`✅ Created: ${row.role} → ${row.id}`);
   }
 
   console.log("\n────────────────────────────────────");

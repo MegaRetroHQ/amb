@@ -1,4 +1,5 @@
 import { createArgResolvers } from "./args/arg-resolvers";
+import { ensureRegistryAgentsOnFirstToolCall } from "./bootstrap-agents";
 import { createFetchMessageBusClient } from "./client/fetch-message-bus-client";
 import { getMessageBusConfig } from "./config/message-bus-config";
 import { buildToolRegistry, type ToolRegistryDeps } from "./tools/build-registry";
@@ -10,7 +11,8 @@ const resolvers = createArgResolvers(config.defaultProjectId);
 
 export const toolHandlers = buildToolRegistry({ client, resolvers });
 
-export function handleTool(name: string, args: ToolArgs): Promise<unknown> {
+export async function handleTool(name: string, args: ToolArgs): Promise<unknown> {
+  await ensureRegistryAgentsOnFirstToolCall(client, config);
   const handler = toolHandlers[name];
   if (!handler) {
     throw new Error(`Unknown tool: ${name}`);

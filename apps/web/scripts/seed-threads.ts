@@ -7,10 +7,13 @@
 
 import "dotenv/config";
 import fs from "fs/promises";
-import path from "path";
 
-const API_URL = process.env.MESSAGE_BUS_URL ?? "http://localhost:3333";
-const PROJECT_ID = process.env.MESSAGE_BUS_PROJECT_ID;
+import {
+  messageBusFetchHeaders,
+  resolveSeedMessageBusConfig,
+  type SeedMessageBusConfig,
+} from "./message-bus-env";
+import { resolveRegistryJsonPath } from "./registry-path";
 
 type Registry = {
   project: string;
@@ -22,14 +25,15 @@ type Registry = {
   }[];
 };
 
-async function createThread(title: string): Promise<{ id: string; title: string } | null> {
+async function createThread(
+  baseUrl: string,
+  bus: SeedMessageBusConfig,
+  title: string
+): Promise<{ id: string; title: string } | null> {
   try {
-    const res = await fetch(`${API_URL}/api/threads`, {
+    const res = await fetch(`${baseUrl}/api/threads`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(PROJECT_ID ? { "x-project-id": PROJECT_ID } : {}),
-      },
+      headers: messageBusFetchHeaders(bus, true),
       body: JSON.stringify({ title, status: "open" }),
     });
 
@@ -47,10 +51,13 @@ async function createThread(title: string): Promise<{ id: string; title: string 
   }
 }
 
-async function getExistingThreads(): Promise<Set<string>> {
+async function getExistingThreads(
+  baseUrl: string,
+  bus: SeedMessageBusConfig
+): Promise<Set<string>> {
   try {
-    const res = await fetch(`${API_URL}/api/threads`, {
-      headers: PROJECT_ID ? { "x-project-id": PROJECT_ID } : undefined,
+    const res = await fetch(`${baseUrl}/api/threads`, {
+      headers: messageBusFetchHeaders(bus, false),
     });
     if (!res.ok) return new Set();
     const json = await res.json();
@@ -63,13 +70,19 @@ async function getExistingThreads(): Promise<Set<string>> {
 async function main() {
   console.log("🌱 Seeding default threads...\n");
 
+  const bus = await resolveSeedMessageBusConfig();
+  const baseUrl = bus.baseUrl;
+  if (bus.projectId) {
+    console.log(`📎 Using project: ${bus.projectId}\n`);
+  }
+
   // Load registry
-  const registryPath = path.resolve(".cursor/agents/registry.json");
+  const registryPath = await resolveRegistryJsonPath();
   const raw = await fs.readFile(registryPath, "utf-8");
   const registry = JSON.parse(raw) as Registry;
 
   // Get existing threads to avoid duplicates
-  const existingThreads = await getExistingThreads();
+  const existingThreads = await getExistingThreads(baseUrl, bus);
   console.log(`📋 Existing threads: ${existingThreads.size}\n`);
 
   let created = 0;
@@ -95,7 +108,7 @@ async function main() {
       continue;
     }
 
-    const thread = await createThread(title);
+    const thread = await createThread(baseUrl, bus, title);
     if (thread) {
       console.log(`✅ Created: ${title} → ${thread.id}`);
       created++;
@@ -119,7 +132,7 @@ async function main() {
       continue;
     }
 
-    const thread = await createThread(title);
+    const thread = await createThread(baseUrl, bus, title);
     if (thread) {
       console.log(`✅ Created: ${title} → ${thread.id}`);
       created++;

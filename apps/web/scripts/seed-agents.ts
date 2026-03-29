@@ -1,10 +1,12 @@
 import "dotenv/config";
 import fs from "fs/promises";
-import path from "path";
 
-const BASE_URL = process.env.MESSAGE_BUS_URL ?? "http://localhost:3333";
-const API_URL = `${BASE_URL}/api/agents`;
-const PROJECT_ID = process.env.MESSAGE_BUS_PROJECT_ID;
+import {
+  messageBusFetchHeaders,
+  resolveSeedMessageBusConfig,
+  type SeedMessageBusConfig,
+} from "./message-bus-env";
+import { resolveRegistryJsonPath } from "./registry-path";
 
 type Registry = {
   project: string;
@@ -23,10 +25,13 @@ type Agent = {
   role: string;
 };
 
-async function getExistingAgents(): Promise<Map<string, Agent>> {
+async function getExistingAgents(
+  apiUrl: string,
+  config: SeedMessageBusConfig
+): Promise<Map<string, Agent>> {
   try {
-    const res = await fetch(API_URL, {
-      headers: PROJECT_ID ? { "x-project-id": PROJECT_ID } : undefined,
+    const res = await fetch(apiUrl, {
+      headers: messageBusFetchHeaders(config, false),
     });
     if (!res.ok) return new Map();
     const json = await res.json();
@@ -38,22 +43,29 @@ async function getExistingAgents(): Promise<Map<string, Agent>> {
 }
 
 async function main() {
-  const registryPath = path.resolve(".cursor/agents/registry.json");
+  const bus = await resolveSeedMessageBusConfig();
+  const apiUrl = `${bus.baseUrl}/api/agents`;
+
+  const registryPath = await resolveRegistryJsonPath();
 
   const raw = await fs.readFile(registryPath, "utf-8");
   const registry = JSON.parse(raw) as Registry;
 
-  console.log(`🌱 Seeding agents for project: ${registry.project}\n`);
+  console.log(`🌱 Seeding agents for: ${registry.project}\n`);
 
-  // Get existing agents to avoid duplicates
-  const existingAgents = await getExistingAgents();
-  console.log(`📋 Existing agents: ${existingAgents.size}\n`);
+  console.log("⚙️  Config:");
+  console.log(`   API URL     ${bus.baseUrl}  (${bus.sources.baseUrl})`);
+  console.log(`   Project ID  ${bus.projectId ?? "—"}  (${bus.sources.projectId})`);
+  console.log(`   Auth token  ${bus.accessToken ? "***" : "—"}  (${bus.sources.accessToken})`);
+  console.log(`   Registry    ${registryPath}\n`);
+
+  const existingAgents = await getExistingAgents(apiUrl, bus);
+  console.log(`📋 Existing agents in project: ${existingAgents.size}\n`);
 
   let created = 0;
   let skipped = 0;
 
   for (const agent of registry.agents) {
-    // Check if agent with this role already exists
     const existing = existingAgents.get(agent.role);
     if (existing) {
       console.log(`⏭️  Skip (exists): ${agent.role} → ${existing.id}`);
@@ -61,12 +73,9 @@ async function main() {
       continue;
     }
 
-    const res = await fetch(API_URL, {
+    const res = await fetch(apiUrl, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(PROJECT_ID ? { "x-project-id": PROJECT_ID } : {}),
-      },
+      headers: messageBusFetchHeaders(bus, true),
       body: JSON.stringify({
         name: agent.name,
         role: agent.role,

@@ -2,7 +2,7 @@ import type { MessageBusConfig } from "../config/message-bus-config";
 import type { MessageBusClient } from "./message-bus-client";
 
 export function createFetchMessageBusClient(config: MessageBusConfig): MessageBusClient {
-  const { baseUrl, defaultProjectId } = config;
+  const { baseUrl, defaultProjectId, accessToken } = config;
 
   return {
     async requestJson<T>(path: string, init: RequestInit = {}): Promise<T> {
@@ -11,6 +11,7 @@ export function createFetchMessageBusClient(config: MessageBusConfig): MessageBu
         headers: {
           "Content-Type": "application/json",
           ...(defaultProjectId ? { "x-project-id": defaultProjectId } : {}),
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
           ...init.headers,
         },
       });

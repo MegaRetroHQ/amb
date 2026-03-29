@@ -1,6 +1,6 @@
 # ADR-019: Routing Efficiency and Broadcast Governance
 
-Статус: Предложено  
+Статус: Принято  
 Дата: 2026-03-29
 
 ## Контекст

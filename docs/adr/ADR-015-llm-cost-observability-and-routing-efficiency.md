@@ -1,8 +1,21 @@
 # ADR-015: LLM Cost Observability и оптимизация маршрутизации сообщений
 
-Статус: Предложено  
+Статус: Разбито  
 Дата: 2026-03-28  
 Автор: Architect Agent
+
+## Разбиение на дочерние ADR
+
+Исходный зонтичный ADR заменён каноничным набором решений (см. [kernel-architecture-enterprise.md](../kernel-architecture-enterprise.md)):
+
+| Тема ADR-015 | Дочерний ADR |
+|--------------|--------------|
+| Граница kernel, Control/Data Plane, запрет смешения с продуктовыми модулями | [ADR-016](./ADR-016-kernel-boundary-and-plane-model.md) |
+| Enterprise rules, `PolicyDecision`, точки enforcement, аудит | [ADR-017](./ADR-017-enterprise-rules-and-policy-contract.md) |
+| LLM usage/cost, `provider_exact` / `estimated`, soft budgets v1, агрегаты | [ADR-018](./ADR-018-llm-cost-observability-soft-budgets.md) |
+| Directed-by-default, broadcast governance, cursor-first reads, anti-amplification, KPI | [ADR-019](./ADR-019-routing-efficiency-and-broadcast-governance.md) |
+
+Детальный план фаз (Prisma `LlmCall`, API, UI, optional `claimed` и hard cap) остаётся в тексте ниже как **исторический материал внедрения**; нормативные контракты и границы ядра — только в ADR-016–019.
 
 ---
 

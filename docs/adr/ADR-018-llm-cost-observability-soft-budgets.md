@@ -1,6 +1,6 @@
 # ADR-018: LLM Usage Cost Observability and Soft Budgets
 
-Статус: Предложено  
+Статус: Принято  
 Дата: 2026-03-29
 
 ## Контекст

@@ -4,11 +4,14 @@
 **Дата:** 2026-03-29  
 **Статус:** Baseline (каноничный ориентир)
 
-Связанные ADR:
+Связанные ADR (каноничные, **Принято**):
+
 - [ADR-016](./adr/ADR-016-kernel-boundary-and-plane-model.md)
 - [ADR-017](./adr/ADR-017-enterprise-rules-and-policy-contract.md)
 - [ADR-018](./adr/ADR-018-llm-cost-observability-soft-budgets.md)
 - [ADR-019](./adr/ADR-019-routing-efficiency-and-broadcast-governance.md)
+
+Зонтичный [ADR-015](./adr/ADR-015-llm-cost-observability-and-routing-efficiency.md) имеет статус **Разбито**; нормативная часть перенесена в ADR-016–019, детали плана внедрения в ADR-015 оставлены как справочный текст.
 
 ---
 

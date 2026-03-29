@@ -1,6 +1,6 @@
 # ADR-017: Enterprise Rules and Policy Engine Contract
 
-Статус: Предложено  
+Статус: Принято  
 Дата: 2026-03-29
 
 ## Контекст

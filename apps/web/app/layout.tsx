@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, IBM_Plex_Sans, Unbounded } from "next/font/google";
+import { IBM_Plex_Mono, IBM_Plex_Sans, Unbounded, Inter } from "next/font/google";
+import { TooltipProvider } from "@amb-app/ui/components/tooltip";
 import "./globals.css";
+import { cn } from "@amb-app/ui/lib/utils";
+
+const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
 const bodyFont = IBM_Plex_Sans({
   variable: "--font-ibm-plex-sans",
@@ -30,9 +34,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${bodyFont.variable} ${displayFont.variable}`}>
+    <html lang="en" suppressHydrationWarning className={cn(bodyFont.variable, displayFont.variable, "font-sans", inter.variable)}>
       <body className={`${bodyFont.variable} ${displayFont.variable} ${monoFont.variable} antialiased`}>
-        {children}
+        <TooltipProvider>{children}</TooltipProvider>
       </body>
     </html>
   );

@@ -4,15 +4,15 @@ import { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { CopyIcon, UserRoundIcon } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@amb-app/ui/components/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+} from "@amb-app/ui/components/card";
+import { Skeleton } from "@amb-app/ui/components/skeleton";
 
 import { ChangePasswordCard } from "./change-password-card";
 

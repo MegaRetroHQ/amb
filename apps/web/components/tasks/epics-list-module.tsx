@@ -5,8 +5,8 @@ import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Badge } from "@amb-app/ui/components/badge";
+import { Button } from "@amb-app/ui/components/button";
 import {
   Dialog,
   DialogContent,
@@ -14,9 +14,24 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+} from "@amb-app/ui/components/dialog";
+import { Input } from "@amb-app/ui/components/input";
 import { DescriptionEditor } from "@/components/ui/description-editor";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@amb-app/ui/components/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@amb-app/ui/components/table";
 import { useEpics } from "@/lib/hooks/use-epics";
 import { getLocalizedApiErrorMessage } from "@/lib/api/error-i18n";
 import { EPIC_STATUSES } from "@amb-app/shared";
@@ -25,10 +40,9 @@ import {
   TasksWorkspaceEmpty,
   TasksWorkspaceFilterDeck,
   TasksWorkspaceToolRow,
-  tasksFilterSelectClass,
   tasksWorkspacePrimaryButtonClass,
 } from "@/components/tasks/tasks-workspace-shell";
-import { cn } from "@/lib/utils";
+import { cn } from "@amb-app/ui/lib/utils";
 
 type EpicsListModuleProps = {
   projectId: string;
@@ -42,6 +56,7 @@ export function EpicsListModule({ projectId }: EpicsListModuleProps) {
     projectId,
     statusFilter,
   );
+  const { epics: allEpics } = useEpics(projectId, "ALL");
 
   const [createOpen, setCreateOpen] = useState(false);
   const [editing, setEditing] = useState<Epic | null>(null);
@@ -120,6 +135,22 @@ export function EpicsListModule({ projectId }: EpicsListModuleProps) {
     }
   };
 
+  const statusCounts = {
+    ALL: allEpics.length,
+    OPEN: allEpics.filter((epic) => epic.status === "OPEN").length,
+    IN_PROGRESS: allEpics.filter((epic) => epic.status === "IN_PROGRESS").length,
+    DONE: allEpics.filter((epic) => epic.status === "DONE").length,
+    ARCHIVED: allEpics.filter((epic) => epic.status === "ARCHIVED").length,
+  } as const;
+
+  const statusOptions: Array<{ value: EpicStatus | "ALL"; label: string }> = [
+    { value: "ALL", label: t("statusAll").replace(/\s*\(.+\)\s*$/, "") },
+    ...EPIC_STATUSES.map((status) => ({
+      value: status,
+      label: t(`status.${status}`),
+    })),
+  ];
+
   return (
     <div className="space-y-3">
       <TasksWorkspaceToolRow
@@ -127,19 +158,32 @@ export function EpicsListModule({ projectId }: EpicsListModuleProps) {
           <TasksWorkspaceFilterDeck>
             <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-x-4 sm:gap-y-2">
               <span className="tasks-kicker">{t("listTitle")}</span>
-              <select
-                className={cn(tasksFilterSelectClass, "max-w-none sm:max-w-[14rem]")}
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value as EpicStatus | "ALL")}
+              <div
+                className="inline-flex flex-wrap items-center gap-1"
+                role="tablist"
                 aria-label={t("filterStatus")}
               >
-                <option value="ALL">{t("statusAll")}</option>
-                {EPIC_STATUSES.map((s) => (
-                  <option key={s} value={s}>
-                    {t(`status.${s}`)}
-                  </option>
-                ))}
-              </select>
+                {statusOptions.map((option) => {
+                  const isActive = statusFilter === option.value;
+                  const count = statusCounts[option.value];
+
+                  return (
+                    <Button
+                      key={option.value}
+                      type="button"
+                      size="sm"
+                      variant={isActive ? "secondary" : "ghost"}
+                      className={cn("h-8 gap-1.5 rounded-md px-3", isActive && "shadow-sm")}
+                      onClick={() => setStatusFilter(option.value)}
+                      role="tab"
+                      aria-selected={isActive}
+                    >
+                      <span>{option.label}</span>
+                      <span className="text-muted-foreground">({count})</span>
+                    </Button>
+                  );
+                })}
+              </div>
             </div>
           </TasksWorkspaceFilterDeck>
         }
@@ -161,36 +205,36 @@ export function EpicsListModule({ projectId }: EpicsListModuleProps) {
       {!loading && epics.length === 0 ? <TasksWorkspaceEmpty>{t("empty")}</TasksWorkspaceEmpty> : null}
 
       {!loading && epics.length > 0 ? (
-        <div className="tasks-data-table-wrap overflow-x-auto">
-          <table className="w-full min-w-[640px] text-sm">
-            <thead className="tasks-table-head">
-              <tr className="text-left">
-                <th className="px-3">{t("columnTitle")}</th>
-                <th className="px-3">{t("columnStatus")}</th>
-                <th className="px-3">{t("columnTasks")}</th>
-                <th className="px-3">{t("columnActions")}</th>
-              </tr>
-            </thead>
-            <tbody>
+        <div className="tasks-data-table-wrap">
+          <Table className="min-w-[640px]">
+            <TableHeader className="tasks-table-head">
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="px-3">{t("columnTitle")}</TableHead>
+                <TableHead className="px-3">{t("columnStatus")}</TableHead>
+                <TableHead className="px-3">{t("columnTasks")}</TableHead>
+                <TableHead className="px-3">{t("columnActions")}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {epics.map((epic, rowIndex) => (
-                <tr
+                <TableRow
                   key={epic.id}
                   className="tasks-table-row"
                   style={{ "--stagger": Math.min(rowIndex * 22, 440) } as CSSProperties}
                 >
-                  <td className="px-3 py-2">
+                  <TableCell className="px-3 py-2">
                     <Link
                       href={`/tasks/epics/${epic.id}`}
                       className="font-medium text-foreground underline-offset-4 hover:underline"
                     >
                       {epic.title}
                     </Link>
-                  </td>
-                  <td className="px-3 py-2">
+                  </TableCell>
+                  <TableCell className="px-3 py-2">
                     <Badge variant="outline">{t(`status.${epic.status}`)}</Badge>
-                  </td>
-                  <td className="px-3 py-2 tabular-nums">{epic._count?.tasks ?? "—"}</td>
-                  <td className="px-3 py-2">
+                  </TableCell>
+                  <TableCell className="px-3 py-2 tabular-nums">{epic._count?.tasks ?? "—"}</TableCell>
+                  <TableCell className="px-3 py-2">
                     <div className="flex items-center gap-1">
                       <Button variant="ghost" size="icon" onClick={() => openEdit(epic)}>
                         <PencilIcon className="size-4" />
@@ -205,11 +249,11 @@ export function EpicsListModule({ projectId }: EpicsListModuleProps) {
                         <TrashIcon className="size-4 text-destructive" />
                       </Button>
                     </div>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       ) : null}
 
@@ -231,17 +275,21 @@ export function EpicsListModule({ projectId }: EpicsListModuleProps) {
               onChange={setFormDescription}
               minHeight="8rem"
             />
-            <select
-              className="h-9 w-full rounded-md border bg-transparent px-2 text-sm"
+            <Select
               value={formStatus}
-              onChange={(e) => setFormStatus(e.target.value as EpicStatus)}
+              onValueChange={(value) => setFormStatus(value as EpicStatus)}
             >
-              {EPIC_STATUSES.filter((s) => s !== "ARCHIVED").map((s) => (
-                <option key={s} value={s}>
-                  {t(`status.${s}`)}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {EPIC_STATUSES.filter((s) => s !== "ARCHIVED").map((s) => (
+                  <SelectItem key={s} value={s}>
+                    {t(`status.${s}`)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setCreateOpen(false)}>
@@ -272,17 +320,21 @@ export function EpicsListModule({ projectId }: EpicsListModuleProps) {
               onChange={setFormDescription}
               minHeight="8rem"
             />
-            <select
-              className="h-9 w-full rounded-md border bg-transparent px-2 text-sm"
+            <Select
               value={formStatus}
-              onChange={(e) => setFormStatus(e.target.value as EpicStatus)}
+              onValueChange={(value) => setFormStatus(value as EpicStatus)}
             >
-              {EPIC_STATUSES.map((s) => (
-                <option key={s} value={s}>
-                  {t(`status.${s}`)}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {EPIC_STATUSES.map((s) => (
+                  <SelectItem key={s} value={s}>
+                    {t(`status.${s}`)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditing(null)}>

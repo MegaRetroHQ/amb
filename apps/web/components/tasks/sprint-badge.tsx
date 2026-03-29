@@ -2,13 +2,13 @@
 
 import { Link } from "@/i18n/navigation";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@amb-app/ui/lib/utils";
 import type { TaskSprint } from "@amb-app/shared";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@amb-app/ui/components/tooltip";
 
 type SprintBadgeProps = {
   sprint: Pick<TaskSprint, "id" | "name" | "status">;

@@ -4,9 +4,9 @@ import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ChevronLeftIcon, ChevronRightIcon, CalendarIcon } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { cn } from "@/lib/utils";
+import { Button } from "@amb-app/ui/components/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@amb-app/ui/components/dialog";
+import { cn } from "@amb-app/ui/lib/utils";
 
 type DatePickerProps = {
   value?: string;

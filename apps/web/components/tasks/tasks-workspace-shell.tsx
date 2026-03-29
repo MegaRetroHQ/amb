@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
-import { cn } from "@/lib/utils";
+import { EmptyState } from "@amb-app/ui/components/empty-state";
+import { cn } from "@amb-app/ui/lib/utils";
 
 /** Shared with Issues filters — keep in sync with task toolbar selects. */
 export const tasksFilterSelectClass =
@@ -51,11 +52,7 @@ export function TasksWorkspaceToolRow({
 }
 
 export function TasksWorkspaceEmpty({ children, className }: { children: ReactNode; className?: string }) {
-  return (
-    <div className={cn("tasks-filter-deck p-10 text-center text-sm text-muted-foreground", className)}>
-      {children}
-    </div>
-  );
+  return <EmptyState title={children} className={cn("border-border/60", className)} />;
 }
 
 export const tasksDetailBackButtonClass =

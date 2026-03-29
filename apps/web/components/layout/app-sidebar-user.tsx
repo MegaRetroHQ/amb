@@ -21,14 +21,14 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@amb-app/ui/components/dropdown-menu";
 import {
   SidebarFooter,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSkeleton,
-} from "@/components/ui/sidebar";
+} from "@amb-app/ui/components/sidebar";
 import { useTheme } from "@/components/theme-provider";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
@@ -149,24 +149,23 @@ export function AppSidebarUser() {
       <SidebarMenu>
         <SidebarMenuItem>
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <SidebarMenuButton
-                size="lg"
-                className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-                tooltip={t("sidebarUserMenu")}
-              >
-                <div className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-sidebar-border bg-sidebar-accent text-sidebar-accent-foreground">
-                  <span className="text-xs font-semibold">
-                    {userInitials(user.email, user.userId)}
-                  </span>
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">{displayName}</span>
-                  <span className="truncate text-xs text-sidebar-foreground/70">{subtitle}</span>
-                </div>
-                <ChevronsUpDown className="ml-auto size-4 shrink-0" />
-              </SidebarMenuButton>
-            </DropdownMenuTrigger>
+            <SidebarMenuButton
+              render={<DropdownMenuTrigger />}
+              size="lg"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              tooltip={t("sidebarUserMenu")}
+            >
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-sidebar-border bg-sidebar-accent text-sidebar-accent-foreground">
+                <span className="text-xs font-semibold">
+                  {userInitials(user.email, user.userId)}
+                </span>
+              </div>
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-semibold">{displayName}</span>
+                <span className="truncate text-xs text-sidebar-foreground/70">{subtitle}</span>
+              </div>
+              <ChevronsUpDown className="ml-auto size-4 shrink-0" />
+            </SidebarMenuButton>
             <DropdownMenuContent className="w-56 rounded-lg" side="top" align="start" sideOffset={4}>
               <DropdownMenuItem asChild>
                 <Link href="/profile" className="flex items-center gap-2">

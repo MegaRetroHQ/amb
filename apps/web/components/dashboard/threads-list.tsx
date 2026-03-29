@@ -3,10 +3,10 @@
 import { useState, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { useThreads } from "@/lib/hooks/use-threads";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@amb-app/ui/components/badge";
+import { Button } from "@amb-app/ui/components/button";
+import { Input } from "@amb-app/ui/components/input";
+import { ScrollArea } from "@amb-app/ui/components/scroll-area";
 import {
   Dialog,
   DialogContent,
@@ -15,19 +15,19 @@ import {
   DialogFooter,
   DialogTrigger,
   DialogDescription,
-} from "@/components/ui/dialog";
+} from "@amb-app/ui/components/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@amb-app/ui/components/dropdown-menu";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@amb-app/ui/components/tooltip";
 import {
   MessageSquareIcon,
   PlusIcon,
@@ -170,7 +170,7 @@ export function ThreadsList({
       await navigator.clipboard.writeText(title);
       setCopiedThreadId(threadId);
       setTimeout(() => setCopiedThreadId(null), 2000);
-    } catch (err) {
+    } catch {
       // Fallback for older browsers
       const textArea = document.createElement("textarea");
       textArea.value = title;
@@ -189,7 +189,6 @@ export function ThreadsList({
 
   return (
     <div className="h-full flex flex-col">
-      {/* Header */}
       <div className="p-4 border-b space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -269,7 +268,6 @@ export function ThreadsList({
           />
         </div>
 
-        {/* Filter tabs */}
         <div className="flex gap-1">
           {(["all", "open", "closed", "archived"] as FilterStatus[]).map(
             (status) => {
@@ -302,7 +300,6 @@ export function ThreadsList({
         </div>
       </div>
 
-      {/* Content */}
       <ScrollArea className="flex-1 min-h-0">
         <div className="p-2">
           {loading ? (

@@ -12,7 +12,7 @@ import {
   CommandList,
   CommandShortcut,
   CommandSeparator,
-} from "@/components/ui/command"
+} from "@amb-app/ui/components/command"
 import {
   MessageSquareIcon,
   InboxIcon,

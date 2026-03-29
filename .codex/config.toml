@@ -2,10 +2,9 @@
 # Документация: https://developers.openai.com/codex/mcp/
 
 [mcp_servers.message-bus]
-command = "node"
-args = ["/Users/atukov/Developer/amb/packages/mcp-server/dist/index.js"]
-cwd = "/Users/atukov/Developer/amb"
+command = "pnpm"
+args = ["exec", "amb-mcp"]
 
 [mcp_servers.message-bus.env]
-MESSAGE_BUS_URL = "http://localhost:3333"
+MESSAGE_BUS_URL = "http://localhost:4333"
 MESSAGE_BUS_PROJECT_ID = "22222222-2222-4222-8222-222222222222"

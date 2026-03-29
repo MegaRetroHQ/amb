@@ -17,8 +17,8 @@ import {
   TrashIcon,
 } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Badge } from "@amb-app/ui/components/badge";
+import { Button } from "@amb-app/ui/components/button";
 import {
   Dialog,
   DialogContent,
@@ -27,12 +27,27 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+} from "@amb-app/ui/components/dialog";
+import { Input } from "@amb-app/ui/components/input";
 import { DatePicker } from "@/components/ui/date-picker";
 import { DateRangePicker } from "@/components/ui/date-range-picker";
-import { MarkdownContent } from "@/components/ui/markdown-content";
+import { MarkdownContent } from "@amb-app/ui/components/markdown-content";
 import { DescriptionEditor } from "@/components/ui/description-editor";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@amb-app/ui/components/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@amb-app/ui/components/table";
 import {
   TASK_PRIORITIES,
   TASK_PRIORITY_LABELS,
@@ -50,11 +65,10 @@ import { SprintBadge } from "@/components/tasks/sprint-badge";
 import { SprintPicker } from "@/components/tasks/sprint-picker";
 import {
   TasksWorkspaceFilterDeck,
-  tasksFilterSelectClass,
 } from "@/components/tasks/tasks-workspace-shell";
 import type { Task, TaskPriority, TaskState } from "@/lib/types";
 import { getLocalizedApiErrorMessage } from "@/lib/api/error-i18n";
-import { cn } from "@/lib/utils";
+import { cn } from "@amb-app/ui/lib/utils";
 
 type TasksModuleProps = {
   projectId: string;
@@ -83,6 +97,8 @@ const defaultTaskForm: TaskFormState = {
   sprintId: "",
   dueDate: "",
 };
+
+const UNASSIGNED_SELECT_VALUE = "__unassigned__";
 
 const priorityRank: Record<TaskPriority, number> = {
   NONE: 0,
@@ -200,7 +216,7 @@ function SortableTh({
         : "none";
 
   return (
-    <th className={cn("px-3", className)} aria-sort={ariaSort}>
+    <TableHead className={cn("px-3", className)} aria-sort={ariaSort}>
       <button
         type="button"
         className={cn(
@@ -223,7 +239,7 @@ function SortableTh({
           )}
         </span>
       </button>
-    </th>
+    </TableHead>
   );
 }
 
@@ -583,76 +599,96 @@ export function TasksModule({ projectId }: TasksModuleProps) {
       <TasksWorkspaceFilterDeck>
         <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-x-2 sm:gap-y-2">
           <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
-            <select
-              className={tasksFilterSelectClass}
+            <Select
               value={filters.state ?? "ALL"}
-              onChange={(event) => setFilters((prev) => ({ ...prev, state: event.target.value as TaskState | "ALL" }))}
+              onValueChange={(value) => setFilters((prev) => ({ ...prev, state: value as TaskState | "ALL" }))}
             >
-              <option value="ALL">{t("allStates")}</option>
-              {TASK_STATES.map((state) => (
-                <option key={state} value={state}>
-                  {TASK_STATE_LABELS[state]}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger className="w-full sm:w-[11rem]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">{t("allStates")}</SelectItem>
+                {TASK_STATES.map((state) => (
+                  <SelectItem key={state} value={state}>
+                    {TASK_STATE_LABELS[state]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-            <select
-              className={tasksFilterSelectClass}
+            <Select
               value={filters.priority ?? "ALL"}
-              onChange={(event) =>
-                setFilters((prev) => ({ ...prev, priority: event.target.value as TaskPriority | "ALL" }))
+              onValueChange={(value) =>
+                setFilters((prev) => ({ ...prev, priority: value as TaskPriority | "ALL" }))
               }
             >
-              <option value="ALL">{t("allPriorities")}</option>
-              {TASK_PRIORITIES.map((priority) => (
-                <option key={priority} value={priority}>
-                  {TASK_PRIORITY_LABELS[priority]}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger className="w-full sm:w-[11rem]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">{t("allPriorities")}</SelectItem>
+                {TASK_PRIORITIES.map((priority) => (
+                  <SelectItem key={priority} value={priority}>
+                    {TASK_PRIORITY_LABELS[priority]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-            <select
-              className={tasksFilterSelectClass}
+            <Select
               value={filters.assigneeId ?? "ALL"}
-              onChange={(event) => setFilters((prev) => ({ ...prev, assigneeId: event.target.value || "ALL" }))}
+              onValueChange={(value) => setFilters((prev) => ({ ...prev, assigneeId: value || "ALL" }))}
             >
-              <option value="ALL">{t("allAssignees")}</option>
-              {members.map((member) => (
-                <option key={member.id} value={member.id}>
-                  {member.name}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger className="w-full sm:w-[11rem]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">{t("allAssignees")}</SelectItem>
+                {members.map((member) => (
+                  <SelectItem key={member.id} value={member.id}>
+                    {member.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-            <select
-              className={tasksFilterSelectClass}
+            <Select
               value={filters.epicId ?? "ALL"}
-              onChange={(event) =>
-                setFilters((prev) => ({ ...prev, epicId: (event.target.value || "ALL") as string | "ALL" }))
+              onValueChange={(value) =>
+                setFilters((prev) => ({ ...prev, epicId: (value || "ALL") as string | "ALL" }))
               }
             >
-              <option value="ALL">{t("filterAllEpics")}</option>
-              {activeEpics.map((epic) => (
-                <option key={epic.id} value={epic.id}>
-                  {epic.title}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger className="w-full sm:w-[11rem]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">{t("filterAllEpics")}</SelectItem>
+                {activeEpics.map((epic) => (
+                  <SelectItem key={epic.id} value={epic.id}>
+                    {epic.title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-            <select
-              className={tasksFilterSelectClass}
+            <Select
               value={filters.sprintId ?? "ALL"}
-              onChange={(event) =>
-                setFilters((prev) => ({ ...prev, sprintId: (event.target.value || "ALL") as string | "ALL" }))
+              onValueChange={(value) =>
+                setFilters((prev) => ({ ...prev, sprintId: (value || "ALL") as string | "ALL" }))
               }
             >
-              <option value="ALL">{t("filterAllSprints")}</option>
-              {allSprints.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger className="w-full sm:w-[11rem]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">{t("filterAllSprints")}</SelectItem>
+                {allSprints.map((s) => (
+                  <SelectItem key={s.id} value={s.id}>
+                    {s.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
             <DateRangePicker
               ariaLabel={`${t("dueFrom")} — ${t("dueTo")}`}
@@ -672,10 +708,10 @@ export function TasksModule({ projectId }: TasksModuleProps) {
       {loading ? <p className="text-sm text-muted-foreground">{t("loadingIssues")}</p> : null}
 
       {!loading && viewMode === "list" ? (
-          <div className="tasks-data-table-wrap overflow-x-auto">
-            <table className="tasks-data-table w-full min-w-[1000px] text-sm">
-              <thead className="tasks-table-head">
-                <tr className="text-left">
+          <div className="tasks-data-table-wrap">
+            <Table className="tasks-data-table min-w-[1000px]">
+              <TableHeader className="tasks-table-head">
+                <TableRow className="text-left hover:bg-transparent">
                   <SortableTh
                     column="key"
                     label={t("taskKey")}
@@ -733,17 +769,17 @@ export function TasksModule({ projectId }: TasksModuleProps) {
                     onSort={toggleListSort}
                     toggleSortLabel={t("toggleSort")}
                   />
-                  <th className="px-3 py-2.5 text-muted-foreground">{t("actions")}</th>
-                </tr>
-              </thead>
-              <tbody>
+                  <TableHead className="px-3 py-2.5 text-muted-foreground">{t("actions")}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {sortedTasks.map((task, rowIndex) => (
-                  <tr
+                  <TableRow
                     key={task.id}
                     className="tasks-table-row"
                     style={{ "--stagger": Math.min(rowIndex * 22, 440) } as CSSProperties}
                   >
-                    <td className="whitespace-nowrap px-3 py-2 align-top">
+                    <TableCell className="whitespace-nowrap px-3 py-2 align-top">
                       {task.key ? (
                         <div className="flex items-center gap-0.5">
                           <span className="font-mono text-[11px] tabular-nums tracking-tight text-primary/85">
@@ -768,16 +804,16 @@ export function TasksModule({ projectId }: TasksModuleProps) {
                       ) : (
                         <span className="text-xs text-muted-foreground">—</span>
                       )}
-                    </td>
-                    <td className="max-w-[min(420px,40vw)] px-3 py-2 align-top">
+                    </TableCell>
+                    <TableCell className="max-w-[min(420px,40vw)] px-3 py-2 align-top whitespace-normal">
                       <p className="text-sm font-medium leading-snug tracking-tight">{task.title}</p>
-                    </td>
-                    <td className="px-3 py-2 align-top">
+                    </TableCell>
+                    <TableCell className="px-3 py-2 align-top">
                       <Badge variant="outline" className="font-normal">
                         {TASK_STATE_LABELS[task.state]}
                       </Badge>
-                    </td>
-                    <td className="px-3 py-2 align-top">
+                    </TableCell>
+                    <TableCell className="px-3 py-2 align-top">
                       {task.priority === "NONE" ? (
                         <span className="text-xs text-muted-foreground">—</span>
                       ) : (
@@ -785,24 +821,24 @@ export function TasksModule({ projectId }: TasksModuleProps) {
                           {TASK_PRIORITY_LABELS[task.priority]}
                         </Badge>
                       )}
-                    </td>
-                    <td className="px-3 py-2 align-top">
+                    </TableCell>
+                    <TableCell className="px-3 py-2 align-top">
                       {task.epic ? (
                         <EpicBadge
                           epic={task.epic}
                           statusLabel={tEpic(`status.${task.epic.status}`)}
                         />
                       ) : null}
-                    </td>
-                    <td className="px-3 py-2 align-top">
+                    </TableCell>
+                    <TableCell className="px-3 py-2 align-top">
                       {task.sprint ? (
                         <SprintBadge
                           sprint={task.sprint}
                           statusLabel={tSprints(`status.${task.sprint.status}`)}
                         />
                       ) : null}
-                    </td>
-                    <td className="px-3 py-2 align-top">
+                    </TableCell>
+                    <TableCell className="px-3 py-2 align-top">
                       {task.assignee ? (
                         <div className="flex max-w-[180px] items-center gap-2">
                           <span
@@ -816,9 +852,9 @@ export function TasksModule({ projectId }: TasksModuleProps) {
                       ) : (
                         <span className="text-xs text-muted-foreground">—</span>
                       )}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-2 text-muted-foreground">{formatDate(task.dueDate)}</td>
-                    <td className="px-3 py-2">
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap px-3 py-2 text-muted-foreground">{formatDate(task.dueDate)}</TableCell>
+                    <TableCell className="px-3 py-2">
                       <div className="flex items-center gap-1">
                         <Button variant="ghost" size="icon" onClick={() => openEditDialog(task)}>
                           <PencilIcon className="size-4" />
@@ -827,11 +863,11 @@ export function TasksModule({ projectId }: TasksModuleProps) {
                           <TrashIcon className="size-4 text-destructive" />
                         </Button>
                       </div>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         ) : null}
 
@@ -843,11 +879,10 @@ export function TasksModule({ projectId }: TasksModuleProps) {
               aria-label={t("kanbanColumn")}
             >
               <span className="shrink-0 text-xs font-medium text-muted-foreground">{t("kanbanColumn")}</span>
-              <select
-                className="h-9 min-w-0 flex-1 rounded-md border border-input bg-background px-2 py-1 text-sm shadow-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              <Select
                 value={kanbanMobileColumn}
-                onChange={(e) => {
-                  const s = e.target.value as TaskState;
+                onValueChange={(value) => {
+                  const s = value as TaskState;
                   setKanbanMobileColumn(s);
                   requestAnimationFrame(() => {
                     kanbanColRefs.current[s]?.scrollIntoView({
@@ -858,15 +893,20 @@ export function TasksModule({ projectId }: TasksModuleProps) {
                   });
                 }}
               >
-                {TASK_STATES.map((state) => {
-                  const count = sortedTasks.filter((task) => task.state === state).length;
-                  return (
-                    <option key={state} value={state}>
-                      {`${TASK_STATE_LABELS[state]} (${count})`}
-                    </option>
-                  );
-                })}
-              </select>
+                <SelectTrigger className="min-w-0 flex-1">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {TASK_STATES.map((state) => {
+                    const count = sortedTasks.filter((task) => task.state === state).length;
+                    return (
+                      <SelectItem key={state} value={state}>
+                        {`${TASK_STATE_LABELS[state]} (${count})`}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
             </div>
             <div className="tasks-kanban-scroll -mx-1 flex w-full snap-x snap-mandatory gap-3 overflow-x-auto scroll-pb-2 px-1 pb-2 lg:mx-0 lg:grid lg:grid-cols-4 lg:gap-3 lg:overflow-visible lg:pb-0 lg:snap-none">
             {TASK_STATES.map((state) => {
@@ -1114,43 +1154,61 @@ function TaskForm({
       />
 
       <div className="grid gap-3 md:grid-cols-2">
-        <select
-          className="h-9 rounded-md border bg-transparent px-2 text-sm"
+        <Select
           value={form.state}
-          onChange={(event) => setForm((prev) => ({ ...prev, state: event.target.value as TaskState }))}
+          onValueChange={(value) => setForm((prev) => ({ ...prev, state: value as TaskState }))}
         >
-          {TASK_STATES.map((state) => (
-            <option key={state} value={state}>
-              {TASK_STATE_LABELS[state]}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger className="w-full">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {TASK_STATES.map((state) => (
+              <SelectItem key={state} value={state}>
+                {TASK_STATE_LABELS[state]}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
-        <select
-          className="h-9 rounded-md border bg-transparent px-2 text-sm"
+        <Select
           value={form.priority}
-          onChange={(event) => setForm((prev) => ({ ...prev, priority: event.target.value as TaskPriority }))}
+          onValueChange={(value) => setForm((prev) => ({ ...prev, priority: value as TaskPriority }))}
         >
-          {TASK_PRIORITIES.map((priority) => (
-            <option key={priority} value={priority}>
-              {TASK_PRIORITY_LABELS[priority]}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger className="w-full">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {TASK_PRIORITIES.map((priority) => (
+              <SelectItem key={priority} value={priority}>
+                {TASK_PRIORITY_LABELS[priority]}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
-        <select
-          className="h-9 rounded-md border bg-transparent px-2 text-sm"
-          value={form.assigneeId}
-          onChange={(event) => setForm((prev) => ({ ...prev, assigneeId: event.target.value }))}
+        <Select
+          value={form.assigneeId || UNASSIGNED_SELECT_VALUE}
+          onValueChange={(value) =>
+            setForm((prev) => ({
+              ...prev,
+              assigneeId:
+                value === UNASSIGNED_SELECT_VALUE ? "" : (value ?? ""),
+            }))
+          }
           disabled={membersLoading}
         >
-          <option value="">{t("unassigned")}</option>
-          {members.map((member) => (
-            <option key={member.id} value={member.id}>
-              {member.name}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder={t("unassigned")} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={UNASSIGNED_SELECT_VALUE}>{t("unassigned")}</SelectItem>
+            {members.map((member) => (
+              <SelectItem key={member.id} value={member.id}>
+                {member.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
         <DatePicker
           value={form.dueDate}

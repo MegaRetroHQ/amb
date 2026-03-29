@@ -5,9 +5,9 @@ import { useRouter } from "@/i18n/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Button } from "@amb-app/ui/components/button";
+import { Card } from "@amb-app/ui/components/card";
+import { Input } from "@amb-app/ui/components/input";
 import { getLocalizedApiErrorFromCode } from "@/lib/api/error-i18n";
 
 function sanitizeNextPath(nextValue: string | null, locale: string): string {

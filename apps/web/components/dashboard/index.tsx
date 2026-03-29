@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, useCallback, useEffect } from "react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@amb-app/ui/components/tabs"
 import { AgentsList } from "./agents-list"
 import { ThreadsList } from "./threads-list"
 import { ThreadViewer } from "./thread-viewer"
@@ -131,7 +131,7 @@ export function Dashboard() {
         ) : (
           <>
             <aside
-              className="amb-glass-surface flex-shrink-0 overflow-hidden rounded-2xl"
+              className="amb-shell-panel flex-shrink-0 overflow-hidden rounded-xl"
               style={{ width: agentsWidth, minWidth: 200, maxWidth: 500 }}
             >
               <AgentsList
@@ -147,7 +147,7 @@ export function Dashboard() {
             />
 
             <aside
-              className="amb-glass-surface flex-shrink-0 overflow-hidden rounded-2xl"
+              className="amb-shell-panel flex-shrink-0 overflow-hidden rounded-xl"
               style={{ width: threadsWidth, minWidth: 250, maxWidth: 600 }}
             >
               <ThreadsList
@@ -162,7 +162,7 @@ export function Dashboard() {
               onResize={(delta) => setThreadsWidth((w) => Math.max(250, Math.min(600, w + delta)))}
             />
 
-            <main className="amb-glass-surface flex flex-1 flex-col overflow-hidden rounded-2xl">
+            <main className="amb-shell-panel flex flex-1 flex-col overflow-hidden rounded-xl">
               <Tabs
                 value={activeTab}
                 onValueChange={(v) => setActiveTab(v as TabValue)}

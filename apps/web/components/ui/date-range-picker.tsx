@@ -4,10 +4,10 @@ import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { CalendarRangeIcon } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+import { Button } from "@amb-app/ui/components/button";
+import { Calendar } from "@amb-app/ui/components/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@amb-app/ui/components/popover";
+import { cn } from "@amb-app/ui/lib/utils";
 
 type DateRangePickerProps = {
   from?: string;

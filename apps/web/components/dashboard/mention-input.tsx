@@ -1,19 +1,19 @@
 "use client";
 
 import { useRef, useState, useEffect, useCallback } from "react";
-import { Input } from "@/components/ui/input";
+import { Input } from "@amb-app/ui/components/input";
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
+} from "@amb-app/ui/components/command";
 import { BotIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { getCurrentMentionAtCursor, filterAgentsByQuery } from "@/lib/mentions";
 import type { Agent } from "@/lib/types";
-import { cn } from "@/lib/utils";
+import { cn } from "@amb-app/ui/lib/utils";
 
 type Props = {
   value: string;

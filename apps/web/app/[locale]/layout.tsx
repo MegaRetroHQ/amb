@@ -2,6 +2,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
+import { Toaster } from "@amb-app/ui/components/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ProjectProvider } from "@/lib/context/project-context";
 import { routing } from "@/i18n/routing";
@@ -27,7 +28,10 @@ export default async function LocaleLayout({ children, params }: Props) {
   return (
     <NextIntlClientProvider messages={messages}>
       <ThemeProvider>
-        <ProjectProvider>{children}</ProjectProvider>
+        <ProjectProvider>
+          {children}
+          <Toaster richColors closeButton />
+        </ProjectProvider>
       </ThemeProvider>
     </NextIntlClientProvider>
   );

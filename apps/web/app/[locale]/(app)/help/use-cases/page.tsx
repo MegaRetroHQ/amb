@@ -1,13 +1,28 @@
 import type { Metadata } from "next";
 import { BookOpenIcon, Link2Icon, ListOrderedIcon, NetworkIcon, UserIcon, WorkflowIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@amb-app/ui/components/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@amb-app/ui/components/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@amb-app/ui/components/table";
+import {
+  PageHeader,
+  PageHeaderContent,
+  PageHeaderDescription,
+  PageHeaderEyebrow,
+  PageHeaderTitle,
+} from "@amb-app/ui/components/page-header";
 import { getTranslations } from "next-intl/server";
 
 export const metadata: Metadata = {
@@ -54,7 +69,7 @@ const summaryTable = [
   { scenario: "AMB as a service", connection: "HTTP from app", ops: "Any scenario via AMB URL" },
 ];
 
-function Table({
+function DataTable({
   headers,
   rows,
 }: {
@@ -62,29 +77,29 @@ function Table({
   rows: Record<string, string>[];
 }) {
   return (
-    <div className="overflow-x-auto rounded-md border border-border">
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="border-b border-border bg-muted/50">
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow className="bg-muted/40 hover:bg-muted/40">
             {headers.map((h) => (
-              <th key={h} className="px-4 py-2 text-left font-medium">
+              <TableHead key={h} className="px-4">
                 {h}
-              </th>
+              </TableHead>
             ))}
-          </tr>
-        </thead>
-        <tbody>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {rows.map((row, i) => (
-            <tr key={i} className="border-b border-border/50 last:border-0">
+            <TableRow key={i}>
               {headers.map((h) => (
-                <td key={h} className="px-4 py-2 text-muted-foreground">
+                <TableCell key={h} className="px-4 align-top text-muted-foreground whitespace-normal">
                   {row[h]}
-                </td>
+                </TableCell>
               ))}
-            </tr>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 }
@@ -93,11 +108,23 @@ export default async function UseCasesPage() {
   const t = await getTranslations("Help");
 
   return (
-    <div className="flex flex-1 flex-col overflow-auto bg-background">
-      <main className="mx-auto w-full max-w-3xl space-y-8 px-4 py-6 md:px-6 md:py-8">
-        <p className="text-muted-foreground text-sm">
-          All AMB use cases: who uses it, how they connect, and what message flows are supported.
-        </p>
+    <div className="tasks-workspace-surface amb-shell-panel flex min-h-0 flex-1 flex-col overflow-hidden">
+      <div className="shrink-0 px-5 py-4 md:px-6">
+        <div className="amb-page-width">
+          <PageHeader className="border-b-0 pb-0">
+            <PageHeaderContent>
+              <PageHeaderEyebrow>{t("title")}</PageHeaderEyebrow>
+              <PageHeaderTitle>{t("useCases")}</PageHeaderTitle>
+              <PageHeaderDescription>
+                Типовые сценарии использования, способы подключения и поддерживаемые message flows.
+              </PageHeaderDescription>
+            </PageHeaderContent>
+          </PageHeader>
+        </div>
+      </div>
+
+      <main className="tasks-workspace-inner min-h-0 min-w-0 flex-1 overflow-auto">
+        <div className="amb-page-width space-y-8 px-4 py-4 md:px-6 md:py-5">
 
         <Card>
           <CardHeader>
@@ -108,7 +135,7 @@ export default async function UseCasesPage() {
             <CardDescription>How clients connect to the bus</CardDescription>
           </CardHeader>
           <CardContent>
-            <Table
+            <DataTable
               headers={["Method", "Who uses", "Description"]}
               rows={connectionTable.map((r) => ({
                 Method: r.way,
@@ -128,7 +155,7 @@ export default async function UseCasesPage() {
             <CardDescription>Point-to-point, broadcast, workflow, DLQ, etc.</CardDescription>
           </CardHeader>
           <CardContent>
-            <Table
+            <DataTable
               headers={["Scenario", "Description", "How to implement"]}
               rows={flowTable.map((r) => ({
                 Scenario: r.scenario,
@@ -148,7 +175,7 @@ export default async function UseCasesPage() {
             <CardDescription>Who does what</CardDescription>
           </CardHeader>
           <CardContent>
-            <Table
+            <DataTable
               headers={["Role", "Goal", "Typical actions"]}
               rows={roleTable.map((r) => ({
                 Role: r.role,
@@ -167,33 +194,33 @@ export default async function UseCasesPage() {
             </CardTitle>
             <CardDescription>Summary: registration, MCP, broadcast, workflow, worker, DLQ, Docker</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6 text-sm text-muted-foreground">
-            <div>
-              <h4 className="font-medium text-foreground mb-1">Agent registration and first message (SDK)</h4>
+          <CardContent className="grid gap-4 md:grid-cols-2">
+            <div className="rounded-lg border p-4 text-sm text-muted-foreground">
+              <h4 className="mb-1 font-medium text-foreground">Agent registration and first message (SDK)</h4>
               <p>Start AMB → createClient → registerAgent → createThread → sendMessage. Recipient: getInbox / pollInbox → process → ackMessage.</p>
             </div>
-            <div>
-              <h4 className="font-medium text-foreground mb-1">Task from Cursor (MCP)</h4>
-              <p>In chat: "Create a thread and send a task to the dev agent". AI calls create_thread → list_agents → send_message.</p>
+            <div className="rounded-lg border p-4 text-sm text-muted-foreground">
+              <h4 className="mb-1 font-medium text-foreground">Task from Cursor (MCP)</h4>
+              <p>In chat: &quot;Create a thread and send a task to the dev agent&quot;. AI calls create_thread → list_agents → send_message.</p>
             </div>
-            <div>
-              <h4 className="font-medium text-foreground mb-1">Broadcast</h4>
+            <div className="rounded-lg border p-4 text-sm text-muted-foreground">
+              <h4 className="mb-1 font-medium text-foreground">Broadcast</h4>
               <p>sendMessage with toAgentId: null — every agent sees the message in inbox.</p>
             </div>
-            <div>
-              <h4 className="font-medium text-foreground mb-1">Workflow PO → Architect → Dev → QA</h4>
+            <div className="rounded-lg border p-4 text-sm text-muted-foreground">
+              <h4 className="mb-1 font-medium text-foreground">Workflow PO → Architect → Dev → QA</h4>
               <p>Script: create thread, sendMessage by role step by step, optionally wait for reply, close thread. Example: pnpm orchestrator.</p>
             </div>
-            <div>
-              <h4 className="font-medium text-foreground mb-1">Agent worker</h4>
+            <div className="rounded-lg border p-4 text-sm text-muted-foreground">
+              <h4 className="mb-1 font-medium text-foreground">Agent worker</h4>
               <p>pollInbox(agentId) in a loop, handle by payload.type, ackMessage. On failure — retry/DLQ.</p>
             </div>
-            <div>
-              <h4 className="font-medium text-foreground mb-1">Monitoring and DLQ</h4>
+            <div className="rounded-lg border p-4 text-sm text-muted-foreground">
+              <h4 className="mb-1 font-medium text-foreground">Monitoring and DLQ</h4>
               <p>Dashboard or GET /api/dlq → retry one or retry-all via API / client.retryDLQMessage / retryAllDLQ.</p>
             </div>
-            <div>
-              <h4 className="font-medium text-foreground mb-1">AMB as a service</h4>
+            <div className="rounded-lg border p-4 text-sm text-muted-foreground md:col-span-2">
+              <h4 className="mb-1 font-medium text-foreground">AMB as a service</h4>
               <p>docker compose up -d; your app connects over HTTP or via SDK to the AMB URL.</p>
             </div>
           </CardContent>
@@ -205,7 +232,7 @@ export default async function UseCasesPage() {
             <CardDescription>Scenario → connection → main operations</CardDescription>
           </CardHeader>
           <CardContent>
-            <Table
+            <DataTable
               headers={["Scenario", "Connection", "Main operations"]}
               rows={summaryTable.map((r) => ({
                 Scenario: r.scenario,
@@ -241,6 +268,7 @@ export default async function UseCasesPage() {
             </ul>
           </CardContent>
         </Card>
+        </div>
       </main>
     </div>
   );

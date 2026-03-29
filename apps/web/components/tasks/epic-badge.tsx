@@ -1,14 +1,14 @@
 "use client";
 
 import { Link } from "@/i18n/navigation";
-import { cn } from "@/lib/utils";
+import { cn } from "@amb-app/ui/lib/utils";
 import { epicDotClass } from "@/lib/epic-colors";
 import type { TaskEpic } from "@amb-app/shared";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@amb-app/ui/components/tooltip";
 
 type EpicBadgeProps = {
   epic: Pick<TaskEpic, "id" | "title" | "status">;

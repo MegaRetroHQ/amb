@@ -5,8 +5,8 @@ import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { ArrowLeftIcon, PencilIcon, TrashIcon } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Badge } from "@amb-app/ui/components/badge";
+import { Button } from "@amb-app/ui/components/button";
 import {
   Dialog,
   DialogContent,
@@ -14,10 +14,25 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+} from "@amb-app/ui/components/dialog";
+import { Input } from "@amb-app/ui/components/input";
 import { DescriptionEditor } from "@/components/ui/description-editor";
-import { MarkdownContent } from "@/components/ui/markdown-content";
+import { MarkdownContent } from "@amb-app/ui/components/markdown-content";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@amb-app/ui/components/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@amb-app/ui/components/table";
 import { fetchApiData } from "@/lib/api/http";
 import { getLocalizedApiErrorMessage } from "@/lib/api/error-i18n";
 import { EPIC_STATUSES } from "@amb-app/shared";
@@ -213,25 +228,25 @@ export function EpicDetailModule({ projectId, epicId }: EpicDetailModuleProps) {
         {epic.tasks.length === 0 ? (
           <p className="text-sm text-muted-foreground">{t("noTasksInEpic")}</p>
         ) : (
-          <div className="tasks-data-table-wrap overflow-x-auto">
-            <table className="w-full min-w-[720px] text-sm">
-              <thead className="tasks-table-head">
-                <tr className="text-left">
-                  <th className="px-3">{tTasks("taskKey")}</th>
-                  <th className="px-3">{tTasks("columnIssue")}</th>
-                  <th className="px-3">{tTasks("sprint")}</th>
-                  <th className="px-3">{tTasks("state")}</th>
-                  <th className="px-3">{tTasks("priority")}</th>
-                </tr>
-              </thead>
-              <tbody>
+          <div className="tasks-data-table-wrap">
+            <Table className="min-w-[720px]">
+              <TableHeader className="tasks-table-head">
+                <TableRow className="hover:bg-transparent">
+                  <TableHead className="px-3">{tTasks("taskKey")}</TableHead>
+                  <TableHead className="px-3">{tTasks("columnIssue")}</TableHead>
+                  <TableHead className="px-3">{tTasks("sprint")}</TableHead>
+                  <TableHead className="px-3">{tTasks("state")}</TableHead>
+                  <TableHead className="px-3">{tTasks("priority")}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {epic.tasks.map((task, rowIndex) => (
-                  <tr
+                  <TableRow
                     key={task.id}
                     className="tasks-table-row"
                     style={{ "--stagger": Math.min(rowIndex * 22, 440) } as CSSProperties}
                   >
-                    <td className="whitespace-nowrap px-3 py-2 align-top">
+                    <TableCell className="whitespace-nowrap px-3 py-2 align-top">
                       {task.key ? (
                         <Link
                           href={`/tasks?key=${encodeURIComponent(task.key)}`}
@@ -242,11 +257,11 @@ export function EpicDetailModule({ projectId, epicId }: EpicDetailModuleProps) {
                       ) : (
                         <span className="text-xs text-muted-foreground">—</span>
                       )}
-                    </td>
-                    <td className="max-w-[min(420px,40vw)] px-3 py-2 align-top">
+                    </TableCell>
+                    <TableCell className="max-w-[min(420px,40vw)] px-3 py-2 align-top whitespace-normal">
                       <p className="text-sm font-medium leading-snug tracking-tight">{task.title}</p>
-                    </td>
-                    <td className="px-3 py-2 align-top">
+                    </TableCell>
+                    <TableCell className="px-3 py-2 align-top">
                       {task.sprint ? (
                         <SprintBadge
                           sprint={task.sprint}
@@ -255,13 +270,13 @@ export function EpicDetailModule({ projectId, epicId }: EpicDetailModuleProps) {
                       ) : (
                         <span className="text-xs text-muted-foreground">—</span>
                       )}
-                    </td>
-                    <td className="px-3 py-2 align-top">
+                    </TableCell>
+                    <TableCell className="px-3 py-2 align-top">
                       <Badge variant="outline" className="font-normal">
                         {TASK_STATE_LABELS[task.state]}
                       </Badge>
-                    </td>
-                    <td className="px-3 py-2 align-top">
+                    </TableCell>
+                    <TableCell className="px-3 py-2 align-top">
                       {task.priority === "NONE" ? (
                         <span className="text-xs text-muted-foreground">—</span>
                       ) : (
@@ -269,11 +284,11 @@ export function EpicDetailModule({ projectId, epicId }: EpicDetailModuleProps) {
                           {TASK_PRIORITY_LABELS[task.priority]}
                         </Badge>
                       )}
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         )}
       </TasksNestedTableSection>
@@ -296,17 +311,21 @@ export function EpicDetailModule({ projectId, epicId }: EpicDetailModuleProps) {
               onChange={setFormDescription}
               minHeight="8rem"
             />
-            <select
-              className="h-9 w-full rounded-md border bg-transparent px-2 text-sm"
+            <Select
               value={formStatus}
-              onChange={(e) => setFormStatus(e.target.value as EpicStatus)}
+              onValueChange={(value) => setFormStatus(value as EpicStatus)}
             >
-              {EPIC_STATUSES.map((s) => (
-                <option key={s} value={s}>
-                  {t(`status.${s}`)}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {EPIC_STATUSES.map((s) => (
+                  <SelectItem key={s} value={s}>
+                    {t(`status.${s}`)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditing(false)}>

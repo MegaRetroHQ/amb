@@ -3,10 +3,10 @@
 import { useState, useMemo, RefObject } from "react";
 import { useTranslations } from "next-intl";
 import { useAgents } from "@/lib/hooks/use-agents";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@amb-app/ui/components/badge";
+import { Button } from "@amb-app/ui/components/button";
+import { Input } from "@amb-app/ui/components/input";
+import { ScrollArea } from "@amb-app/ui/components/scroll-area";
 import {
   Dialog,
   DialogContent,
@@ -14,14 +14,14 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@amb-app/ui/components/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@amb-app/ui/components/dropdown-menu";
 import {
   UsersIcon,
   SearchIcon,
@@ -92,7 +92,6 @@ export function AgentsList({ selectedAgentId, onSelectAgent, searchInputRef, inb
 
   return (
     <div className="h-full flex flex-col">
-      {/* Header */}
       <div className="p-4 border-b space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -115,7 +114,6 @@ export function AgentsList({ selectedAgentId, onSelectAgent, searchInputRef, inb
           </Button>
         </div>
 
-        {/* Search */}
         <div className="relative">
           <SearchIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
           <Input
@@ -129,7 +127,6 @@ export function AgentsList({ selectedAgentId, onSelectAgent, searchInputRef, inb
         </div>
       </div>
 
-      {/* Content */}
       <ScrollArea className="flex-1 min-h-0">
         <div className="p-2">
           {loading ? (

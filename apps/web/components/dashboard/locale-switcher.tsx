@@ -8,8 +8,8 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
+} from "@amb-app/ui/components/dropdown-menu";
+import { Button } from "@amb-app/ui/components/button";
 import { LanguagesIcon } from "lucide-react";
 import { routing } from "@/i18n/routing";
 

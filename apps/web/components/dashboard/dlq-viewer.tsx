@@ -4,14 +4,14 @@ import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useDlq } from "@/lib/hooks/use-messages";
 import { useAgents } from "@/lib/hooks/use-agents";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@amb-app/ui/components/badge";
+import { Button } from "@amb-app/ui/components/button";
+import { ScrollArea } from "@amb-app/ui/components/scroll-area";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@amb-app/ui/components/tooltip";
 import {
   Dialog,
   DialogContent,
@@ -19,7 +19,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@/components/ui/dialog";
+} from "@amb-app/ui/components/dialog";
 import {
   RefreshCwIcon,
   AlertTriangleIcon,
@@ -33,7 +33,6 @@ import {
   HashIcon,
   FileJsonIcon,
 } from "lucide-react";
-import type { Message } from "@/lib/types";
 
 export function DlqViewer() {
   const t = useTranslations("DlqViewer");
@@ -95,12 +94,11 @@ export function DlqViewer() {
 
   return (
     <div className="h-full rounded-lg border bg-card flex flex-col overflow-hidden">
-      {/* Header */}
       <div className="px-4 py-3 border-b flex items-center justify-between bg-destructive/5">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <AlertTriangleIcon className="size-4 text-destructive" />
-            <span className="font-medium text-sm">{t("errorQueue")}</span>
+              <AlertTriangleIcon className="size-4 text-destructive" />
+              <span className="font-medium text-sm">{t("errorQueue")}</span>
           </div>
           {messages.length > 0 && (
             <Badge variant="destructive" className="text-xs">
@@ -146,7 +144,6 @@ export function DlqViewer() {
         </div>
       </div>
 
-      {/* Messages */}
       <ScrollArea className="flex-1">
         <div className="p-4">
           {loading ? (
@@ -195,7 +192,6 @@ export function DlqViewer() {
                     key={msg.id}
                     className="rounded-lg border border-destructive/30 bg-destructive/5 overflow-hidden"
                   >
-                    {/* Main row */}
                     <div className="p-4">
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex items-start gap-3 flex-1 min-w-0">
@@ -276,7 +272,6 @@ export function DlqViewer() {
                         </div>
                       </div>
 
-                      {/* Time */}
                       <div className="flex items-center gap-1.5 mt-2 ml-7 text-xs text-muted-foreground">
                         <ClockIcon className="size-3" />
                         <span>
@@ -285,7 +280,6 @@ export function DlqViewer() {
                       </div>
                     </div>
 
-                    {/* Expanded details */}
                     {isExpanded && (
                       <div className="border-t border-destructive/20 p-4 bg-background/50 space-y-3">
                         <div className="grid gap-3 text-xs">
@@ -335,14 +329,12 @@ export function DlqViewer() {
         </div>
       </ScrollArea>
 
-      {/* Info footer */}
       {messages.length > 0 && (
         <div className="px-4 py-2 border-t bg-muted/30 text-xs text-muted-foreground text-center">
           {t("footerInfo")}
         </div>
       )}
 
-      {/* Confirm retry all dialog */}
       <Dialog open={confirmRetryAll} onOpenChange={setConfirmRetryAll}>
         <DialogContent>
           <DialogHeader>

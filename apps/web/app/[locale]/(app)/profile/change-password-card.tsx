@@ -3,15 +3,15 @@
 import { FormEvent, useState } from "react";
 import { useTranslations } from "next-intl";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@amb-app/ui/components/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+} from "@amb-app/ui/components/card";
+import { Input } from "@amb-app/ui/components/input";
 
 export function ChangePasswordCard() {
   const t = useTranslations("Profile");

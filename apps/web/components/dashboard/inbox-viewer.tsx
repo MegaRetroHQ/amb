@@ -4,14 +4,14 @@ import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useInbox } from "@/lib/hooks/use-messages";
 import { useAgents } from "@/lib/hooks/use-agents";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@amb-app/ui/components/badge";
+import { Button } from "@amb-app/ui/components/button";
+import { ScrollArea } from "@amb-app/ui/components/scroll-area";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@amb-app/ui/components/tooltip";
 import {
   RefreshCwIcon,
   InboxIcon,
@@ -22,7 +22,7 @@ import {
   MailIcon,
   ClockIcon,
 } from "lucide-react";
-import { JsonViewer } from "@/components/ui/json-viewer";
+import { JsonViewer } from "@amb-app/ui/components/json-viewer";
 
 type Props = {
   agentId: string | null;
@@ -81,12 +81,11 @@ export function InboxViewer({ agentId }: Props) {
 
   return (
     <div className="h-full rounded-lg border bg-card flex flex-col overflow-hidden">
-      {/* Header */}
       <div className="px-4 py-3 border-b flex items-center justify-between bg-card/50">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <InboxIcon className="size-4 text-muted-foreground" />
-            <span className="font-medium text-sm">{t("inbox")}</span>
+              <InboxIcon className="size-4 text-muted-foreground" />
+              <span className="font-medium text-sm">{t("inbox")}</span>
           </div>
           {currentAgent && (
             <Badge variant="outline" className="gap-1 text-xs">
@@ -138,7 +137,6 @@ export function InboxViewer({ agentId }: Props) {
         </div>
       </div>
 
-      {/* Messages */}
       <ScrollArea className="flex-1 h-0">
         <div className="p-4">
           {loading && messages.length === 0 ? (
@@ -166,7 +164,6 @@ export function InboxViewer({ agentId }: Props) {
                     key={msg.id}
                     className="group rounded-lg border bg-background p-4 transition-all hover:shadow-sm"
                   >
-                    {/* Header */}
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <div className="flex items-center gap-2.5">
                         <div
@@ -208,7 +205,6 @@ export function InboxViewer({ agentId }: Props) {
                       </Tooltip>
                     </div>
 
-                    {/* Content */}
                     <div className="rounded-md bg-muted/50 p-3 mb-3">
                       {payload?.text ? (
                         <p className="text-sm whitespace-pre-wrap break-words">
@@ -221,8 +217,7 @@ export function InboxViewer({ agentId }: Props) {
                       )}
                     </div>
 
-                    {/* Footer */}
-                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
                       <div className="flex items-center gap-1.5">
                         <ClockIcon className="size-3" />
                         <span>
@@ -246,7 +241,6 @@ export function InboxViewer({ agentId }: Props) {
         </div>
       </ScrollArea>
 
-      {/* Footer with polling indicator */}
       <div className="px-4 py-2 border-t bg-muted/30 flex items-center justify-center gap-2 text-xs text-muted-foreground">
         <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
         {t("autoRefresh", { seconds: 3 })}

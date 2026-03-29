@@ -5,8 +5,8 @@ import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Badge } from "@amb-app/ui/components/badge";
+import { Button } from "@amb-app/ui/components/button";
 import {
   Dialog,
   DialogContent,
@@ -14,10 +14,25 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+} from "@amb-app/ui/components/dialog";
+import { Input } from "@amb-app/ui/components/input";
 import { DatePicker } from "@/components/ui/date-picker";
 import { DescriptionEditor } from "@/components/ui/description-editor";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@amb-app/ui/components/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@amb-app/ui/components/table";
 import { useSprints, type SprintListItem } from "@/lib/hooks/use-sprints";
 import { getLocalizedApiErrorMessage } from "@/lib/api/error-i18n";
 import { SPRINT_STATUSES } from "@amb-app/shared";
@@ -26,10 +41,9 @@ import {
   TasksWorkspaceEmpty,
   TasksWorkspaceFilterDeck,
   TasksWorkspaceToolRow,
-  tasksFilterSelectClass,
   tasksWorkspacePrimaryButtonClass,
 } from "@/components/tasks/tasks-workspace-shell";
-import { cn } from "@/lib/utils";
+import { cn } from "@amb-app/ui/lib/utils";
 
 type SprintsListModuleProps = {
   projectId: string;
@@ -151,19 +165,22 @@ export function SprintsListModule({ projectId }: SprintsListModuleProps) {
           <TasksWorkspaceFilterDeck>
             <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-x-4 sm:gap-y-2">
               <span className="tasks-kicker">{t("listTitle")}</span>
-              <select
-                className={cn(tasksFilterSelectClass, "max-w-none sm:max-w-[14rem]")}
+              <Select
                 value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value as SprintStatus | "ALL")}
-                aria-label={t("filterStatus")}
+                onValueChange={(value) => setStatusFilter(value as SprintStatus | "ALL")}
               >
-                <option value="ALL">{t("statusAll")}</option>
-                {SPRINT_STATUSES.map((s) => (
-                  <option key={s} value={s}>
-                    {t(`status.${s}`)}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="w-full sm:w-[14rem]" aria-label={t("filterStatus")}>
+                  <SelectValue placeholder={t("filterStatus")} />
+                </SelectTrigger>
+                <SelectContent align="end">
+                  <SelectItem value="ALL">{t("statusAll")}</SelectItem>
+                  {SPRINT_STATUSES.map((s) => (
+                    <SelectItem key={s} value={s}>
+                      {t(`status.${s}`)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </TasksWorkspaceFilterDeck>
         }
@@ -185,42 +202,42 @@ export function SprintsListModule({ projectId }: SprintsListModuleProps) {
       {!loading && sprints.length === 0 ? <TasksWorkspaceEmpty>{t("empty")}</TasksWorkspaceEmpty> : null}
 
       {!loading && sprints.length > 0 ? (
-        <div className="tasks-data-table-wrap overflow-x-auto">
-          <table className="w-full min-w-[720px] text-sm">
-            <thead className="tasks-table-head">
-              <tr className="text-left">
-                <th className="px-3">{t("columnName")}</th>
-                <th className="px-3">{t("columnDates")}</th>
-                <th className="px-3">{t("columnStatus")}</th>
-                <th className="px-3">{t("columnTasks")}</th>
-                <th className="px-3">{t("columnActions")}</th>
-              </tr>
-            </thead>
-            <tbody>
+        <div className="tasks-data-table-wrap">
+          <Table className="min-w-[720px]">
+            <TableHeader className="tasks-table-head">
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="px-3">{t("columnName")}</TableHead>
+                <TableHead className="px-3">{t("columnDates")}</TableHead>
+                <TableHead className="px-3">{t("columnStatus")}</TableHead>
+                <TableHead className="px-3">{t("columnTasks")}</TableHead>
+                <TableHead className="px-3">{t("columnActions")}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {sprints.map((sprint, rowIndex) => (
-                <tr
+                <TableRow
                   key={sprint.id}
                   className={cn("tasks-table-row", sprint.status === "ACTIVE" && "bg-primary/5")}
                   style={{ "--stagger": Math.min(rowIndex * 22, 440) } as CSSProperties}
                 >
-                  <td className="px-3 py-2">
+                  <TableCell className="px-3 py-2">
                     <Link
                       href={`/tasks/sprints/${sprint.id}`}
                       className="font-medium text-foreground underline-offset-4 hover:underline"
                     >
                       {sprint.name}
                     </Link>
-                  </td>
-                  <td className="px-3 py-2 text-muted-foreground">
+                  </TableCell>
+                  <TableCell className="px-3 py-2 text-muted-foreground">
                     {formatSprintRange(sprint.startDate, sprint.endDate, t("noDates"))}
-                  </td>
-                  <td className="px-3 py-2">
+                  </TableCell>
+                  <TableCell className="px-3 py-2">
                     <Badge variant={sprint.status === "ACTIVE" ? "default" : "outline"}>
                       {t(`status.${sprint.status}`)}
                     </Badge>
-                  </td>
-                  <td className="px-3 py-2 tabular-nums">{sprint._count?.tasks ?? "—"}</td>
-                  <td className="px-3 py-2">
+                  </TableCell>
+                  <TableCell className="px-3 py-2 tabular-nums">{sprint._count?.tasks ?? "—"}</TableCell>
+                  <TableCell className="px-3 py-2">
                     <div className="flex items-center gap-1">
                       <Button variant="ghost" size="icon" onClick={() => openEdit(sprint)}>
                         <PencilIcon className="size-4" />
@@ -235,11 +252,11 @@ export function SprintsListModule({ projectId }: SprintsListModuleProps) {
                         <TrashIcon className="size-4 text-destructive" />
                       </Button>
                     </div>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       ) : null}
 

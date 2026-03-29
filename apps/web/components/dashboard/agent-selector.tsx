@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@amb-app/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,11 +8,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
+} from "@amb-app/ui/components/dropdown-menu";
+import { Badge } from "@amb-app/ui/components/badge";
 import { BotIcon, ChevronDownIcon, XIcon, AtSignIcon } from "lucide-react";
 import type { Agent } from "@/lib/types";
-import { cn } from "@/lib/utils";
+import { cn } from "@amb-app/ui/lib/utils";
 import { useTranslations } from "next-intl";
 
 type Props = {

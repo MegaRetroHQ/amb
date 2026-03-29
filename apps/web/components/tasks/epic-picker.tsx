@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { CheckIcon, ChevronsUpDownIcon } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@amb-app/ui/components/button";
 import {
   Command,
   CommandEmpty,
@@ -11,9 +11,9 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+} from "@amb-app/ui/components/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@amb-app/ui/components/popover";
+import { cn } from "@amb-app/ui/lib/utils";
 import type { EpicListItem } from "@/lib/hooks/use-epics";
 
 type EpicPickerProps = {

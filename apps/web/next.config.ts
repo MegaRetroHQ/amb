@@ -5,6 +5,7 @@ import createNextIntlPlugin from "next-intl/plugin";
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
 const nextConfig: NextConfig = {
+  transpilePackages: ["@amb-app/ui"],
   output: "standalone",
   // Корень монорепо: иначе Turbopack не находит next относительно App Router.
   // CSS (@import "tailwindcss" и др.) резолвится из этого же корня — см. devDependencies в корневом package.json.

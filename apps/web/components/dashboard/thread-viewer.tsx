@@ -4,14 +4,14 @@ import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { useThreadMessages } from "@/lib/hooks/use-messages";
 import { useAgents } from "@/lib/hooks/use-agents";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@amb-app/ui/components/badge";
+import { Button } from "@amb-app/ui/components/button";
+import { ScrollArea } from "@amb-app/ui/components/scroll-area";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@amb-app/ui/components/tooltip";
 import {
   SendIcon,
   RefreshCwIcon,
@@ -28,7 +28,7 @@ import type { Agent, Message } from "@/lib/types";
 import { MentionInput } from "./mention-input";
 import { AgentSelector } from "./agent-selector";
 import { extractToAgentId } from "@/lib/mentions";
-import { JsonViewer } from "@/components/ui/json-viewer";
+import { JsonViewer } from "@amb-app/ui/components/json-viewer";
 
 type Props = {
   threadId: string | null;
@@ -253,12 +253,11 @@ export function ThreadViewer({ threadId, currentAgentId }: Props) {
 
   return (
     <div className="h-full min-h-0 rounded-lg border bg-card flex flex-col overflow-hidden">
-      {/* Header */}
       <div className="px-4 py-3 border-b flex items-center justify-between bg-card/50">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <MessageSquareIcon className="size-4 text-muted-foreground" />
-            <span className="font-medium text-sm">{t("messages")}</span>
+              <MessageSquareIcon className="size-4 text-muted-foreground" />
+              <span className="font-medium text-sm">{t("messages")}</span>
           </div>
           <Badge variant="secondary" className="text-xs">
             {messages.length}
@@ -290,7 +289,6 @@ export function ThreadViewer({ threadId, currentAgentId }: Props) {
         </div>
       </div>
 
-      {/* Messages area */}
       <ScrollArea className="flex-1 min-h-0 relative" onScrollCapture={handleScroll}>
         <div 
           ref={(node) => {
@@ -354,7 +352,7 @@ export function ThreadViewer({ threadId, currentAgentId }: Props) {
                         className={`thread-message-card group ${isOwn ? "thread-message-card--own" : ""}`}
                       >
                         {/* Header */}
-                        <div className="flex items-start justify-between gap-3 mb-3">
+                        <div className="mb-3 flex items-start justify-between gap-3">
                           <div className="flex items-center gap-2.5">
                             <div
                               className={`flex items-center justify-center size-8 rounded-full ${
@@ -476,7 +474,6 @@ export function ThreadViewer({ threadId, currentAgentId }: Props) {
         )}
       </ScrollArea>
 
-      {/* Input area */}
       <div className="p-4 border-t bg-card/50">
         <div className="flex gap-2">
           <AgentSelector

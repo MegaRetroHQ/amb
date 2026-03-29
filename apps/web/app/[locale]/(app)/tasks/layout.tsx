@@ -2,8 +2,17 @@
 
 import { Link, usePathname } from "@/i18n/navigation";
 import { useProjectContext } from "@/lib/context/project-context";
-import { Button } from "@/components/ui/button";
+import { Button } from "@amb-app/ui/components/button";
+import { EmptyState } from "@amb-app/ui/components/empty-state";
+import {
+  PageHeader,
+  PageHeaderContent,
+  PageHeaderDescription,
+  PageHeaderEyebrow,
+  PageHeaderTitle,
+} from "@amb-app/ui/components/page-header";
 import { useTranslations } from "next-intl";
+import { FolderKanbanIcon } from "lucide-react";
 
 export default function TasksLayout({ children }: { children: React.ReactNode }) {
   return <TasksLayoutInner>{children}</TasksLayoutInner>;
@@ -29,33 +38,39 @@ function TasksLayoutInner({ children }: { children: React.ReactNode }) {
 
   if (!selectedProject) {
     return (
-      <div className="flex flex-1 flex-col items-center justify-center gap-4 px-4 py-12">
-        <p className="text-sm text-muted-foreground">{t("selectProject")}</p>
-        <Button asChild variant="outline">
-          <Link href="/">{t("toDashboard")}</Link>
-        </Button>
+      <div className="flex flex-1 items-center justify-center px-4 py-12">
+        <EmptyState
+          icon={<FolderKanbanIcon className="size-6" />}
+          title={t("selectProject")}
+          action={
+            <Button variant="outline">
+              <Link href="/">{t("toDashboard")}</Link>
+            </Button>
+          }
+        />
       </div>
     );
   }
 
   return (
-    <div className="tasks-workspace flex min-h-0 flex-1 flex-col overflow-hidden bg-background">
+
       <div className="tasks-workspace-surface amb-glass-surface flex min-h-0 flex-1 flex-col overflow-hidden">
-        <div className="shrink-0 border-b border-border/50 px-5 py-3.5 md:px-6">
-          <div className="min-w-0 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-            <h1 className="font-display text-lg font-semibold tracking-tight sm:text-xl">{sectionHeading}</h1>
-            <span className="text-muted-foreground/80">·</span>
-            <p className="max-w-[min(100%,36rem)] truncate text-sm text-muted-foreground">
-              {t("projectLabel")}{" "}
-              <span className="font-medium text-foreground/90">{selectedProject.name}</span>
-            </p>
-          </div>
+        <div className="shrink-0 px-5 py-4 md:px-6">
+          <PageHeader className="border-b-0 pb-0">
+            <PageHeaderContent>
+              <PageHeaderEyebrow>{t("tasksTitle")}</PageHeaderEyebrow>
+              <PageHeaderTitle className="font-display text-lg sm:text-xl">{sectionHeading}</PageHeaderTitle>
+              <PageHeaderDescription className="truncate">
+                {t("projectLabel")} <span className="font-medium text-foreground">{selectedProject.name}</span>
+              </PageHeaderDescription>
+            </PageHeaderContent>
+          </PageHeader>
         </div>
 
         <div className="tasks-workspace-inner min-h-0 min-w-0 flex-1 overflow-auto px-5 py-4 md:px-6 md:py-5">
           {children}
         </div>
       </div>
-    </div>
+
   );
 }

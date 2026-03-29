@@ -14,7 +14,7 @@ import {
 
 import { CommandPalette, useCommandPalette } from "@/components/dashboard/command-palette";
 import { ProjectToolbarQuickActions } from "@/components/dashboard/project-switcher";
-import { Button } from "@/components/ui/button";
+import { Button } from "@amb-app/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,8 +24,8 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+} from "@amb-app/ui/components/dropdown-menu";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@amb-app/ui/components/tooltip";
 import { useTheme } from "@/components/theme-provider";
 import { Link, useRouter, usePathname } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";

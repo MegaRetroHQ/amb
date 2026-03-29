@@ -2,7 +2,12 @@
   "extends": "@repo/typescript-config/nextjs.json",
   "compilerOptions": {
     "baseUrl": ".",
-    "paths": { "@/*": ["./*"] },
+    "paths": {
+      "@/*": ["./*"],
+      "@/components/ui/date-picker": ["./components/ui/date-picker.tsx"],
+      "@/components/ui/date-range-picker": ["./components/ui/date-range-picker.tsx"],
+      "@/components/ui/description-editor": ["./components/ui/description-editor.tsx"]
+    },
     "plugins": [{ "name": "next" }]
   },
   "include": [

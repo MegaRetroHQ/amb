@@ -2,13 +2,29 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { CopyIcon, CheckIcon, PlusIcon, BanIcon, InfoIcon } from "lucide-react";
+import { CopyIcon, CheckIcon, PlusIcon, BanIcon, InfoIcon, KeyRoundIcon } from "lucide-react";
 
 import { useProjectTokens } from "@/lib/hooks/use-project-tokens";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@amb-app/ui/components/button";
+import { Card } from "@amb-app/ui/components/card";
+import { EmptyState } from "@amb-app/ui/components/empty-state";
+import { Input } from "@amb-app/ui/components/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@amb-app/ui/components/select";
+import {
+  PageHeader,
+  PageHeaderActions,
+  PageHeaderContent,
+  PageHeaderDescription,
+  PageHeaderEyebrow,
+  PageHeaderTitle,
+} from "@amb-app/ui/components/page-header";
+import { Badge } from "@amb-app/ui/components/badge";
 import {
   Dialog,
   DialogContent,
@@ -17,7 +33,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@amb-app/ui/components/dialog";
 import { getLocalizedApiErrorMessage } from "@/lib/api/error-i18n";
 
 type Props = {
@@ -89,13 +105,14 @@ export function TokensModule({ projectId, projectName }: Props) {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div>
-          <h2 className="text-xl font-semibold">{t("title")}</h2>
-          <p className="text-sm text-muted-foreground">
+      <PageHeader>
+        <PageHeaderContent>
+          <PageHeaderEyebrow>{t("title")}</PageHeaderEyebrow>
+          <PageHeaderTitle>{t("title")}</PageHeaderTitle>
+          <PageHeaderDescription>
             {t("projectLabel")}: {projectName}
-          </p>
-        </div>
+          </PageHeaderDescription>
+        </PageHeaderContent>
 
         <Dialog
           open={dialogOpen}
@@ -107,12 +124,14 @@ export function TokensModule({ projectId, projectName }: Props) {
             }
           }}
         >
-          <DialogTrigger asChild>
-            <Button className="gap-2">
-              <PlusIcon className="size-4" />
-              {t("createToken")}
-            </Button>
-          </DialogTrigger>
+          <PageHeaderActions>
+            <DialogTrigger asChild>
+              <Button className="gap-2">
+                <PlusIcon className="size-4" />
+                {t("createToken")}
+              </Button>
+            </DialogTrigger>
+          </PageHeaderActions>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>{t("createToken")}</DialogTitle>
@@ -127,17 +146,18 @@ export function TokensModule({ projectId, projectName }: Props) {
               />
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-foreground">{t("expiresInLabel")}</label>
-                <select
-                  value={expiresIn}
-                  onChange={(e) => setExpiresIn(Number(e.target.value))}
-                  className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                >
-                  {EXPIRY_OPTIONS.map(({ value, labelKey }) => (
-                    <option key={value} value={value}>
-                      {t(labelKey)}
-                    </option>
-                  ))}
-                </select>
+                <Select value={String(expiresIn)} onValueChange={(value) => setExpiresIn(Number(value))}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {EXPIRY_OPTIONS.map(({ value, labelKey }) => (
+                      <SelectItem key={value} value={String(value)}>
+                        {t(labelKey)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               {createError ? <p className="text-sm text-destructive">{createError}</p> : null}
 
@@ -167,7 +187,7 @@ export function TokensModule({ projectId, projectName }: Props) {
             </DialogFooter>
           </DialogContent>
         </Dialog>
-      </div>
+      </PageHeader>
 
       <Card className="p-4">
         <div className="flex items-start gap-3">
@@ -227,7 +247,11 @@ export function TokensModule({ projectId, projectName }: Props) {
       </div>
 
       {!loading && tokens.length === 0 ? (
-        <Card className="p-4 text-sm text-muted-foreground">{t("empty")}</Card>
+        <EmptyState
+          icon={<KeyRoundIcon className="size-6" />}
+          title={t("empty")}
+          description={t("usageDescription")}
+        />
       ) : null}
     </div>
   );

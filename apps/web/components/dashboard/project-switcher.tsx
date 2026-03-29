@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@amb-app/ui/components/button";
+import { Input } from "@amb-app/ui/components/input";
+import { Badge } from "@amb-app/ui/components/badge";
 import {
   Dialog,
   DialogContent,
@@ -13,14 +13,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@amb-app/ui/components/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@amb-app/ui/components/dropdown-menu";
 import {
   FolderKanbanIcon,
   PlusIcon,
@@ -39,7 +39,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar";
+} from "@amb-app/ui/components/sidebar";
 import { useProjectContext } from "@/lib/context/project-context";
 import { getLocalizedApiErrorFromCode } from "@/lib/api/error-i18n";
 
@@ -285,21 +285,20 @@ export function ProjectSwitcher() {
       <SidebarMenu>
         <SidebarMenuItem>
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <SidebarMenuButton
-                className="h-10 data-[state=open]:bg-sidebar-accent/90 data-[state=open]:text-sidebar-accent-foreground group-data-[collapsible=icon]:!size-10 group-data-[collapsible=icon]:!p-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-xl"
-                tooltip={triggerLabel}
-              >
-                <div className="amb-sidebar-brand-mark flex size-8 shrink-0 items-center justify-center rounded-lg text-sidebar-primary-foreground group-data-[collapsible=icon]:size-9">
-                  <FolderKanbanIcon className="size-4" />
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">{triggerLabel}</span>
-                  <span className="truncate text-xs text-sidebar-foreground/70">{tDash("subtitle")}</span>
-                </div>
-                <ChevronDownIcon className="ml-auto size-4 shrink-0 group-data-[collapsible=icon]:hidden" />
-              </SidebarMenuButton>
-            </DropdownMenuTrigger>
+            <SidebarMenuButton
+              render={<DropdownMenuTrigger />}
+              className="h-10 data-[state=open]:bg-sidebar-accent/90 data-[state=open]:text-sidebar-accent-foreground group-data-[collapsible=icon]:!size-10 group-data-[collapsible=icon]:!p-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-xl"
+              tooltip={triggerLabel}
+            >
+              <div className="amb-sidebar-brand-mark flex size-8 shrink-0 items-center justify-center rounded-lg text-sidebar-primary-foreground group-data-[collapsible=icon]:size-9">
+                <FolderKanbanIcon className="size-4" />
+              </div>
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-semibold">{triggerLabel}</span>
+                <span className="truncate text-xs text-sidebar-foreground/70">{tDash("subtitle")}</span>
+              </div>
+              <ChevronDownIcon className="ml-auto size-4 shrink-0 group-data-[collapsible=icon]:hidden" />
+            </SidebarMenuButton>
             <DropdownMenuContent align="start" className="w-[320px]">
               <DropdownMenuItem asChild>
                 <Link href="/" className="flex cursor-pointer items-center gap-2">

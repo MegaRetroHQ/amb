@@ -1,14 +1,21 @@
 import type { Metadata } from "next";
 import { Link } from "@/i18n/navigation";
 import { BookOpenIcon, Info, KeyboardIcon, Link2Icon, Plug } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@amb-app/ui/components/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@amb-app/ui/components/card";
+import {
+  PageHeader,
+  PageHeaderContent,
+  PageHeaderDescription,
+  PageHeaderEyebrow,
+  PageHeaderTitle,
+} from "@amb-app/ui/components/page-header";
 import { getTranslations } from "next-intl/server";
 
 export const metadata: Metadata = {
@@ -32,8 +39,24 @@ export default async function HelpPage() {
   const t = await getTranslations("Help");
 
   return (
-    <div className="flex flex-1 flex-col overflow-auto bg-background">
-      <main className="mx-auto w-full max-w-4xl space-y-8 px-5 py-5 md:px-6 md:py-6">
+    <div className="tasks-workspace-surface amb-shell-panel flex min-h-0 flex-1 flex-col overflow-hidden">
+      <div className="shrink-0 px-5 py-4 md:px-6">
+        <div className="amb-page-width">
+          <PageHeader className="border-b-0 pb-0">
+            <PageHeaderContent>
+              <PageHeaderEyebrow>{t("title")}</PageHeaderEyebrow>
+              <PageHeaderTitle>{t("title")}</PageHeaderTitle>
+              <PageHeaderDescription>
+                {t("about")} · {t("connectingProject")} · {t("keyboardShortcuts")} · {t("links")}
+              </PageHeaderDescription>
+            </PageHeaderContent>
+          </PageHeader>
+        </div>
+      </div>
+
+      <main className="tasks-workspace-inner min-h-0 min-w-0 flex-1 overflow-auto">
+        <div className="amb-page-width space-y-8 px-5 py-4 md:px-6 md:py-5">
+
         <Card className="shadow-elevation">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -101,7 +124,7 @@ export default async function HelpPage() {
                   <strong className="text-foreground">Start AMB.</strong> In this repo: <code className="rounded bg-muted px-1 font-mono text-xs">pnpm dev</code> (and separately — PostgreSQL, migrations, and if needed <code className="rounded bg-muted px-1 font-mono text-xs">pnpm seed:agents</code>). Or run AMB via Docker.
                 </li>
                 <li>
-                  <strong className="text-foreground">In the new project</strong> (repo root or Turborepo root) add the Message Bus MCP server: in Cursor → MCP settings set <code className="rounded bg-muted px-1 font-mono text-xs">command</code> = <code className="rounded bg-muted px-1 font-mono text-xs">node</code>, <code className="rounded bg-muted px-1 font-mono text-xs">args</code> = <code className="rounded bg-muted px-1 font-mono text-xs">["/absolute/path/to/amb/packages/mcp-server/dist/index.js"]</code>, <code className="rounded bg-muted px-1 font-mono text-xs">env.MESSAGE_BUS_URL</code> = <code className="rounded bg-muted px-1 font-mono text-xs">http://localhost:3333</code>.
+                  <strong className="text-foreground">In the new project</strong> (repo root or Turborepo root) add the Message Bus MCP server: in Cursor → MCP settings set <code className="rounded bg-muted px-1 font-mono text-xs">command</code> = <code className="rounded bg-muted px-1 font-mono text-xs">node</code>, <code className="rounded bg-muted px-1 font-mono text-xs">args</code> = <code className="rounded bg-muted px-1 font-mono text-xs">[&quot;/absolute/path/to/amb/packages/mcp-server/dist/index.js&quot;]</code>, <code className="rounded bg-muted px-1 font-mono text-xs">env.MESSAGE_BUS_URL</code> = <code className="rounded bg-muted px-1 font-mono text-xs">http://localhost:3333</code>.
                 </li>
                 <li>
                   Restart Cursor or reconnect MCP. Done: you can create threads, send messages, and view inbox via Message Bus tools in chat.
@@ -300,6 +323,7 @@ const agent = await client.registerAgent({ name: "my-service", role: "worker" })
             </ul>
           </CardContent>
         </Card>
+        </div>
       </main>
     </div>
   );

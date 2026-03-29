@@ -6,6 +6,22 @@
 
 - `ADR-XXX-<kebab-title>.md`
 
+## Triage ADR-015–019
+
+Итог разбора (архитектор): зонтичный **ADR-015** разбит на **ADR-016–019**; последние **приняты** как канон enterprise kernel baseline.
+
+| ADR | Triage | Статус в репозитории |
+|-----|--------|----------------------|
+| [ADR-015](./ADR-015-llm-cost-observability-and-routing-efficiency.md) | **Разбить** → дочерние ADR-016…019; тело ADR-015 = справочный план внедрения | Разбито |
+| [ADR-016](./ADR-016-kernel-boundary-and-plane-model.md) | **Принять** — граница kernel, Control/Data Plane | Принято |
+| [ADR-017](./ADR-017-enterprise-rules-and-policy-contract.md) | **Принять** — контракт policy и точки enforcement | Принято |
+| [ADR-018](./ADR-018-llm-cost-observability-soft-budgets.md) | **Принять** — usage/cost, soft budgets v1 | Принято |
+| [ADR-019](./ADR-019-routing-efficiency-and-broadcast-governance.md) | **Принять** — маршрутизация, broadcast, cursor-first | Принято |
+
+**Отклонено:** ни один из ADR-015…019 не отклонён целиком.
+
+Полный отчёт о выполнении: [completion-report-adr-015-019.md](./completion-report-adr-015-019.md).
+
 ## Принятые ADR
 
 | ADR | Название | Дата | Статус |

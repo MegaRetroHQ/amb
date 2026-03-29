@@ -1,7 +1,7 @@
 # PRD: Issue Keys, Epics и Sprints
 
-**Версия:** 1.0  
-**Дата:** 2026-03-26  
+**Версия:** 1.1  
+**Дата:** 2026-03-29  
 **Статус:** Draft  
 **Автор:** Product Owner Agent
 
@@ -17,6 +17,8 @@
 - задачи и эпики можно планировать по спринтам
 
 Цель: приблизить управление задачами к привычной модели Jira/Linear/Plane, не ломая текущий project-scoped MVP.
+
+Уточнение от 2026-03-29: детальная sprint analytics вынесена в отдельный PRD: [PRD-sprint-analytics.md](./PRD-sprint-analytics.md).
 
 ---
 
@@ -51,6 +53,7 @@
 | Project settings         | Префикс настраивается в настройках проекта                                  |
 | List / board support     | Ключ, эпик и спринт видны в списке и карточках задач                        |
 | Filtering                | Фильтры по epic и sprint                                                    |
+| Sprint analytics         | Burndown, Burnup, Scope Change и Throughput для спринта                    |
 
 
 ### Out of Scope
@@ -60,7 +63,7 @@
 - Перенумерация существующих задач при смене префикса
 - Иерархия эпик → под-эпик
 - Несколько спринтов на одну задачу одновременно
-- Velocity, burn-down, story points
+- Velocity и story points
 - Автоматическое планирование задач в спринт
 
 ---
@@ -134,6 +137,14 @@
 - API поддерживает CRUD для epics и sprints
 - SDK типы и схемы поддерживают новые сущности и поля
 
+### FR7. Sprint Analytics
+
+- Для каждого спринта доступны метрики: `Burndown`, `Burnup`, `Scope Change`, `Throughput`.
+- Все метрики строятся по временным точкам внутри диапазона дат спринта.
+- В UI графики реализуются через стандартные chart-компоненты (`shadcn/ui`, area chart где применимо).
+- Фильтры аналитики минимум: `project`, `sprint`, `assignee` (optional), `priority` (optional).
+- Данные аналитики доступны в API для дальнейшего использования в Dashboard.
+
 ---
 
 ## 6. Acceptance Criteria
@@ -165,6 +176,14 @@
 - Список и board можно отфильтровать по sprint
 - В интерфейсе видно, какие задачи входят в активный sprint
 
+### Epic D: Sprint Analytics
+
+- На странице спринта отображается `Burndown`.
+- На странице спринта отображается `Burnup` (done vs total scope).
+- Видна динамика `Scope Change` по задачам спринта.
+- Виден `Throughput` (closed issues per day/week) в рамках спринта.
+- Графики корректно работают при изменении scope спринта в процессе выполнения.
+
 ---
 
 ## 7. Dependencies
@@ -191,6 +210,7 @@
 | E9-S4 | CRUD эпиков и связь issue ↔ epic                     | P1        |
 | E9-S5 | CRUD спринтов и связь issue ↔ sprint                 | P1        |
 | E9-S6 | Фильтры, представления и навигация для epics/sprints | P1        |
+| E9-S7 | Sprint analytics (burndown/burnup/scope/throughput)  | P1        |
 
 
 ---
@@ -209,6 +229,5 @@
 
 | Дата       | Версия | Изменения                                        |
 | ---------- | ------ | ------------------------------------------------ |
+| 2026-03-29 | 1.1    | Добавлены обязательные sprint analytics и критерии приёмки |
 | 2026-03-26 | 1.0    | Первый релиз PRD для issue keys, epics и sprints |
-
-

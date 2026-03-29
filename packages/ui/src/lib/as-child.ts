@@ -47,9 +47,14 @@ export function inferNativeButtonFromSlot(
   if (componentName === "Button") {
     return true
   }
-  if ("nativeButton" in slotted.props) {
+  const slotProps = slotted.props
+  if (
+    slotProps !== null &&
+    typeof slotProps === "object" &&
+    "nativeButton" in slotProps
+  ) {
     return Boolean(
-      (slotted.props as { nativeButton?: boolean }).nativeButton
+      (slotProps as { nativeButton?: boolean }).nativeButton
     )
   }
   return false

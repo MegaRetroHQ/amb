@@ -2,7 +2,7 @@
 
 **Версия:** 1.0  
 **Дата:** 2026-01-28  
-**Последняя проверка статуса:** 2026-03-26 (nest-engineer). Epic 1–6 Done. E9A Phase 1–3 Done (DB, API, SDK). Issue → Task rename завершён.  
+**Последняя проверка статуса:** 2026-03-29 (PO). E1–E7 Done в overview (E5, E7 — все stories в таблицах ниже ✅). E9A Phase 1–3 Done (DB, API, SDK). Issue → Task rename завершён.  
 **Автор:** Product Owner Agent  
 **Статус:** Актуально
 
@@ -17,9 +17,9 @@
 | [E2: Multi-tenant инфраструктура](#epic-2-multi-tenant-инфраструктура) | P0        | ✅ Done        | Sprint 2-3 |
 | [E3: JWT авторизация](#epic-3-jwt-авторизация)                         | P0        | ✅ Done        | Sprint 3-4 |
 | [E4: Dashboard как продукт](#epic-4-dashboard-как-продукт)             | P0        | ✅ Done        | Sprint 4-5 |
-| [E5: Developer Experience](#epic-5-developer-experience)               | P1        | 🚧 In Progress | Sprint 5-6 |
+| [E5: Developer Experience](#epic-5-developer-experience)               | P1        | ✅ Done        | Sprint 5-6 |
 | [E6: Операционная готовность](#epic-6-операционная-готовность)         | P1        | ✅ Done        | Sprint 6-7 |
-| [E7: Локализация (i18n)](#epic-7-локализация-i18n)                     | P1        | 🚧 In Progress | Sprint 6-7 |
+| [E7: Локализация (i18n)](#epic-7-локализация-i18n)                     | P1        | ✅ Done        | Sprint 6-7 |
 | [E8: Удаление и редактирование сущностей](#epic-8-удаление-и-редактирование-сущностей) | P1        | 📋 Backlog     | —          |
 | [E9: Issue Keys, Epics и Sprints](#epic-9-issue-keys-epics-и-sprints) | P0        | 🚧 In Progress | Sprint 7-8 |
 

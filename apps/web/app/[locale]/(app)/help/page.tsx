@@ -39,25 +39,22 @@ export default async function HelpPage() {
   const t = await getTranslations("Help");
 
   return (
-    <div className="tasks-workspace-surface amb-shell-panel flex min-h-0 flex-1 flex-col overflow-hidden">
+    <div className="tasks-workspace-surface amb-glass-surface amb-shell-panel flex min-h-0 flex-1 flex-col overflow-hidden">
       <div className="shrink-0 px-5 py-4 md:px-6">
-        <div className="amb-page-width">
-          <PageHeader className="border-b-0 pb-0">
-            <PageHeaderContent>
-              <PageHeaderEyebrow>{t("title")}</PageHeaderEyebrow>
-              <PageHeaderTitle>{t("title")}</PageHeaderTitle>
-              <PageHeaderDescription>
-                {t("about")} · {t("connectingProject")} · {t("keyboardShortcuts")} · {t("links")}
-              </PageHeaderDescription>
-            </PageHeaderContent>
-          </PageHeader>
-        </div>
+        <PageHeader className="max-w-5xl border-b-0 pb-0">
+          <PageHeaderContent>
+            <PageHeaderEyebrow>{t("title")}</PageHeaderEyebrow>
+            <PageHeaderTitle className="font-display text-lg sm:text-xl">{t("title")}</PageHeaderTitle>
+            <PageHeaderDescription>
+              {t("about")} · {t("connectingProject")} · {t("keyboardShortcuts")} · {t("links")}
+            </PageHeaderDescription>
+          </PageHeaderContent>
+        </PageHeader>
       </div>
 
       <main className="tasks-workspace-inner min-h-0 min-w-0 flex-1 overflow-auto">
-        <div className="amb-page-width space-y-8 px-5 py-4 md:px-6 md:py-5">
-
-        <Card className="shadow-elevation">
+        <div className="max-w-5xl space-y-8 px-5 py-4 md:px-6 md:py-5">
+          <Card className="shadow-elevation">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Info className="size-5" />
@@ -103,7 +100,7 @@ export default async function HelpPage() {
           </CardContent>
         </Card>
 
-        <Card className="shadow-elevation">
+          <Card className="shadow-elevation">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Plug className="size-5" />
@@ -257,7 +254,7 @@ const agent = await client.registerAgent({ name: "my-service", role: "worker" })
           </CardContent>
         </Card>
 
-        <Card className="shadow-elevation">
+          <Card className="shadow-elevation">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <KeyboardIcon className="size-5" />

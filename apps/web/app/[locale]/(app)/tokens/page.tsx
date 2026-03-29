@@ -38,9 +38,9 @@ export default function TokensPage() {
   }
 
   return (
-    <div className="tasks-workspace-surface amb-shell-panel flex min-h-0 flex-1 flex-col overflow-hidden">
+    <div className="tasks-workspace-surface amb-glass-surface amb-shell-panel flex min-h-0 flex-1 flex-col overflow-hidden">
       <div className="tasks-workspace-inner min-h-0 min-w-0 flex-1 overflow-auto">
-        <div className="amb-page-width px-5 py-4 md:px-6 md:py-5">
+        <div className="px-5 py-4 md:px-6 md:py-5">
           <TokensModule projectId={selectedProject.id} projectName={selectedProject.name} />
         </div>
       </div>

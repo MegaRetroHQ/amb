@@ -108,25 +108,22 @@ export default async function UseCasesPage() {
   const t = await getTranslations("Help");
 
   return (
-    <div className="tasks-workspace-surface amb-shell-panel flex min-h-0 flex-1 flex-col overflow-hidden">
+    <div className="tasks-workspace-surface amb-glass-surface amb-shell-panel flex min-h-0 flex-1 flex-col overflow-hidden">
       <div className="shrink-0 px-5 py-4 md:px-6">
-        <div className="amb-page-width">
-          <PageHeader className="border-b-0 pb-0">
-            <PageHeaderContent>
-              <PageHeaderEyebrow>{t("title")}</PageHeaderEyebrow>
-              <PageHeaderTitle>{t("useCases")}</PageHeaderTitle>
-              <PageHeaderDescription>
-                Типовые сценарии использования, способы подключения и поддерживаемые message flows.
-              </PageHeaderDescription>
-            </PageHeaderContent>
-          </PageHeader>
-        </div>
+        <PageHeader className="max-w-5xl border-b-0 pb-0">
+          <PageHeaderContent>
+            <PageHeaderEyebrow>{t("title")}</PageHeaderEyebrow>
+            <PageHeaderTitle className="font-display text-lg sm:text-xl">{t("useCases")}</PageHeaderTitle>
+            <PageHeaderDescription>
+              Типовые сценарии использования, способы подключения и поддерживаемые message flows.
+            </PageHeaderDescription>
+          </PageHeaderContent>
+        </PageHeader>
       </div>
 
       <main className="tasks-workspace-inner min-h-0 min-w-0 flex-1 overflow-auto">
-        <div className="amb-page-width space-y-8 px-4 py-4 md:px-6 md:py-5">
-
-        <Card>
+        <div className="max-w-5xl space-y-8 px-5 py-4 md:px-6 md:py-5">
+          <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <NetworkIcon className="size-5" />
@@ -146,7 +143,7 @@ export default async function UseCasesPage() {
           </CardContent>
         </Card>
 
-        <Card>
+          <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <WorkflowIcon className="size-5" />
@@ -166,7 +163,7 @@ export default async function UseCasesPage() {
           </CardContent>
         </Card>
 
-        <Card>
+          <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <UserIcon className="size-5" />
@@ -186,7 +183,7 @@ export default async function UseCasesPage() {
           </CardContent>
         </Card>
 
-        <Card>
+          <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <ListOrderedIcon className="size-5" />
@@ -226,7 +223,7 @@ export default async function UseCasesPage() {
           </CardContent>
         </Card>
 
-        <Card>
+          <Card>
           <CardHeader>
             <CardTitle>Summary table</CardTitle>
             <CardDescription>Scenario → connection → main operations</CardDescription>
@@ -243,7 +240,7 @@ export default async function UseCasesPage() {
           </CardContent>
         </Card>
 
-        <Card>
+          <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Link2Icon className="size-5" />

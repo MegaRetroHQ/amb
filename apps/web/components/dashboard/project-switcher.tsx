@@ -12,7 +12,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@amb-app/ui/components/dialog";
 import {
   DropdownMenu,
@@ -86,6 +85,7 @@ export function ProjectSwitcher() {
   const { setProjectId, projects, loading, selectedProject, loadProjects: reloadProjects, deleteProject } = useProjectContext();
   const [newProjectName, setNewProjectName] = useState("");
   const [creating, setCreating] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [manageOpen, setManageOpen] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
@@ -123,6 +123,14 @@ export function ProjectSwitcher() {
     if (tenants.length === 0) {
       await loadTenants();
     }
+  };
+
+  const openCreateDialogFromMenu = () => {
+    setMenuOpen(false);
+    setCreateError(null);
+    window.setTimeout(() => {
+      setDialogOpen(true);
+    }, 0);
   };
 
   const filteredProjects = projects.filter((project) => {
@@ -284,7 +292,7 @@ export function ProjectSwitcher() {
     <>
       <SidebarMenu>
         <SidebarMenuItem>
-          <DropdownMenu>
+          <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
             <SidebarMenuButton
               render={<DropdownMenuTrigger />}
               className="h-10 data-[state=open]:bg-sidebar-accent/90 data-[state=open]:text-sidebar-accent-foreground group-data-[collapsible=icon]:!size-10 group-data-[collapsible=icon]:!p-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-xl"
@@ -324,43 +332,13 @@ export function ProjectSwitcher() {
             ))}
           </div>
           <DropdownMenuSeparator />
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <DialogTrigger asChild>
-              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                <PlusIcon className="size-4 mr-2" />
-                {t("createProject")}
-              </DropdownMenuItem>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>{t("newProject")}</DialogTitle>
-                <DialogDescription>
-                  {t("newProjectDesc")}
-                </DialogDescription>
-              </DialogHeader>
-              {createError && (
-                <p className="text-sm text-destructive">{createError}</p>
-              )}
-              <Input
-                placeholder={t("projectNamePlaceholder")}
-                value={newProjectName}
-                onChange={(event) => setNewProjectName(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") {
-                    createProject();
-                  }
-                }}
-              />
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setDialogOpen(false)}>
-                  {tCommon("cancel")}
-                </Button>
-                <Button onClick={createProject} disabled={!newProjectName.trim() || creating}>
-                  {tCommon("create")}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          <DropdownMenuItem
+            onSelect={(event) => event.preventDefault()}
+            onClick={openCreateDialogFromMenu}
+          >
+            <PlusIcon className="size-4 mr-2" />
+            {t("createProject")}
+          </DropdownMenuItem>
           <DropdownMenuItem onSelect={(event) => event.preventDefault()} onClick={openManageDialog}>
             <Building2Icon className="size-4 mr-2" />
             {t("manageProjects")}
@@ -369,6 +347,46 @@ export function ProjectSwitcher() {
           </DropdownMenu>
         </SidebarMenuItem>
       </SidebarMenu>
+
+      <Dialog
+        open={dialogOpen}
+        onOpenChange={(open) => {
+          setDialogOpen(open);
+          if (!open) {
+            setCreateError(null);
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("newProject")}</DialogTitle>
+            <DialogDescription>
+              {t("newProjectDesc")}
+            </DialogDescription>
+          </DialogHeader>
+          {createError && (
+            <p className="text-sm text-destructive">{createError}</p>
+          )}
+          <Input
+            placeholder={t("projectNamePlaceholder")}
+            value={newProjectName}
+            onChange={(event) => setNewProjectName(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                createProject();
+              }
+            }}
+          />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>
+              {tCommon("cancel")}
+            </Button>
+            <Button onClick={createProject} disabled={!newProjectName.trim() || creating}>
+              {tCommon("create")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={manageOpen} onOpenChange={setManageOpen}>
         <DialogContent className="sm:max-w-[840px]">

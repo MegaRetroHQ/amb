@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { BookOpen, CalendarRange, CircleHelp, KeyRound, LayoutList, Layers } from "lucide-react";
+import { BookOpen, CalendarRange, CircleHelp, KeyRound, LayoutList, Layers, MessagesSquare } from "lucide-react";
 
 import { Link, usePathname } from "@/i18n/navigation";
 import { ProjectSwitcher } from "@/components/dashboard/project-switcher";
@@ -25,10 +25,13 @@ function pathMatches(pathname: string, prefix: string) {
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const tDashboard = useTranslations("Dashboard");
+  const tAgents = useTranslations("AgentsList");
   const tTasks = useTranslations("Tasks");
   const tTokens = useTranslations("Tokens");
   const tHelp = useTranslations("Help");
 
+  const isDashboard = pathname === "/";
   const isTasksIssues = pathname === "/tasks" || pathname === "/tasks/";
   const isEpics = pathMatches(pathname, "/tasks/epics");
   const isSprints = pathMatches(pathname, "/tasks/sprints");
@@ -42,6 +45,22 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel className="amb-sidebar-section-label">{tAgents("agents")}</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={isDashboard} tooltip={tDashboard("messages")}>
+                  <Link href="/">
+                    <MessagesSquare />
+                    <span>{tDashboard("messages")}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
         <SidebarGroup>
           <SidebarGroupLabel className="amb-sidebar-section-label">{tTasks("tasksTitle")}</SidebarGroupLabel>
           <SidebarGroupContent>

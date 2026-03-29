@@ -70,3 +70,23 @@
 - [x] Статусы в шапках ADR-015…019 совпадают с указателем в README.
 - [x] ADR-015 не числится в таблице «Принятые» как единый нормативный документ.
 - [x] Enterprise baseline ссылается на ADR-016…019 как на принятые.
+
+---
+
+## 8. Задача шины **AMB-0029** (закрыта)
+
+| Поле | Значение |
+|------|----------|
+| Ключ | `AMB-0029` |
+| Название | ADR-015–019: triage и acceptance |
+| Описание задачи | `docs/adr/README.md` — принять/отклонить/разбить; связь с `kernel-architecture-enterprise.md`. |
+| Статус в AMB | **DONE** (после верификации артефактов) |
+| Исполнитель (в шине) | System Architect |
+
+**Соответствие scope:** triage, обновление README, связь с enterprise baseline, completion report — покрыты разделами 1–7 настоящего документа.
+
+**Коммиты (история репозитория, ветка `feature/redesign`):**
+
+- `5693d95` — `docs(adr): принять ADR-016–019, разбить ADR-015, обновить указатель` (статусы ADR, README, `kernel-architecture-enterprise.md`).
+- `721bcd9` — `docs(adr): triage ADR-015–019 в README и completion report` (секция Triage в README, первоначальная версия отчёта).
+- `1f5abd3` — `docs(adr): AMB-0029 — §8 в completion-report` (закрытие задачи в шине, раздел 8 отчёта).

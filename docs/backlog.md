@@ -2,7 +2,7 @@
 
 **Версия:** 1.0  
 **Дата:** 2026-01-28  
-**Последняя проверка статуса:** 2026-03-29 (PO). E1–E7 Done в overview (E5, E7 — все stories в таблицах ниже ✅). E9A Phase 1–3 Done (DB, API, SDK). Issue → Task rename завершён.  
+**Последняя проверка статуса:** 2026-03-29 (PO). Сверка E5/E7: Epic Overview = таблицы stories (все Done, расхождений нет). E1–E7 Done в overview. E9A Phase 1–3 Done (DB, API, SDK). Issue → Task rename завершён.  
 **Автор:** Product Owner Agent  
 **Статус:** Актуально
 

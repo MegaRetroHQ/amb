@@ -89,4 +89,4 @@
 
 - `5693d95` — `docs(adr): принять ADR-016–019, разбить ADR-015, обновить указатель` (статусы ADR, README, `kernel-architecture-enterprise.md`).
 - `721bcd9` — `docs(adr): triage ADR-015–019 в README и completion report` (секция Triage в README, первоначальная версия отчёта).
-- `1f5abd3` — `docs(adr): AMB-0029 — §8 в completion-report` (закрытие задачи в шине, раздел 8 отчёта).
+- Закрытие **AMB-0029** и §8 отчёта: коммит с сообщением `docs(adr): AMB-0029 — §8 в completion-report (закрытие задачи)` на ветке разработки (актуальный SHA: `git log -1 --oneline -- docs/adr/completion-report-adr-015-019.md`).

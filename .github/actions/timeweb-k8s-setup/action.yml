@@ -1,0 +1,53 @@
+name: Timeweb K8s Setup
+description: Install kubectl tools, configure kubeconfig, and optionally define AMB image tags.
+
+inputs:
+  kubeconfig:
+    description: Kubeconfig content for the target cluster.
+    required: true
+  registry_host:
+    description: Container registry host.
+    required: true
+  registry_namespace:
+    description: Container registry namespace.
+    required: true
+  define_web_image:
+    description: Whether to export AMB_WEB_IMAGE into GITHUB_ENV.
+    required: false
+    default: "true"
+  define_api_image:
+    description: Whether to export AMB_API_IMAGE into GITHUB_ENV.
+    required: false
+    default: "true"
+
+runs:
+  using: composite
+  steps:
+    - name: Install kubectl
+      uses: azure/setup-kubectl@v4
+
+    - name: Install envsubst
+      shell: bash
+      run: |
+        set -euo pipefail
+        sudo apt-get update
+        sudo apt-get install -y gettext-base
+
+    - name: Configure kubeconfig
+      shell: bash
+      run: |
+        set -euo pipefail
+        mkdir -p "$HOME/.kube"
+        printf '%s' '${{ inputs.kubeconfig }}' > "$HOME/.kube/config"
+        chmod 600 "$HOME/.kube/config"
+
+    - name: Define image tags
+      shell: bash
+      run: |
+        set -euo pipefail
+        if [ "${{ inputs.define_api_image }}" = "true" ]; then
+          echo "AMB_API_IMAGE=${{ inputs.registry_host }}/${{ inputs.registry_namespace }}/amb-api:${GITHUB_SHA}" >> "$GITHUB_ENV"
+        fi
+        if [ "${{ inputs.define_web_image }}" = "true" ]; then
+          echo "AMB_WEB_IMAGE=${{ inputs.registry_host }}/${{ inputs.registry_namespace }}/amb-web:${GITHUB_SHA}" >> "$GITHUB_ENV"
+        fi

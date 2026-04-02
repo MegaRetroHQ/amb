@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   ForbiddenException,
   Injectable,
   UnauthorizedException,
@@ -33,6 +34,31 @@ function signHs256(payload: Record<string, unknown>, secret: string): string {
   return `${encodedHeader}.${encodedPayload}.${signature}`;
 }
 
+function slugify(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .replace(/-{2,}/g, "-");
+}
+
+function deriveDisplayName(email: string, displayName?: string): string {
+  const normalized = displayName?.trim();
+  if (normalized) {
+    return normalized;
+  }
+
+  const localPart = email.split("@")[0] ?? "";
+  const fallback = localPart
+    .split(/[._-]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+
+  return fallback || "Workspace Admin";
+}
+
 @Injectable()
 export class AuthService {
   constructor(private readonly prisma: PrismaService) {}
@@ -45,6 +71,68 @@ export class AuthService {
     if (!user || !user.isActive || !verifyPassword(password, user.passwordHash)) {
       throw new UnauthorizedException("Invalid email or password");
     }
+
+    return this.createUserSession(user);
+  }
+
+  async signup(email: string, password: string, displayName?: string) {
+    const normalizedEmail = email.trim().toLowerCase();
+    const existingUser = await this.prisma.user.findUnique({
+      where: { email: normalizedEmail },
+      select: { id: true },
+    });
+    if (existingUser) {
+      throw new ConflictException({
+        code: "email_already_registered",
+        message: "A user with this email already exists",
+      });
+    }
+
+    const resolvedDisplayName = deriveDisplayName(normalizedEmail, displayName);
+    const tenantSlugBase = slugify(resolvedDisplayName) || slugify(normalizedEmail.split("@")[0] ?? "");
+    const tenantSlug = `${tenantSlugBase || "workspace"}-${randomUUID().slice(0, 8)}`;
+    const projectSlug = `default-${tenantSlug}`;
+
+    const user = await this.prisma.$transaction(async (tx) => {
+      const tenant = await tx.tenant.create({
+        data: {
+          name: `${resolvedDisplayName}'s Workspace`,
+          slug: tenantSlug,
+        },
+      });
+
+      await tx.project.create({
+        data: {
+          tenantId: tenant.id,
+          name: "Default Project",
+          slug: projectSlug,
+          taskPrefix: "AMB",
+          taskSequence: 0,
+        },
+      });
+
+      return tx.user.create({
+        data: {
+          tenantId: tenant.id,
+          email: normalizedEmail,
+          passwordHash: hashPassword(password),
+          displayName: resolvedDisplayName,
+          roles: ["tenant-admin"],
+          isActive: true,
+        },
+      });
+    });
+
+    return this.createUserSession(user);
+  }
+
+  private async createUserSession(user: {
+    id: string;
+    email: string;
+    displayName: string | null;
+    tenantId: string;
+    roles: string[];
+  }) {
 
     const secret = resolveJwtSecret();
     if (!secret) {

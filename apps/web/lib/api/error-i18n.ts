@@ -12,6 +12,7 @@ const CODE_TO_KEY: Record<string, string> = {
   invalid_project_id: "apiErrors.invalidProjectId",
   project_not_found: "apiErrors.projectNotFound",
   auth_failed: "apiErrors.authFailed",
+  email_already_registered: "apiErrors.emailAlreadyRegistered",
   invalid_auth_response: "apiErrors.invalidAuthResponse",
   not_found: "apiErrors.notFound",
   conflict: "apiErrors.conflict",

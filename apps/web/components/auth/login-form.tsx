@@ -23,15 +23,16 @@ function sanitizeNextPath(nextValue: string | null, locale: string): string {
 }
 
 export function LoginForm() {
+  const isProduction = process.env.NODE_ENV === "production";
   const t = useTranslations("Auth");
   const tCommon = useTranslations("Common");
   const locale = useLocale();
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [email, setEmail] = useState("admin@local.test");
-  const [password, setPassword] = useState("ChangeMe123!");
-  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState(isProduction ? "" : "admin@local.test");
+  const [password, setPassword] = useState(isProduction ? "" : "ChangeMe123!");
+  const [loadingAction, setLoadingAction] = useState<"signin" | "signup" | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const nextPath = useMemo(
@@ -39,13 +40,12 @@ export function LoginForm() {
     [searchParams, locale]
   );
 
-  const onSubmit = async (event: FormEvent) => {
-    event.preventDefault();
-    setLoading(true);
+  const submitAuth = async (mode: "signin" | "signup") => {
+    setLoadingAction(mode);
     setError(null);
 
     try {
-      const response = await fetch("/api/auth/login", {
+      const response = await fetch(mode === "signup" ? "/api/auth/signup" : "/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -59,8 +59,15 @@ export function LoginForm() {
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : tCommon("apiErrors.authFailed"));
     } finally {
-      setLoading(false);
+      setLoadingAction(null);
     }
+  };
+
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const nativeEvent = event.nativeEvent as SubmitEvent;
+    const submitter = nativeEvent.submitter as HTMLButtonElement | null;
+    await submitAuth(submitter?.value === "signup" ? "signup" : "signin");
   };
 
   return (
@@ -85,7 +92,7 @@ export function LoginForm() {
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              placeholder="admin@local.test"
+              placeholder={isProduction ? "you@example.com" : "admin@local.test"}
               required
             />
           </div>
@@ -100,14 +107,29 @@ export function LoginForm() {
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
+              placeholder={t("passwordPlaceholder")}
               required
             />
           </div>
 
           {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? t("signingIn") : t("signIn")}
+          <Button
+            type="submit"
+            value="signin"
+            className="w-full"
+            disabled={loadingAction !== null}
+          >
+            {loadingAction === "signin" ? t("signingIn") : t("signIn")}
+          </Button>
+          <Button
+            type="submit"
+            value="signup"
+            variant="outline"
+            className="w-full"
+            disabled={loadingAction !== null}
+          >
+            {loadingAction === "signup" ? t("creatingAccount") : t("createAccount")}
           </Button>
         </form>
       </Card>

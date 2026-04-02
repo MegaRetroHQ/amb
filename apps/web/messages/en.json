@@ -34,6 +34,7 @@
       "invalidProjectId": "Project ID must be a valid UUID.",
       "projectNotFound": "Project not found.",
       "authFailed": "Authentication failed.",
+      "emailAlreadyRegistered": "An account with this email already exists.",
       "invalidAuthResponse": "Invalid auth response from API.",
       "notFound": "Resource not found.",
       "conflict": "Conflict: resource state has changed.",
@@ -95,11 +96,14 @@
   },
   "Auth": {
     "title": "Sign in",
-    "subtitle": "Use your user token account to access the dashboard.",
+    "subtitle": "Sign in or create a user account to access the dashboard.",
     "email": "Email",
     "password": "Password",
+    "passwordPlaceholder": "At least 8 characters",
     "signIn": "Sign in",
     "signingIn": "Signing in...",
+    "createAccount": "Create account",
+    "creatingAccount": "Creating account...",
     "loginFailed": "Invalid email or password"
   },
   "CommandPalette": {

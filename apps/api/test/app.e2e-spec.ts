@@ -583,6 +583,41 @@ describe("API (e2e)", () => {
   });
 
   describe("user tokens and login (E3-S2)", () => {
+    it("allows self-signup and issues a user JWT", async () => {
+      const email = `new-user-${Date.now().toString(36)}@local.test`;
+
+      const signupRes = await request(app.getHttpServer())
+        .post("/api/auth/signup")
+        .send({ email, password: "SignupPass123!", displayName: "New User" })
+        .expect(201);
+
+      expect(signupRes.body.data?.tokenType).toBe("Bearer");
+      expect(signupRes.body.data?.user?.email).toBe(email);
+      expect(signupRes.body.data?.user?.displayName).toBe("New User");
+      expect(signupRes.body.data?.user?.roles).toContain("tenant-admin");
+
+      const token = signupRes.body.data?.accessToken as string;
+      const payload = JSON.parse(
+        Buffer.from(token.split(".")[1] ?? "", "base64url").toString("utf8")
+      ) as { sub: string; tenantId: string; roles: string[] };
+
+      expect(payload.sub).toBe("user");
+      expect(typeof payload.tenantId).toBe("string");
+      expect(payload.roles).toContain("tenant-admin");
+
+      await request(app.getHttpServer())
+        .post("/api/auth/login")
+        .send({ email, password: "SignupPass123!" })
+        .expect(200);
+    });
+
+    it("returns 409 when signup email already exists", async () => {
+      await request(app.getHttpServer())
+        .post("/api/auth/signup")
+        .send({ email: "admin@local.test", password: "ChangeMe123!" })
+        .expect(409);
+    });
+
     it("returns 401 for invalid credentials", async () => {
       await request(app.getHttpServer())
         .post("/api/auth/login")

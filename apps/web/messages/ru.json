@@ -34,6 +34,7 @@
       "invalidProjectId": "Project ID должен быть валидным UUID.",
       "projectNotFound": "Проект не найден.",
       "authFailed": "Ошибка авторизации.",
+      "emailAlreadyRegistered": "Аккаунт с таким email уже существует.",
       "invalidAuthResponse": "Некорректный ответ авторизации от API.",
       "notFound": "Ресурс не найден.",
       "conflict": "Конфликт состояния ресурса.",
@@ -95,11 +96,14 @@
   },
   "Auth": {
     "title": "Вход",
-    "subtitle": "Войдите под пользовательским токеном для доступа к панели.",
+    "subtitle": "Войдите или создайте пользовательский аккаунт для доступа к панели.",
     "email": "Email",
     "password": "Пароль",
+    "passwordPlaceholder": "Минимум 8 символов",
     "signIn": "Войти",
     "signingIn": "Вход...",
+    "createAccount": "Создать аккаунт",
+    "creatingAccount": "Создание аккаунта...",
     "loginFailed": "Неверный email или пароль"
   },
   "CommandPalette": {

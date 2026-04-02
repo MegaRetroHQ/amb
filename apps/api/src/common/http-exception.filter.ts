@@ -77,13 +77,21 @@ export class AllExceptionsFilter implements ExceptionFilter {
       if (typeof payload === "string") {
         message = payload;
       } else if (typeof payload === "object" && payload !== null) {
+        const maybeCode = (payload as { code?: unknown }).code;
         const maybeMessage = (payload as { message?: unknown }).message;
+        const maybeDetails = (payload as { details?: unknown }).details;
+        if (typeof maybeCode === "string") {
+          code = maybeCode;
+        }
         if (Array.isArray(maybeMessage)) {
           message = maybeMessage.join(", ");
         } else if (typeof maybeMessage === "string") {
           message = maybeMessage;
         } else {
           message = exception.message;
+        }
+        if (maybeDetails !== undefined) {
+          details = maybeDetails;
         }
       } else {
         message = exception.message;

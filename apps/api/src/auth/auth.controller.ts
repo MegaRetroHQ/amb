@@ -1,5 +1,5 @@
 import { Body, Controller, HttpCode, Post, Req } from "@nestjs/common";
-import { changePasswordSchema, issueProjectTokenSchema, loginSchema } from "@amb-app/shared";
+import { changePasswordSchema, issueProjectTokenSchema, loginSchema, signupSchema } from "@amb-app/shared";
 import { AuthService } from "./auth.service";
 import { Public } from "../common/public.decorator";
 import type { RequestWithAuth } from "../common/auth-context";
@@ -33,6 +33,38 @@ export class AuthController {
     }
 
     const data = await this.authService.login(parsed.data.email, parsed.data.password);
+    return { data };
+  }
+
+  @Public()
+  @Post("signup")
+  @HttpCode(201)
+  async signup(
+    @Body() body: unknown
+  ): Promise<{
+    data: {
+      accessToken: string;
+      tokenType: string;
+      expiresIn: number;
+      user: {
+        id: string;
+        email: string;
+        displayName: string | null;
+        tenantId: string;
+        roles: string[];
+      };
+    };
+  }> {
+    const parsed = signupSchema.safeParse(body);
+    if (!parsed.success) {
+      throw parsed.error;
+    }
+
+    const data = await this.authService.signup(
+      parsed.data.email,
+      parsed.data.password,
+      parsed.data.displayName
+    );
     return { data };
   }
 

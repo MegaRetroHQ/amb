@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: amb-api-migrate
+  labels:
+    app: amb-api
+    component: migrate
+spec:
+  backoffLimit: 1
+  template:
+    metadata:
+      labels:
+        app: amb-api
+        component: migrate
+    spec:
+      restartPolicy: Never
+      imagePullSecrets:
+        - name: ${AMB_IMAGE_PULL_SECRET}
+      containers:
+        - name: migrate
+          image: ${AMB_API_IMAGE}
+          imagePullPolicy: Always
+          command: ["sh", "-lc", "pnpm db:migrate:deploy"]
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: amb-secrets
+                  key: DATABASE_URL

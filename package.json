@@ -60,6 +60,7 @@
     "deploy:local:standalone": "bash -c 'export WEB_PORT=3333 API_PORT=3334; podman compose up -d --build && bash scripts/wait-for-local-stack.sh'",
     "deploy:local:down": "podman compose down -v",
     "deploy:prod": "./scripts/deploy/production-deploy.sh",
+    "deploy:hosting": "sh scripts/deploy/hosting-deploy.sh",
     "deploy:k8s:migrate": "kubectl apply -f deploy/k8s/api-migrate-job.yaml",
     "deploy:k8s:api": "kubectl apply -f deploy/k8s/api-deployment.yaml -f deploy/k8s/api-service.yaml"
   },

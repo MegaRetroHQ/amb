@@ -1,0 +1,144 @@
+name: Deploy AMB to Timeweb Kubernetes
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "Dockerfile"
+      - "Dockerfile.api"
+      - "apps/api/**"
+      - "apps/web/**"
+      - "packages/**"
+      - "pnpm-lock.yaml"
+      - "package.json"
+      - "deploy/k8s/timeweb/**"
+      - ".github/workflows/deploy-timeweb-k8s.yml"
+
+concurrency:
+  group: deploy-timeweb-k8s-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    if: ${{ secrets.TWC_KUBECONFIG != '' && secrets.TWC_REGISTRY_HOST != '' && secrets.TWC_REGISTRY_USERNAME != '' && secrets.TWC_REGISTRY_PASSWORD != '' && secrets.AMB_DATABASE_URL != '' && secrets.AMB_JWT_SECRET != '' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    env:
+      AMB_NAMESPACE: ${{ vars.AMB_K8S_NAMESPACE || 'megaretro' }}
+      AMB_CLUSTER_ISSUER: ${{ vars.AMB_K8S_CLUSTER_ISSUER || 'letsencrypt-prod' }}
+      AMB_IMAGE_PULL_SECRET: ${{ vars.AMB_K8S_IMAGE_PULL_SECRET || 'timeweb-registry-secret' }}
+      AMB_BOOTSTRAP: ${{ vars.AMB_BOOTSTRAP || 'true' }}
+      AMB_WEB_HOST: ${{ vars.AMB_WEB_HOST || 'amb.megaretro.ru' }}
+      AMB_API_HOST: ${{ vars.AMB_API_HOST || 'api.amb.megaretro.ru' }}
+      AMB_WEB_TLS_SECRET: amb-megaretro-ru-tls
+      AMB_API_TLS_SECRET: api-amb-megaretro-ru-tls
+      REGISTRY_HOST: ${{ secrets.TWC_REGISTRY_HOST }}
+      REGISTRY_NAMESPACE: ${{ vars.TWC_REGISTRY_NAMESPACE || 'megaretro' }}
+      KUBECONFIG_CONTENT: ${{ secrets.TWC_KUBECONFIG }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Define image tags
+        run: |
+          echo "AMB_API_IMAGE=${REGISTRY_HOST}/${REGISTRY_NAMESPACE}/amb-api:${GITHUB_SHA}" >> "$GITHUB_ENV"
+          echo "AMB_WEB_IMAGE=${REGISTRY_HOST}/${REGISTRY_NAMESPACE}/amb-web:${GITHUB_SHA}" >> "$GITHUB_ENV"
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.19.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: "20"
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Log in to Timeweb Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.TWC_REGISTRY_HOST }}
+          username: ${{ secrets.TWC_REGISTRY_USERNAME }}
+          password: ${{ secrets.TWC_REGISTRY_PASSWORD }}
+
+      - name: Build and push deployment images
+        run: sh scripts/release/publish-public-artifacts.sh
+        env:
+          CONTAINER_CLI: docker
+          REGISTRY_PREFIX: ${{ env.REGISTRY_HOST }}/${{ env.REGISTRY_NAMESPACE }}
+          IMAGE_TAG: ${{ github.sha }}
+          PUBLISH_LATEST: "false"
+          PUBLISH_WEB: "true"
+          PUBLISH_API: "true"
+          PUBLISH_SEED: "false"
+          PUBLISH_NPM: "false"
+          WEB_IMAGE_NAME: amb-web
+          API_IMAGE_NAME: amb-api
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Install envsubst
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gettext-base
+
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p "$HOME/.kube"
+          printf '%s' "$KUBECONFIG_CONTENT" > "$HOME/.kube/config"
+          chmod 600 "$HOME/.kube/config"
+
+      - name: Ensure namespace exists
+        run: kubectl get namespace "$AMB_NAMESPACE" >/dev/null 2>&1 || kubectl create namespace "$AMB_NAMESPACE"
+
+      - name: Update image pull secret
+        run: |
+          kubectl create secret docker-registry "$AMB_IMAGE_PULL_SECRET" \
+            -n "$AMB_NAMESPACE" \
+            --docker-server="${{ secrets.TWC_REGISTRY_HOST }}" \
+            --docker-username="${{ secrets.TWC_REGISTRY_USERNAME }}" \
+            --docker-password="${{ secrets.TWC_REGISTRY_PASSWORD }}" \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Update app secrets
+        run: |
+          kubectl create secret generic amb-secrets \
+            -n "$AMB_NAMESPACE" \
+            --from-literal=DATABASE_URL='${{ secrets.AMB_DATABASE_URL }}' \
+            --from-literal=JWT_SECRET='${{ secrets.AMB_JWT_SECRET }}' \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Run database migrations
+        run: |
+          kubectl delete job amb-api-migrate -n "$AMB_NAMESPACE" --ignore-not-found
+          envsubst < deploy/k8s/timeweb/migrate-job.yaml | kubectl apply -n "$AMB_NAMESPACE" -f -
+          kubectl wait -n "$AMB_NAMESPACE" --for=condition=complete --timeout=300s job/amb-api-migrate
+
+      - name: Deploy workloads and ingress
+        run: |
+          envsubst < deploy/k8s/timeweb/apply.yaml | kubectl apply -n "$AMB_NAMESPACE" -f -
+
+      - name: Wait for rollout
+        run: |
+          kubectl rollout status -n "$AMB_NAMESPACE" deployment/amb-api --timeout=300s
+          kubectl rollout status -n "$AMB_NAMESPACE" deployment/amb-web --timeout=300s
+
+      - name: Show ingress status
+        run: |
+          kubectl get ingress -n "$AMB_NAMESPACE" amb-api-ingress amb-web-ingress -o wide

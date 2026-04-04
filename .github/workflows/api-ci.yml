@@ -68,6 +68,9 @@ jobs:
       - name: Migrate DB
         run: pnpm db:migrate:deploy
 
+      - name: API lint
+        run: pnpm --filter amb-api run lint
+
       - name: API Typecheck
         run: pnpm --filter amb-api typecheck
 

@@ -166,6 +166,7 @@ jobs:
       - name: Web lint
         run: pnpm --filter amb-web lint
 
+      # Рекомендуемый путь. Legacy CI с ./node_modules/.bin/eslint см. корневой eslint.config.mjs + eslint в package.json.
       - name: API lint
         run: pnpm --filter amb-api run lint
 

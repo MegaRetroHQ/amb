@@ -9,20 +9,27 @@ async function bootstrap() {
   app.setGlobalPrefix("api");
   app.useGlobalFilters(new AllExceptionsFilter());
 
-  const swaggerConfig = new DocumentBuilder()
-    .setTitle("AMB API")
-    .setDescription("Agent Message Bus API")
-    .setVersion("1.0")
-    .build();
-  const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup("api/docs", app, swaggerDocument, {
-    jsonDocumentUrl: "api/docs-json",
-  });
+  const isProd = process.env.NODE_ENV === "production";
+  const swaggerEnabled =
+    process.env.AMB_SWAGGER_ENABLED === "true" || !isProd;
+  if (swaggerEnabled) {
+    const swaggerConfig = new DocumentBuilder()
+      .setTitle("AMB API")
+      .setDescription("Agent Message Bus API")
+      .setVersion("1.0")
+      .build();
+    const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
+    SwaggerModule.setup("api/docs", app, swaggerDocument, {
+      jsonDocumentUrl: "api/docs-json",
+    });
+  }
 
   const port = process.env.PORT ?? 3334;
   await app.listen(port);
   console.log(`AMB API listening on http://localhost:${port}/api`);
-  console.log(`AMB Swagger UI listening on http://localhost:${port}/api/docs`);
+  if (swaggerEnabled) {
+    console.log(`AMB Swagger UI listening on http://localhost:${port}/api/docs`);
+  }
 }
 
 bootstrap().catch((err) => {

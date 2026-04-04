@@ -43,4 +43,5 @@ done
 
 echo "[hosting] deployment finished"
 echo "[hosting] dashboard: https://$(awk -F= '/^WEB_DOMAIN=/{print $2}' "$ENV_FILE")"
-echo "[hosting] api docs: https://$(awk -F= '/^API_DOMAIN=/{print $2}' "$ENV_FILE")/api/docs"
+echo "[hosting] api base: https://$(awk -F= '/^API_DOMAIN=/{print $2}' "$ENV_FILE")/api"
+echo "[hosting] note: Swagger /api/docs is off when NODE_ENV=production unless AMB_SWAGGER_ENABLED=true"

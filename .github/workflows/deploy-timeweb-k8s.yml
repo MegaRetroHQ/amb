@@ -377,13 +377,17 @@ jobs:
           kubectl rollout status -n "$AMB_NAMESPACE" deployment/amb-api --timeout=300s
           kubectl rollout status -n "$AMB_NAMESPACE" deployment/amb-web --timeout=300s
 
-      - name: Smoke check API and web
+      - name: Smoke check API and web (in-cluster)
         run: |
           set -euo pipefail
           kubectl get pods -n "$AMB_NAMESPACE" -l app=amb-api
           kubectl get pods -n "$AMB_NAMESPACE" -l app=amb-web
-          curl -fsS "https://$AMB_API_HOST/api/health"
-          curl -IfsS "https://$AMB_WEB_HOST"
+          # С раннера GitHub публичный DNS часто не резолвится — проверяем ClusterIP (как и трафик из web → api).
+          RID="${{ github.run_id }}-${{ github.run_attempt }}"
+          kubectl run "amb-smoke-api-$RID" -n "$AMB_NAMESPACE" --rm -i --restart=Never \
+            --image=curlimages/curl:8.11.1 -- -fsS "http://amb-api/api/health"
+          kubectl run "amb-smoke-web-$RID" -n "$AMB_NAMESPACE" --rm -i --restart=Never \
+            --image=curlimages/curl:8.11.1 -- -IfsS "http://amb-web/"
 
       - name: Show ingress status
         run: |

@@ -9,9 +9,10 @@
 # Organization secrets (имена как в Drone UI):
 #   TWC_REGISTRY_HOST, TWC_REGISTRY_USERNAME, TWC_REGISTRY_PASSWORD — Timeweb Container Registry
 #   TWC_KUBECONFIG — raw kubeconfig (без base64)
-#   dockerhub_username, dockerhub_password — Docker Hub (в этом репо push образов только в TWC;
-#     для pull образов шагов при rate limit добавьте org secret dockerconfigjson = содержимое
-#     ~/.docker/config.json после docker login, и раскомментируйте image_pull_secrets в каждом pipeline)
+#   dockerhub_username, dockerhub_password — учётка Docker Hub (для логина вручную при сборке dockerconfigjson)
+#   dockerconfigjson — ОБЯЗАТЕЛЬНО для CI: полное содержимое ~/.docker/config.json после
+#     `docker login -u "<dockerhub_username>" -p "<dockerhub_password>"` (без этого Hub даёт
+#     unauthenticated pull rate limit на clone/step images: alpine/git, node, docker, curl и т.д.)
 #
 # Secrets (репозиторий AMB):
 #   twc_registry_namespace  — путь в реестре (например megaretro), как в saas-billing
@@ -36,6 +37,9 @@
 kind: pipeline
 type: docker
 name: ci
+
+image_pull_secrets:
+  - dockerconfigjson
 
 clone:
   image: alpine/git
@@ -102,6 +106,9 @@ steps:
 kind: pipeline
 type: docker
 name: build-images
+
+image_pull_secrets:
+  - dockerconfigjson
 
 clone:
   image: alpine/git
@@ -180,6 +187,9 @@ steps:
 kind: pipeline
 type: docker
 name: deploy
+
+image_pull_secrets:
+  - dockerconfigjson
 
 clone:
   image: alpine/git

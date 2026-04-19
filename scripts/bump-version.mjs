@@ -35,9 +35,6 @@ for (const relativePath of PACKAGE_FILES) {
   const absolutePath = join(ROOT, relativePath);
   const data = JSON.parse(readFileSync(absolutePath, "utf8"));
   data.version = VERSION;
-  if (relativePath === "package.json" && data.devDependencies?.["@openaisdk/amb-mcp"]) {
-    data.devDependencies["@openaisdk/amb-mcp"] = `^${VERSION}`;
-  }
   writeFileSync(absolutePath, `${JSON.stringify(data, null, 2)}\n`);
   console.log(`Updated ${relativePath} -> ${VERSION}`);
 }

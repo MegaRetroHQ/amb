@@ -10,6 +10,9 @@
   },
   "homepage": "https://github.com/bizmedia/amb#readme",
   "author": "Anatoliy Tukov <openaisdk@gmail.com>",
+  "engines": {
+    "node": ">=20.19.0"
+  },
   "pnpm": {
     "onlyBuiltDependencies": [
       "@nestjs/core",
@@ -22,6 +25,7 @@
     ]
   },
   "scripts": {
+    "preinstall": "node scripts/check-node-prisma.mjs",
     "postinstall": "sh scripts/chmod-node-bin.sh",
     "scripts:help": "node scripts/print-scripts-help.mjs",
     "bump:version": "node scripts/bump-version.mjs",
@@ -63,7 +67,7 @@
     "deploy:k8s:api": "kubectl apply -f deploy/k8s/api-deployment.yaml -f deploy/k8s/api-service.yaml"
   },
   "devDependencies": {
-    "@openaisdk/amb-mcp": "^1.3.3",
+    "@openaisdk/amb-mcp": "workspace:*",
     "@repo/eslint-config": "workspace:*",
     "@tailwindcss/postcss": "^4",
     "@tailwindcss/typography": "^0.5.16",

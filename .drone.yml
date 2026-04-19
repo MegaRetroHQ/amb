@@ -26,6 +26,7 @@
 #   AMB_WEB_TLS_SECRET, AMB_API_TLS_SECRET — как в .github/workflows/deploy-timeweb-k8s.yml (vars).
 #
 # Repository settings → Trusted = ON (Docker-in-Docker privileged).
+# Образы node:20.19-alpine — Prisma 7 требует Node 20.19+ (см. engines в корневом package.json).
 #
 # =============================================================================
 
@@ -47,14 +48,14 @@ trigger:
 
 steps:
   - name: install
-    image: node:20-alpine
+    image: node:20.19-alpine
     commands:
       - corepack enable
       - corepack prepare pnpm@10.19.0 --activate
       - pnpm install --frozen-lockfile
 
   - name: lint-web
-    image: node:20-alpine
+    image: node:20.19-alpine
     depends_on: [install]
     commands:
       - corepack enable
@@ -62,7 +63,7 @@ steps:
       - pnpm lint
 
   - name: lint-api
-    image: node:20-alpine
+    image: node:20.19-alpine
     depends_on: [install]
     commands:
       - corepack enable
@@ -70,7 +71,7 @@ steps:
       - pnpm lint:api
 
   - name: typecheck
-    image: node:20-alpine
+    image: node:20.19-alpine
     depends_on: [install]
     commands:
       - corepack enable
@@ -78,7 +79,7 @@ steps:
       - pnpm typecheck
 
   - name: test
-    image: node:20-alpine
+    image: node:20.19-alpine
     depends_on: [install]
     commands:
       - corepack enable
@@ -86,7 +87,7 @@ steps:
       - pnpm test
 
   - name: build
-    image: node:20-alpine
+    image: node:20.19-alpine
     depends_on: [lint-web, lint-api, typecheck, test]
     commands:
       - corepack enable

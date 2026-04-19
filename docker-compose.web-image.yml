@@ -23,7 +23,7 @@ services:
       retries: 20
 
   api:
-    image: node:20-alpine
+    image: node:20.19-alpine
     container_name: amb-api
     working_dir: /workspace
     volumes:

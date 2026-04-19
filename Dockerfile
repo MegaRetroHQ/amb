@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 ARG PNPM_VERSION=10.19.0
-FROM node:20-alpine AS base
+FROM node:20.19-alpine AS base
 
 ARG PNPM_VERSION
 RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate

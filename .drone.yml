@@ -50,6 +50,15 @@ trigger:
     - push
     - pull_request
 
+# Postgres для e2e-тестов apps/api (Prisma 7 требует реальный connectionString).
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: amb
+
 steps:
   - name: install
     image: node:20.19-alpine
@@ -82,6 +91,20 @@ steps:
       - corepack prepare pnpm@10.19.0 --activate
       - pnpm typecheck
 
+  - name: migrate
+    image: node:20.19-alpine
+    depends_on: [install]
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/amb
+    commands:
+      - corepack enable
+      - corepack prepare pnpm@10.19.0 --activate
+      - apk add --no-cache postgresql16-client
+      - until pg_isready -h postgres -U postgres -d amb; do echo "waiting for postgres..."; sleep 2; done
+      - pnpm --filter @amb-app/shared build
+      - pnpm --filter @amb-app/db build
+      - pnpm db:migrate:deploy
+
   - name: test
     image: node:20.19-alpine
     depends_on: [install]
@@ -90,9 +113,20 @@ steps:
       - corepack prepare pnpm@10.19.0 --activate
       - pnpm test
 
+  - name: test-e2e
+    image: node:20.19-alpine
+    depends_on: [migrate]
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/amb
+      JWT_SECRET: ci-jwt-secret
+    commands:
+      - corepack enable
+      - corepack prepare pnpm@10.19.0 --activate
+      - pnpm test:e2e
+
   - name: build
     image: node:20.19-alpine
-    depends_on: [lint-web, lint-api, typecheck, test]
+    depends_on: [lint-web, lint-api, typecheck, test, test-e2e]
     commands:
       - corepack enable
       - corepack prepare pnpm@10.19.0 --activate

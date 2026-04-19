@@ -10,16 +10,15 @@ export class PrismaService
 {
   constructor() {
     const connectionString = process.env.DATABASE_URL;
-    const adapter = connectionString
-      ? new PrismaPg({ connectionString })
-      : undefined;
-    super(
-      (adapter
-        ? { adapter, log: ["error", "warn"] as const }
-        : { log: ["error", "warn"] as const }) as ConstructorParameters<
-        typeof PrismaClient
-      >[0]
-    );
+    if (!connectionString) {
+      throw new Error(
+        "PrismaService: DATABASE_URL is required (Prisma 7 client needs a driver adapter with a connection string)."
+      );
+    }
+    const adapter = new PrismaPg({ connectionString });
+    super({ adapter, log: ["error", "warn"] as const } as ConstructorParameters<
+      typeof PrismaClient
+    >[0]);
   }
 
   async onModuleInit() {

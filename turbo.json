@@ -11,6 +11,11 @@
     "test": {
       "dependsOn": ["^build"]
     },
+    "test:e2e": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "env": ["DATABASE_URL", "JWT_SECRET"]
+    },
     "dev": {
       "cache": false,
       "persistent": true
